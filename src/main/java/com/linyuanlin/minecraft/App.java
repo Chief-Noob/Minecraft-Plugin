@@ -93,6 +93,7 @@ public class App extends JavaPlugin implements Listener {
             TextComponent a = new TextComponent("[傳送組隊邀請]");
             a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊發送組隊邀請給 " + entity.getName())));
             a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite " + entity.getName()));
+            p.spigot().sendMessage(a);
         }
     }
 
