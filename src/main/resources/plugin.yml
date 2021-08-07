@@ -1,3 +1,7 @@
 main: com.linyuanlin.minecraft.App
 name: MainSystem 
 version: 0.1
+depend: [HolographicDisplays]
+commands:
+  team: 
+    description: 組隊系統 
