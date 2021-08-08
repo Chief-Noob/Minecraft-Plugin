@@ -152,15 +152,14 @@ public class App extends JavaPlugin implements Listener {
                         allPlayers.get(p.getUniqueId()).team = team;
                         allPlayers.get(p1.getUniqueId()).team = team;
                         team.get().leader = allPlayers.get(p.getUniqueId());
-                        msg = new TextComponent(
-                                p1.getName() + "已加入" + "(" + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)");
+                        msg = new TextComponent(p1.getName() + "已加入" + "("
+                                + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)");
                     } else if (!allPlayers.get(p.getUniqueId()).team.get().isFull()) {
-                        allPlayers.get(p.getUniqueId()).team.get().playerList
-                                .add(allPlayers.get(Bukkit.getPlayer(args[0]).getUniqueId()));
+                        allPlayers.get(p.getUniqueId()).team.get().playerList.add(allPlayers.get(p.getUniqueId()));
                         allPlayers.get(Bukkit.getPlayer(p1.getName()).getUniqueId()).team = allPlayers
                                 .get(p.getUniqueId()).team;
-                        msg = new TextComponent(
-                                p1.getName() + "已加入" + "(" + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)");
+                        msg = new TextComponent(p1.getName() + "已加入" + "("
+                                + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)");
                     } else {
                         msg = new TextComponent("隊伍已滿");
                     }
@@ -185,7 +184,7 @@ public class App extends JavaPlugin implements Listener {
                     TextComponent msg = new TextComponent("隊伍成員：" + teamMemberNameString);
                     p1.spigot().sendMessage(msg);
                 }
-                break;
+                    break;
                 default:
                     break;
             }
