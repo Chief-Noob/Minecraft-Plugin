@@ -135,7 +135,8 @@ public class App extends JavaPlugin implements Listener {
                 case "invite": {
                     Player p = Bukkit.getPlayer(args[1]);
                     TextComponent a = new TextComponent("[確認組隊邀請]");
-                    a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊接受 " + sender.getName() + " 的組隊邀請 ")));
+                    a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                            new Text("點擊接受 " + sender.getName() + " 的組隊邀請 ")));
                     a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team join " + args[1]));
                     p.spigot().sendMessage(a);
                     break;
@@ -143,19 +144,23 @@ public class App extends JavaPlugin implements Listener {
                 case "join": {
                     Player p = Bukkit.getPlayer(args[1]);
                     TextComponent msg = new TextComponent("");
-                    if (allPlayers.get(p1.getUniqueId()).team.isEmpty()) {
+                    if (allPlayers.get(p1.getUniqueId()).team.isPresent()) {
                         List<PlayerData> playerArray = new ArrayList<>();
                         playerArray.add(allPlayers.get(p1.getUniqueId()));
                         playerArray.add(allPlayers.get(p.getUniqueId()));
-                        Team team = new Team(playerArray);
+                        Optional<Team> team = Optional.of(new Team(playerArray));
                         allPlayers.get(p1.getUniqueId()).team = team;
                         allPlayers.get(p.getUniqueId()).team = team;
-                        team.leader = allPlayers.get(p1.getUniqueId());
-                        msg = new TextComponent(p.getName() + "已加入" + "(" + allPlayers.get(p1.getUniqueId()).team.size() + "/4");
-                    } else if (!allPlayers.get(p1.getUniqueId()).team.isFull()) {
-                        allPlayers.get(p1.getUniqueId()).team.playerList.add(allPlayers.get(Bukkit.getPlayer(args[0]).getUniqueId()));
-                        allPlayers.get(Bukkit.getPlayer(p.getName()).getUniqueId()).team = allPlayers.get(p1.getUniqueId()).team;
-                        msg = new TextComponent(p.getName() + "已加入" + "(" + allPlayers.get(p1.getUniqueId()).team.size() + "/4");
+                        team.get().leader = allPlayers.get(p1.getUniqueId());
+                        msg = new TextComponent(
+                                p.getName() + "已加入" + "(" + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4");
+                    } else if (!allPlayers.get(p1.getUniqueId()).team.get().isFull()) {
+                        allPlayers.get(p1.getUniqueId()).team.get().playerList
+                                .add(allPlayers.get(Bukkit.getPlayer(args[0]).getUniqueId()));
+                        allPlayers.get(Bukkit.getPlayer(p.getName()).getUniqueId()).team = allPlayers
+                                .get(p1.getUniqueId()).team;
+                        msg = new TextComponent(
+                                p.getName() + "已加入" + "(" + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4");
                     } else {
                         msg = new TextComponent("隊伍已滿");
                     }
@@ -165,16 +170,18 @@ public class App extends JavaPlugin implements Listener {
                 }
                 case "list": {
                     StringBuilder teamMemberNameString = new StringBuilder();
-                    for (int i = 0; i < allPlayers.get(p1.getUniqueId()).team.size(); i++) {
-                        teamMemberNameString.append(allPlayers.get(p1.getUniqueId()).team.playerList.get(i).player.getName()).append(" ");
+                    for (int i = 0; i < allPlayers.get(p1.getUniqueId()).team.get().size(); i++) {
+                        teamMemberNameString
+                                .append(allPlayers.get(p1.getUniqueId()).team.get().playerList.get(i).player.getName())
+                                .append(" ");
                     }
                     TextComponent msg = new TextComponent("隊伍成員：" + teamMemberNameString);
-                    for (int i = 0; i < allPlayers.get(p1.getUniqueId()).team.size(); i++) {
-                        allPlayers.get(p1.getUniqueId()).team.playerList.get(i).player.spigot().sendMessage(msg);
+                    for (int i = 0; i < allPlayers.get(p1.getUniqueId()).team.get().size(); i++) {
+                        allPlayers.get(p1.getUniqueId()).team.get().playerList.get(i).player.spigot().sendMessage(msg);
                     }
 
                 }
-                break;
+                    break;
                 default:
                     break;
             }

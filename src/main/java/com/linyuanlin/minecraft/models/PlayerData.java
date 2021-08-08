@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Optional;
 
 public class PlayerData {
 
@@ -14,7 +15,7 @@ public class PlayerData {
 
     public int balance = 0;
     
-    public Team team;
+    public Optional<Team> team;
 
     public PlayerData(UUID uuid) throws Exception {
 
@@ -34,5 +35,4 @@ public class PlayerData {
         player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
 
     }
-
 }
