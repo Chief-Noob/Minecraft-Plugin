@@ -14,14 +14,15 @@ public class PlayerData {
     public Player player;
 
     public int balance = 0;
-    
+
     public Optional<Team> team = Optional.empty();
 
     public PlayerData(UUID uuid) throws Exception {
 
         this.player = Bukkit.getServer().getPlayer(uuid);
 
-        if (this.player == null) throw new Exception("PLAYER_NOT_ONLINE");
+        if (this.player == null)
+            throw new Exception("PLAYER_NOT_ONLINE");
 
         /* Import data from database */
 
