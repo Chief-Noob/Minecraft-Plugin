@@ -1,37 +1,34 @@
 package com.linyuanlin.minecraft;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-
 import com.linyuanlin.minecraft.models.PlayerData;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class App extends JavaPlugin implements Listener {
 
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
+    public WorldManager worldManager = new WorldManager();
 
     public void downloadAllUserData() throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -43,6 +40,9 @@ public class App extends JavaPlugin implements Listener {
     public void onEnable() {
 
         getServer().getPluginManager().registerEvents(this, this);
+
+        // Load all worlds
+        worldManager.loadWorlds();
 
         try {
             downloadAllUserData();
@@ -61,6 +61,33 @@ public class App extends JavaPlugin implements Listener {
         }
 
         getLogger().info("See you again, SpigotMC!");
+    }
+
+    @EventHandler
+    public void onPlayerEnterGate(PlayerMoveEvent e) {
+        Player p = e.getPlayer();
+
+        if (!p.getWorld().getName().equals("world")) {
+            return;
+        }
+
+        Location houseWorldGate = new Location(Bukkit.getWorld("world"), 29, 65, -296);
+
+        if (p.getLocation().getBlock() == houseWorldGate.getBlock()) {
+            p.teleport(new Location(Bukkit.getWorld("house_world"), 0.0, 100.0, 0.0));
+        }
+    }
+
+    @EventHandler
+    public void onPlayerWorldChange(PlayerChangedWorldEvent e) {
+        Player p = e.getPlayer();
+        String newWorldName = p.getWorld().getName();
+        if (newWorldName.equals("house_world")) {
+            p.sendTitle(ChatColor.YELLOW + "小屋世界", "你能用收集來的資源建造你的居所，也能儲存你的戰利品以及勳章和物資", 20, 80, 20);
+        }
+        if (newWorldName.equals("world")) {
+            p.sendTitle(ChatColor.YELLOW + "大廳", "所有玩家一開始進入遊戲時的交誼廳，擁有通往各個區域的傳送門", 20, 80, 20);
+        }
     }
 
     @EventHandler
@@ -85,7 +112,9 @@ public class App extends JavaPlugin implements Listener {
         Bukkit.getScheduler().callSyncMethod(this, () -> this.setholo(e.getPlayer(), e.getMessage(), 1)).get();
     }
 
-    /** 對話時產生 hologram 在玩家頭上 */
+    /**
+     * 對話時產生 hologram 在玩家頭上
+     */
     public boolean setholo(Player Player, String msg, int second) {
 
         final Hologram hologram = HologramsAPI.createHologram(this, Player.getLocation().add(0.0, 2.0, 0.0));
