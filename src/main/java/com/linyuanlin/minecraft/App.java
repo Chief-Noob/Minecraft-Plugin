@@ -71,9 +71,9 @@ public class App extends JavaPlugin implements Listener {
             return;
         }
 
-        Location houseWorldGate = new Location(Bukkit.getWorld("world"), 29, 65, -296);
 
-        if (p.getLocation().getBlock() == houseWorldGate.getBlock()) {
+        Location l = p.getLocation();
+        if (l.getX() >= 28 && l.getX() <= 32 && l.getY() >= 62 && l.getY() <= 71 && l.getZ() <= -296 && l.getZ() >= -297) {
             p.teleport(new Location(Bukkit.getWorld("house_world"), 0.0, 100.0, 0.0));
         }
     }
