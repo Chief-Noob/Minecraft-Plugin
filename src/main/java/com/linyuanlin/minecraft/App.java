@@ -146,18 +146,17 @@ public class App extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command cmd, String cmdlable, String[] args) {
         Player p1 = (Player) sender;
         if (cmdlable.equals("team")) {
-
             switch (args[0]) {
-                case "invite": {
+                case "invite": {//p1 invite p to p1's team
                     Player p = Bukkit.getPlayer(args[1]);
                     TextComponent a = new TextComponent("[確認組隊邀請]");
                     a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                            new Text("點擊接受 " + sender.getName() + " 的組隊邀請 ")));
-                    a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team join " + args[1]));
+                            new Text("點擊接受 " + p1.getName() + " 的組隊邀請 ")));
+                    a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team join " + p1.getName()));
                     p.spigot().sendMessage(a);
                     break;
                 }
-                case "join": {
+                case "join": {//p join p1's team
                     Player p = Bukkit.getPlayer(args[1]);
                     TextComponent msg = new TextComponent("");
                     if (!allPlayers.get(p.getUniqueId()).team.isPresent()) {
