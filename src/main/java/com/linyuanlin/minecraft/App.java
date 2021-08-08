@@ -1,6 +1,8 @@
 package com.linyuanlin.minecraft;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -9,6 +11,8 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 
 import com.linyuanlin.minecraft.models.PlayerData;
+import com.linyuanlin.minecraft.models.Team;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -129,9 +133,59 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public boolean onCommand(CommandSender sender, Command cmd, String cmdlable, String[] args) {
-        Player p = (Player) sender;
+        Player p1 = (Player) sender;
         if (cmdlable.equals("team")) {
-            p.sendMessage("組隊功能正在開發中");
+
+            switch (args[0]) {
+                case "invite":{
+                Player p = Bukkit.getPlayer(args[1]);
+                TextComponent a = new TextComponent("[確認組隊邀請]");
+                a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊接受 " + sender.getName() + " 的組隊邀請 " )));
+                a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team join " + args[1]));
+                p.spigot().sendMessage(a); 
+                    break;
+                }
+                case "join":{
+                Player p = Bukkit.getPlayer(args[1]);
+                TextComponent msg = new TextComponent("");
+                if(allPlayers.get(p1.getUniqueId()).team.isEmpty()){
+                    List<PlayerData> playerArray = new ArrayList<>();
+                    playerArray.add(allPlayers.get(p1.getUniqueId()));
+                    playerArray.add(allPlayers.get(p.getUniqueId()));
+                    Team team = new Team(playerArray);
+                    allPlayers.get(p1.getUniqueId()).team = team;
+                    allPlayers.get(p.getUniqueId()).team = team;
+                    team.leader = allPlayers.get(p1.getUniqueId());
+                    msg = new TextComponent(p.getName() + "已加入" + "(" + allPlayers.get(p1.getUniqueId()).team.size() + "/4"); 
+                }else if(!allPlayers.get(p1.getUniqueId()).team.isFull()){
+                    allPlayers.get(p1.getUniqueId()).team.playerList.add(allPlayers.get(Bukkit.getPlayer(args[0]).getUniqueId()));
+                    allPlayers.get(Bukkit.getPlayer(p.getName()).getUniqueId()).team = allPlayers.get(p1.getUniqueId()).team;
+                    msg = new TextComponent(p.getName() + "已加入" + "(" + allPlayers.get(p1.getUniqueId()).team.size() + "/4"); 
+                }else{
+                    msg = new TextComponent("隊伍已滿");
+                }
+                p.spigot().sendMessage(msg);
+                p1.spigot().sendMessage(msg);
+                break;
+                }
+                case "list":{
+                    String teamMemberNameString = "";
+                    for(int i = 0; i < allPlayers.get(p1.getUniqueId()).team.size(); i++){
+                        teamMemberNameString += allPlayers.get(p1.getUniqueId()).team.playerList.get(i).player.getName() + " ";
+                    }
+                    TextComponent msg = new TextComponent("隊伍成員：" + teamMemberNameString);
+                    for(int i = 0; i < allPlayers.get(p1.getUniqueId()).team.size(); i++){
+                        allPlayers.get(p1.getUniqueId()).team.playerList.get(i).player.spigot().sendMessage(msg);
+                    } 
+
+                }
+
+
+                break;
+                default:
+                    break;
+            }
+            
             return true;
         }
         return false;
