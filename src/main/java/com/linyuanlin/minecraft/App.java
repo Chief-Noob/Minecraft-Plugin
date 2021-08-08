@@ -10,16 +10,14 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -67,6 +65,24 @@ public class App extends JavaPlugin implements Listener {
         e.setJoinMessage(
                 ChatColor.WHITE + "玩家 " + ChatColor.YELLOW + e.getPlayer().getName() + ChatColor.WHITE + " 登入了, 讚啦！");
         allPlayers.put(p.getUniqueId(), new PlayerData(p.getUniqueId()));
+
+        World lobbyWorld = Bukkit.getWorld("world_lobby");
+        if (lobbyWorld != null) {
+            p.teleport(lobbyWorld.getSpawnLocation());
+        }
+    }
+
+
+    @EventHandler
+    public void onPlayerWorldChange(PlayerChangedWorldEvent e) {
+        Player p = e.getPlayer();
+        String newWorldName = p.getWorld().getName();
+        if (newWorldName.equals("house_world")) {
+            p.sendTitle(ChatColor.YELLOW + "小屋世界", "你能用收集來的資源建造你的居所，也能儲存你的戰利品以及勳章和物資", 20, 80, 20);
+        }
+        if (newWorldName.equals("world_lobby")) {
+            p.sendTitle(ChatColor.YELLOW + "大廳", "所有玩家一開始進入遊戲時的交誼廳，擁有通往各個區域的傳送門", 20, 80, 20);
+        }
     }
 
     @EventHandler

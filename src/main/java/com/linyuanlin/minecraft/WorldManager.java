@@ -12,19 +12,19 @@ public class WorldManager {
         loadLobbyWorld();
     }
 
-    /* Load the house world into server */
+    // Load the house world into server
     private void loadLobbyWorld() {
-        final String worldName = "lobby_world";
+        final String worldName = "world_lobby";
         Bukkit.createWorld(new WorldCreator(worldName));
     }
 
-    /* Load the house world into server */
+    // Load the house world into server
     private void loadHouseWorld() {
         final String worldName = "house_world";
         Bukkit.createWorld(new WorldCreator(worldName));
     }
 
-    /* Check if a world folder is exist */
+    // Check if a world folder is exist
     private boolean checkWorldDataExist(String worldName) {
 
         File file = Bukkit.getWorldContainer();
