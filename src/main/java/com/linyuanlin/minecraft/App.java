@@ -218,7 +218,7 @@ public class App extends JavaPlugin implements Listener {
 
                     if (team.get().size() > 1) {
                         team.get().playerList.remove((Object) allPlayers.get(p1.getUniqueId()));
-                        Optional<Team> newTeam = Optional.of(new Team(team.get().playerList)); 
+                        //Optional<Team> newTeam = Optional.of(new Team(team.get().playerList)); 
                         if (team.get().leader == allPlayers.get(p1.getUniqueId())) {
                             for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
                                 if (team.get().leader != p1) {
@@ -229,17 +229,17 @@ public class App extends JavaPlugin implements Listener {
                             for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
                                 pd.player.spigot().sendMessage(new TextComponent(
                                         "隊長 " + p1.getName() + " 離開了隊伍, 新隊長為" + team.get().leader.player.getName()));
-                                pd.team = newTeam;
+                                //pd.team = newTeam;
                             }
                         } else {
                             for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
                                 pd.player.spigot().sendMessage(new TextComponent("隊員 " + p1.getName() + " 離開了隊伍"));
-                                pd.team = newTeam;
+                                //pd.team = newTeam;
                             }
                         }
                     }
 
-                    team = Optional.empty();
+                    allPlayers.get(p1.getUniqueId()).team = Optional.empty();
                     p1.spigot().sendMessage(new TextComponent("你離開了隊伍"));
                     return true;
                 }
