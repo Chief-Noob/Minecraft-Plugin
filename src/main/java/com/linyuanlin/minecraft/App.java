@@ -1,11 +1,14 @@
 package com.linyuanlin.minecraft;
 
+import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 
+import com.linyuanlin.minecraft.models.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -27,12 +30,27 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class App extends JavaPlugin implements Listener {
 
+    public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
+
     private static final Logger log = Logger.getLogger("Minecraft");
+
+    public void downloadAllUserData() throws Exception {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            allPlayers.put(p.getUniqueId(), new PlayerData(p.getUniqueId()));
+        }
+    }
 
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
-        getLogger().info("Hello, SpigotMC!");
+
+        try {
+            downloadAllUserData();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        getLogger().info("Main system enabled");
     }
 
     @Override
