@@ -88,8 +88,8 @@ public class App extends JavaPlugin implements Listener {
     public void onPlayerInteract(PlayerInteractEntityEvent event1) {
         Player p = event1.getPlayer();
         Entity entity = event1.getRightClicked();
-        if (entity instanceof Player == true) {
-            p.sendMessage("他是 " + ((Player) entity).getName());
+        if (entity instanceof Player) {
+            p.sendMessage("他是 " + entity.getName());
             TextComponent a = new TextComponent("[傳送組隊邀請]");
             a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊發送組隊邀請給 " + entity.getName())));
             a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite " + entity.getName()));
@@ -99,10 +99,9 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public boolean onCommand(CommandSender sender, Command cmd, String cmdlable, String[] args) {
-        Player senderp = (Player) sender;
-        Player p = senderp;
+        Player p = (Player) sender;
         if (cmdlable.equals("team")) {
-            p.sendMessage("組隊功能還沒做好 哭哭");
+            p.sendMessage("組隊功能正在開發中");
             return true;
         }
         return false;
