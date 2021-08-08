@@ -1,9 +1,9 @@
 package com.linyuanlin.minecraft;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Logger;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
@@ -20,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -32,8 +33,6 @@ public class App extends JavaPlugin implements Listener {
 
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
 
-    private static final Logger log = Logger.getLogger("Minecraft");
-
     public void downloadAllUserData() throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {
             allPlayers.put(p.getUniqueId(), new PlayerData(p.getUniqueId()));
@@ -42,6 +41,7 @@ public class App extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+
         getServer().getPluginManager().registerEvents(this, this);
 
         try {
@@ -55,14 +55,26 @@ public class App extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+
+        for (Map.Entry<UUID, PlayerData> pair : allPlayers.entrySet()) {
+            pair.getValue().saveData();
+        }
+
         getLogger().info("See you again, SpigotMC!");
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        e.getPlayer().sendTitle(ChatColor.YELLOW + "歡迎光臨", ChatColor.GRAY + "本伺服器目前仍在開發階段", 20, 80, 40);
+    public void onJoin(PlayerJoinEvent e) throws Exception {
+        Player p = e.getPlayer();
+        p.sendTitle(ChatColor.YELLOW + "歡迎光臨", ChatColor.GRAY + "本伺服器目前仍在開發階段", 20, 80, 40);
         e.setJoinMessage(
                 ChatColor.WHITE + "玩家 " + ChatColor.YELLOW + e.getPlayer().getName() + ChatColor.WHITE + " 登入了, 讚啦！");
+        allPlayers.put(p.getUniqueId(), new PlayerData(p.getUniqueId()));
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent e) {
+        allPlayers.get(e.getPlayer().getUniqueId()).saveData();
     }
 
     @EventHandler
