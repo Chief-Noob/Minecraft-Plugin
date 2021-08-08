@@ -170,18 +170,21 @@ public class App extends JavaPlugin implements Listener {
                 }
                 case "list": {
                     StringBuilder teamMemberNameString = new StringBuilder();
-                    for (int i = 0; i < allPlayers.get(p1.getUniqueId()).team.get().size(); i++) {
-                        teamMemberNameString
-                                .append(allPlayers.get(p1.getUniqueId()).team.get().playerList.get(i).player.getName())
-                                .append(" ");
-                    }
-                    TextComponent msg = new TextComponent("隊伍成員：" + teamMemberNameString);
-                    for (int i = 0; i < allPlayers.get(p1.getUniqueId()).team.get().size(); i++) {
-                        allPlayers.get(p1.getUniqueId()).team.get().playerList.get(i).player.spigot().sendMessage(msg);
+                    Optional<Team> team = allPlayers.get(p1.getUniqueId()).team;
+
+                    if (!team.isPresent()) {
+                        p1.sendMessage("你沒隊伍拉");
+                        return false;
                     }
 
+                    for (PlayerData pd : team.get().playerList) {
+                        teamMemberNameString.append(pd.player.getName()).append(" ");
+                    }
+
+                    TextComponent msg = new TextComponent("隊伍成員：" + teamMemberNameString);
+                    p1.spigot().sendMessage(msg);
                 }
-                    break;
+                break;
                 default:
                     break;
             }
