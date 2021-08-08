@@ -209,7 +209,7 @@ public class App extends JavaPlugin implements Listener {
                     p1.spigot().sendMessage(msg);
                     return true;
                 }
-                case "leave": {
+                case "leave": {//Todo : when log out needs to leave the team / 
                     Optional<Team> team = allPlayers.get(p1.getUniqueId()).team;
                     if (!team.isPresent()) {
                         p1.spigot().sendMessage(new TextComponent("你沒有隊伍"));
@@ -220,7 +220,7 @@ public class App extends JavaPlugin implements Listener {
                         team = Optional.empty();
                     } else {
                         team.get().playerList.remove((Object) allPlayers.get(p1.getUniqueId()));
-                        if (team.get().leader == p1) {
+                        if (team.get().leader == allPlayers.get(p1.getUniqueId())) {
                             for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
                                 if (team.get().leader != p1) {
                                     team.get().leader = pd;
