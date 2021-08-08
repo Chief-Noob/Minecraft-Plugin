@@ -90,6 +90,9 @@ public class App extends JavaPlugin implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
         allPlayers.get(e.getPlayer().getUniqueId()).saveData();
+        if (allPlayers.get(e.getPlayer().getUniqueId()).team.isPresent()){
+            e.getPlayer().performCommand("/team leave");
+        }
     }
 
     @EventHandler
