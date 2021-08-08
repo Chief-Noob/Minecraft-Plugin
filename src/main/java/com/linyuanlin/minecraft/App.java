@@ -144,28 +144,29 @@ public class App extends JavaPlugin implements Listener {
                 case "join": {
                     Player p = Bukkit.getPlayer(args[1]);
                     TextComponent msg = new TextComponent("");
-                    if (!allPlayers.get(p1.getUniqueId()).team.isPresent()) {
+                    if (!allPlayers.get(p.getUniqueId()).team.isPresent()) {
                         List<PlayerData> playerArray = new ArrayList<>();
-                        playerArray.add(allPlayers.get(p1.getUniqueId()));
                         playerArray.add(allPlayers.get(p.getUniqueId()));
+                        playerArray.add(allPlayers.get(p1.getUniqueId()));
                         Optional<Team> team = Optional.of(new Team(playerArray));
-                        allPlayers.get(p1.getUniqueId()).team = team;
                         allPlayers.get(p.getUniqueId()).team = team;
-                        team.get().leader = allPlayers.get(p1.getUniqueId());
+                        allPlayers.get(p1.getUniqueId()).team = team;
+                        team.get().leader = allPlayers.get(p.getUniqueId());
                         msg = new TextComponent(
-                                p.getName() + "已加入" + "(" + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)");
-                    } else if (!allPlayers.get(p1.getUniqueId()).team.get().isFull()) {
-                        allPlayers.get(p1.getUniqueId()).team.get().playerList
+                                p1.getName() + "已加入" + "(" + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)");
+                    } else if (!allPlayers.get(p.getUniqueId()).team.get().isFull()) {
+                        allPlayers.get(p.getUniqueId()).team.get().playerList
                                 .add(allPlayers.get(Bukkit.getPlayer(args[0]).getUniqueId()));
-                        allPlayers.get(Bukkit.getPlayer(p.getName()).getUniqueId()).team = allPlayers
-                                .get(p1.getUniqueId()).team;
+                        allPlayers.get(Bukkit.getPlayer(p1.getName()).getUniqueId()).team = allPlayers
+                                .get(p.getUniqueId()).team;
                         msg = new TextComponent(
-                                p.getName() + "已加入" + "(" + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)");
+                                p1.getName() + "已加入" + "(" + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)");
                     } else {
                         msg = new TextComponent("隊伍已滿");
                     }
-                    p.spigot().sendMessage(msg);
-                    p1.spigot().sendMessage(msg);
+                    for (PlayerData pd : allPlayers.get(p.getUniqueId()).team.get().playerList) {
+                        pd.player.spigot().sendMessage(msg);
+                    }
                     break;
                 }
                 case "list": {
