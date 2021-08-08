@@ -135,7 +135,6 @@ public class App extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command cmd, String cmdlable, String[] args) {
         Player p1 = (Player) sender;
         if (cmdlable.equals("team")) {
-
             switch (args[0]) {
                 case "invite":{
                 Player p = Bukkit.getPlayer(args[1]);
@@ -177,11 +176,8 @@ public class App extends JavaPlugin implements Listener {
                     for(int i = 0; i < allPlayers.get(p1.getUniqueId()).team.size(); i++){
                         allPlayers.get(p1.getUniqueId()).team.playerList.get(i).player.spigot().sendMessage(msg);
                     } 
-
-                }
-
-
                 break;
+                }
                 default:
                     break;
             }
