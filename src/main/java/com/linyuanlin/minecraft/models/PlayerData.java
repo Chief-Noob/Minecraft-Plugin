@@ -15,7 +15,7 @@ public class PlayerData {
 
     public int balance = 0;
     
-    public Optional<Team> team;
+    public Optional<Team> team = Optional.empty();
 
     public PlayerData(UUID uuid) throws Exception {
 
