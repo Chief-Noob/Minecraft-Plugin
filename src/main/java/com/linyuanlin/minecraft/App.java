@@ -144,7 +144,7 @@ public class App extends JavaPlugin implements Listener {
                 case "join": {
                     Player p = Bukkit.getPlayer(args[1]);
                     TextComponent msg = new TextComponent("");
-                    if (allPlayers.get(p1.getUniqueId()).team.isPresent()) {
+                    if (!allPlayers.get(p1.getUniqueId()).team.isPresent()) {
                         List<PlayerData> playerArray = new ArrayList<>();
                         playerArray.add(allPlayers.get(p1.getUniqueId()));
                         playerArray.add(allPlayers.get(p.getUniqueId()));
