@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 public class App extends JavaPlugin implements Listener {
 
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
+    public WorldManager worldManager = new WorldManager();
 
     public void downloadAllUserData() throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -44,6 +45,8 @@ public class App extends JavaPlugin implements Listener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        worldManager.loadWorlds();
 
         getLogger().info("Main system enabled");
     }
@@ -200,7 +203,7 @@ public class App extends JavaPlugin implements Listener {
                     TextComponent msg = new TextComponent("隊伍成員：" + teamMemberNameString);
                     p1.spigot().sendMessage(msg);
                 }
-                    break;
+                break;
                 default:
                     break;
             }
