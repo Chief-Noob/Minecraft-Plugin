@@ -164,7 +164,7 @@ public class App extends JavaPlugin implements Listener {
                     }
                     return true;
                 }
-                case "join": {// p join p1's team
+                case "join": {// p join p1's team / Todo : check if p is invited by p1 or not
                     Player p = Bukkit.getPlayer(args[1]);
                     TextComponent msg = new TextComponent("");
                     if (!allPlayers.get(p.getUniqueId()).team.isPresent()) {
@@ -209,17 +209,16 @@ public class App extends JavaPlugin implements Listener {
                     p1.spigot().sendMessage(msg);
                     return true;
                 }
-                case "leave": {//Todo : when log out needs to leave the team / 
+                case "leave": {// Todo : when log out needs to leave the team
                     Optional<Team> team = allPlayers.get(p1.getUniqueId()).team;
                     if (!team.isPresent()) {
                         p1.spigot().sendMessage(new TextComponent("你沒有隊伍"));
                         return false;
                     }
 
-                    if (team.get().size() == 1) {
-                        team = Optional.empty();
-                    } else {
+                    if (team.get().size() > 1) {
                         team.get().playerList.remove((Object) allPlayers.get(p1.getUniqueId()));
+                        Optional<Team> newTeam = Optional.of(new Team(team.get().playerList)); 
                         if (team.get().leader == allPlayers.get(p1.getUniqueId())) {
                             for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
                                 if (team.get().leader != p1) {
@@ -230,13 +229,17 @@ public class App extends JavaPlugin implements Listener {
                             for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
                                 pd.player.spigot().sendMessage(new TextComponent(
                                         "隊長 " + p1.getName() + " 離開了隊伍, 新隊長為" + team.get().leader.player.getName()));
+                                pd.team = newTeam;
                             }
                         } else {
                             for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
                                 pd.player.spigot().sendMessage(new TextComponent("隊員 " + p1.getName() + " 離開了隊伍"));
+                                pd.team = newTeam;
                             }
                         }
                     }
+
+                    team = Optional.empty();
                     p1.spigot().sendMessage(new TextComponent("你離開了隊伍"));
                     return true;
                 }
