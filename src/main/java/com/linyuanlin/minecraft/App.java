@@ -152,12 +152,18 @@ public class App extends JavaPlugin implements Listener {
             switch (args[0]) {
                 case "invite": {//p1 invite p to p1's team
                     Player p = Bukkit.getPlayer(args[1]);
-                    TextComponent a = new TextComponent("[確認組隊邀請]");
-                    a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                            new Text("點擊接受 " + p1.getName() + " 的組隊邀請 ")));
-                    a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team join " + p1.getName()));
-                    p.spigot().sendMessage(a);
-                    break;
+                    TextComponent a = new TextComponent();
+                    if (allPlayers.get(p.getUniqueId()).team.isPresent()){
+                        a = new TextComponent(p.getName() + "已經有隊伍了！");
+                        p1.spigot().sendMessage(a);
+                    }else{
+                        a = new TextComponent("[確認組隊邀請]");
+                        a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                new Text("點擊接受 " + p1.getName() + " 的組隊邀請 ")));
+                        a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team join " + p1.getName()));
+                        p.spigot().sendMessage(a);
+                    }
+                    return true;
                 }
                 case "join": {//p join p1's team
                     Player p = Bukkit.getPlayer(args[1]);
@@ -184,7 +190,7 @@ public class App extends JavaPlugin implements Listener {
                     for (PlayerData pd : allPlayers.get(p.getUniqueId()).team.get().playerList) {
                         pd.player.spigot().sendMessage(msg);
                     }
-                    break;
+                    return true;
                 }
                 case "list": {
                     StringBuilder teamMemberNameString = new StringBuilder();
@@ -201,8 +207,8 @@ public class App extends JavaPlugin implements Listener {
 
                     TextComponent msg = new TextComponent("隊伍成員：" + teamMemberNameString);
                     p1.spigot().sendMessage(msg);
+                    return true;
                 }
-                break;
                 default:
                     break;
             }
