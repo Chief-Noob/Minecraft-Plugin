@@ -219,7 +219,7 @@ public class App extends JavaPlugin implements Listener {
                     if (team.get().size() == 1) {
                         team = Optional.empty();
                     } else {
-                        team.get().playerList.remove((Object) p1);
+                        team.get().playerList.remove((Object) allPlayers.get(p1.getUniqueId()));
                         if (team.get().leader == p1) {
                             for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
                                 if (team.get().leader != p1) {
