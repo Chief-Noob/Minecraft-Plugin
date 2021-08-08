@@ -90,8 +90,8 @@ public class App extends JavaPlugin implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
         allPlayers.get(e.getPlayer().getUniqueId()).saveData();
-        if (allPlayers.get(e.getPlayer().getUniqueId()).team.isPresent()){
-            e.getPlayer().performCommand("team leave");
+        if (allPlayers.get(e.getPlayer().getUniqueId()).team.isPresent()) {
+            e.getPlayer().performCommand("team leave");// command shouldn't include `/`
         }
     }
 
@@ -212,20 +212,20 @@ public class App extends JavaPlugin implements Listener {
                     p1.spigot().sendMessage(msg);
                     return true;
                 }
-                case "leave": {// Todo : when log out needs to leave the team
+                case "leave": {
                     Optional<Team> team = allPlayers.get(p1.getUniqueId()).team;
                     if (!team.isPresent()) {
                         p1.spigot().sendMessage(new TextComponent("你沒有隊伍"));
                         return false;
                     }
-                    
+
                     team.get().playerList.remove((Object) allPlayers.get(p1.getUniqueId()));
-                    if (team.get().size() == 1){//2 members-Team, this team should be deleted.
+                    if (team.get().size() == 1) {// 2 members-Team, this team should be deleted.
                         for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
                             pd.player.spigot().sendMessage(new TextComponent(p1.getName() + " 離開了隊伍, 隊伍人數不足，自動解散"));
                             pd.team = Optional.empty();
-                        } 
-                    }else if (team.get().size() > 1) {//>2 members-Team, this Team should be remained.  
+                        }
+                    } else if (team.get().size() > 1) {// >2 members-Team, this Team should be remained.
                         if (team.get().leader == allPlayers.get(p1.getUniqueId())) {
                             for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
                                 if (team.get().leader != p1) {
@@ -234,14 +234,15 @@ public class App extends JavaPlugin implements Listener {
                                 }
                             }
                             for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
-                                pd.player.spigot().sendMessage(new TextComponent(
-                                        "隊長 " + p1.getName() + " 離開了隊伍, 新隊長為" + team.get().leader.player.getName()+ "("
-                                        + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)"));
+                                pd.player.spigot()
+                                        .sendMessage(new TextComponent("隊長 " + p1.getName() + " 離開了隊伍, 新隊長為"
+                                                + team.get().leader.player.getName() + "("
+                                                + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)"));
                             }
                         } else {
                             for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
-                                pd.player.spigot().sendMessage(new TextComponent("隊員 " + p1.getName() + " 離開了隊伍"+ "("
-                                + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)"));
+                                pd.player.spigot().sendMessage(new TextComponent("隊員 " + p1.getName() + " 離開了隊伍" + "("
+                                        + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)"));
                             }
                         }
                     }
