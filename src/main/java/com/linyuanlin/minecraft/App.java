@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -97,6 +98,13 @@ public class App extends JavaPlugin implements Listener {
         e.setJoinMessage(
                 ChatColor.WHITE + "玩家 " + ChatColor.YELLOW + e.getPlayer().getName() + ChatColor.WHITE + " 登入了, 讚啦！");
         allPlayers.put(p.getUniqueId(), new PlayerData(p.getUniqueId()));
+
+        // Teleport login user to lobby world
+        World lobbyWorld = Bukkit.getWorld("lobby_world");
+        if (lobbyWorld != null) {
+            Location l = lobbyWorld.getSpawnLocation();
+            p.teleport(l);
+        }
     }
 
     @EventHandler

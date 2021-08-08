@@ -9,6 +9,13 @@ public class WorldManager {
 
     public void loadWorlds() {
         loadHouseWorld();
+        loadLobbyWorld();
+    }
+
+    /* Load the house world into server */
+    private void loadLobbyWorld() {
+        final String worldName = "lobby_world";
+        Bukkit.createWorld(new WorldCreator(worldName));
     }
 
     /* Load the house world into server */
