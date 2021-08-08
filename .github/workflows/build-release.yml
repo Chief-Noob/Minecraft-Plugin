@@ -45,3 +45,10 @@ jobs:
           asset_path: ./target/mcplugin-1.0-SNAPSHOT.jar
           asset_name: mcplugin-1.0-SNAPSHOT.jar
           asset_content_type: application/jar
+      - name: Fetch New Plugin to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: root
+          key: ${{ secrets.ID_RSA }}
+          script: bash pull-latest-plugin.sh
