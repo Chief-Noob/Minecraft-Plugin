@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
 
 public class PlayerData {
@@ -12,6 +13,8 @@ public class PlayerData {
     public Player player;
 
     public int balance = 0;
+    
+    public Team team;
 
     public PlayerData(UUID uuid) throws Exception {
 
