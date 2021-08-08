@@ -75,7 +75,6 @@ public class App extends JavaPlugin implements Listener {
         }
     }
 
-
     @EventHandler
     public void onPlayerWorldChange(PlayerChangedWorldEvent e) {
         Player p = e.getPlayer();
@@ -150,13 +149,13 @@ public class App extends JavaPlugin implements Listener {
         Player p1 = (Player) sender;
         if (cmdlable.equals("team")) {
             switch (args[0]) {
-                case "invite": {//p1 invite p to p1's team
+                case "invite": {// p1 invite p to p1's team
                     Player p = Bukkit.getPlayer(args[1]);
                     TextComponent a = new TextComponent();
-                    if (allPlayers.get(p.getUniqueId()).team.isPresent()){
+                    if (allPlayers.get(p.getUniqueId()).team.isPresent()) {
                         a = new TextComponent(p.getName() + "已經有隊伍了！");
                         p1.spigot().sendMessage(a);
-                    }else{
+                    } else {
                         a = new TextComponent("[確認組隊邀請]");
                         a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 new Text("點擊接受 " + p1.getName() + " 的組隊邀請 ")));
@@ -165,7 +164,7 @@ public class App extends JavaPlugin implements Listener {
                     }
                     return true;
                 }
-                case "join": {//p join p1's team
+                case "join": {// p join p1's team
                     Player p = Bukkit.getPlayer(args[1]);
                     TextComponent msg = new TextComponent("");
                     if (!allPlayers.get(p.getUniqueId()).team.isPresent()) {
@@ -205,8 +204,40 @@ public class App extends JavaPlugin implements Listener {
                         teamMemberNameString.append(pd.player.getName()).append(" ");
                     }
 
-                    TextComponent msg = new TextComponent("隊伍成員：" + teamMemberNameString);
+                    TextComponent msg = new TextComponent(
+                            "隊伍成員：" + teamMemberNameString + " | 隊長:" + team.get().leader.player.getName());
                     p1.spigot().sendMessage(msg);
+                    return true;
+                }
+                case "leave": {
+                    Optional<Team> team = allPlayers.get(p1.getUniqueId()).team;
+                    if (!team.isPresent()) {
+                        p1.spigot().sendMessage(new TextComponent("你沒有隊伍"));
+                        return false;
+                    }
+
+                    if (team.get().size() == 1) {
+                        team = Optional.empty();
+                    } else {
+                        team.get().playerList.remove((Object) p1);
+                        if (team.get().leader == p1) {
+                            for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
+                                if (team.get().leader != p1) {
+                                    team.get().leader = pd;
+                                    break;
+                                }
+                            }
+                            for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
+                                pd.player.spigot().sendMessage(new TextComponent(
+                                        "隊長 " + p1.getName() + " 離開了隊伍, 新隊長為" + team.get().leader.player.getName()));
+                            }
+                        } else {
+                            for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
+                                pd.player.spigot().sendMessage(new TextComponent("隊員 " + p1.getName() + " 離開了隊伍"));
+                            }
+                        }
+                    }
+                    p1.spigot().sendMessage(new TextComponent("你離開了隊伍"));
                     return true;
                 }
                 default:
