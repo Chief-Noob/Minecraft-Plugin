@@ -23,11 +23,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 
 public class App extends JavaPlugin implements Listener {
 
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
     public WorldManager worldManager = new WorldManager();
+    public String mongodbConnectString = "";
 
     public void downloadAllUserData() throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -39,6 +41,18 @@ public class App extends JavaPlugin implements Listener {
     public void onEnable() {
 
         getServer().getPluginManager().registerEvents(this, this);
+
+        this.saveDefaultConfig();
+
+        mongodbConnectString = this.getConfig().getString("mongo_connection_string");
+
+        if(mongodbConnectString == null || mongodbConnectString.equals("mongodb://username:password@host")) {
+            getLogger().log(Level.SEVERE, "There is no valid mongodb connection string in config file !!");
+            for(Player p : getServer().getOnlinePlayers()) {
+                p.sendMessage(ChatColor.RED + "伺服器主系統啟動失敗，資料庫設定無效，請聯繫工程師處理！");
+            }
+        }
+
 
         try {
             downloadAllUserData();
