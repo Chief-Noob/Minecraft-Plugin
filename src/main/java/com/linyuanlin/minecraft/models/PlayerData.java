@@ -7,24 +7,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.lang.StackWalker.Option;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 public class PlayerData {
     public Player player;
     public int balance = 0;
     public BasicDBObject mongoObject;
     public Optional<Team> team;
-    private App app;
     public HashMap<Player, Date> invitedTime;
+    private App app;
 
     public PlayerData(App app, UUID uuid) throws Exception {
         this.app = app;
