@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -152,8 +153,9 @@ public class App extends JavaPlugin implements Listener {
     public void onPlayerInteract(PlayerInteractEntityEvent event1) {
         Player p = event1.getPlayer();
         Entity entity = event1.getRightClicked();
-        if (entity instanceof Player) {
+        if (entity instanceof Player && event1.getHand() == EquipmentSlot.HAND) {
             p.sendMessage("他是 " + entity.getName());
+            p.sendMessage("該玩家擁有財產 " + allPlayers.get(entity.getUniqueId()).balance + " 元");
             TextComponent a = new TextComponent("[傳送組隊邀請]");
             a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊發送組隊邀請給 " + entity.getName())));
             a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite " + entity.getName()));
@@ -246,7 +248,7 @@ public class App extends JavaPlugin implements Listener {
                 }
                 case "leave": {
                     Optional<Team> team = allPlayers.get(senderPlayer.getUniqueId()).team;
-                    
+
                     if (!team.isPresent()) {
                         senderPlayer.spigot().sendMessage(new TextComponent("你沒有隊伍"));
                         return false;
