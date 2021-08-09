@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.lang.StackWalker.Option;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,14 +18,18 @@ public class PlayerData {
     public Player player;
     public int balance = 0;
     public BasicDBObject mongoObject;
-    public Optional<Team> team = Optional.empty();
+    public Optional<Team> team;
     private App app;
-    public HashMap<Player, Date> invitedTime = new HashMap<>();
+    public HashMap<Player, Date> invitedTime;
 
     public PlayerData(App app, UUID uuid) throws Exception {
         this.app = app;
 
         this.player = Bukkit.getServer().getPlayer(uuid);
+
+        this.invitedTime = new HashMap<>();
+
+        this.team = Optional.empty();
 
         if (this.player == null)
             throw new Exception("PLAYER_NOT_ONLINE");
@@ -48,8 +53,8 @@ public class PlayerData {
     }
 
     public boolean inviteIsCooling(Player p) {
-        Date date = new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1));
-        return date.after(invitedTime.get(p));
+        Date t = invitedTime.get(p);
+        return t == null ? false : new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1)).before(t);
     }
 
     public boolean isInvitedBy(PlayerData p) {
