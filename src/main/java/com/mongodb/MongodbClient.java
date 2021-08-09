@@ -9,24 +9,46 @@ public class MongodbClient {
   private DBCollection collection;
   public DBCursor cursor;
 
-  public MongodbClient() {
+  public MongodbClient(String collectionName) {
     try {
       MongoClient mongoClient = new MongoClient(
-        new MongoClientURI(
-          "mongodb+srv://Swarz:<password>@cluster0.vbdvc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-        )
+        new MongoClientURI("<connect string>")
       );
 
       this.database = mongoClient.getDB("<database name>");
-      this.collection = database.getCollection("<collection name>");
+      this.collection = database.getCollection(collectionName);
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  public void getPlayerById(String playerId) {
+  public void getById(String playerId) {
     try {
       this.cursor = this.collection.find(new BasicDBObject("_id", playerId));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void insert(DBObject dbObject) {
+    try {
+      this.collection.insert(dbObject);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void updateById(String objectId, DBObject dbObject) {
+    try {
+      this.collection.update(new BasicDBObject("_id", objectId), dbObject);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void deleteById(String objectId) {
+    try {
+      this.collection.remove(new BasicDBObject("_id", objectId));
     } catch (Exception e) {
       e.printStackTrace();
     }
