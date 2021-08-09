@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,7 +15,9 @@ public class Team {
 
 	public Team(List<PlayerData> playerList) {
 		this.playerList = playerList;
-		this.leader = playerList.get(0);
+		if(playerList != null && playerList.size() >= 1){
+			this.leader = playerList.get(0);
+		}
 	}
 
 	public boolean isEmpty() {

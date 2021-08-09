@@ -198,16 +198,17 @@ public class App extends JavaPlugin implements Listener {
                     TextComponent msg = new TextComponent("");
                     Optional<Team> team = allPlayers.get(receiverPlayer.getUniqueId()).team;
 
-                    if (allPlayers.get(receiverPlayer.getUniqueId()).isInvitedBy(allPlayers.get(receiverPlayer.getUniqueId()))) {
+                    if (allPlayers.get(receiverPlayer.getUniqueId())
+                            .isInvitedBy(allPlayers.get(receiverPlayer.getUniqueId()))) {
                         sender.sendMessage("你並沒有被邀請至 " + receiverPlayer.getName() + " 的隊伍");
                         return false;
                     }
                     if (!team.isPresent()) {
                         List<PlayerData> playerArray = new ArrayList<>();
-                        Optional<Team> newTeam = Optional.of(new Team(playerArray));
-
                         playerArray.add(allPlayers.get(receiverPlayer.getUniqueId()));
                         playerArray.add(allPlayers.get(senderPlayer.getUniqueId()));
+                        
+                        Optional<Team> newTeam = Optional.of(new Team(playerArray));
 
                         allPlayers.get(receiverPlayer.getUniqueId()).team = newTeam;
                         allPlayers.get(senderPlayer.getUniqueId()).team = newTeam;
