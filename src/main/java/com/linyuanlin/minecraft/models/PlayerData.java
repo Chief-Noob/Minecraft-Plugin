@@ -18,7 +18,7 @@ public class PlayerData {
     public int balance = 0;
     public BasicDBObject mongoObject;
     public Optional<Team> team;
-    public HashMap<Player, Date> invitedTime;
+    public HashMap<Player, Date> invitedTimeMap, inviteTimeMap;
     private App app;
 
     public PlayerData(App app, UUID uuid) throws Exception {
@@ -28,7 +28,9 @@ public class PlayerData {
 
         this.mongoObject = new BasicDBObject();
 
-        this.invitedTime = new HashMap<>();
+        this.invitedTimeMap = new HashMap<>();
+
+        this.inviteTimeMap = new HashMap<>();
 
         this.team = Optional.empty();
 
@@ -53,12 +55,32 @@ public class PlayerData {
         player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
     }
 
-    public boolean inviteIsCooling(Player p) {
-        Date t = invitedTime.get(p);
+    public void recordInvite(PlayerData p) {
+        Date t = new Date();
+        this.inviteTimeMap.put(p.player, t);
+        p.invitedTimeMap.put(this.player, t);
+    }
+
+    public void destroyInviteRecord(PlayerData p) {//possible exception
+        this.inviteTimeMap.remove((Object) p.player);
+        p.invitedTimeMap.remove((Object) this.player);
+    }
+
+    public boolean isInviteCooling(PlayerData p) {
+        Date t = inviteTimeMap.get(p.player);
         return t == null ? false : new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1)).before(t);
     }
 
     public boolean isInvitedBy(PlayerData p) {
-        return p.invitedTime.get(this.player) != null;
+        if (p.inviteTimeMap.get(this.player) != null && this.invitedTimeMap.get(p.player) != null) {
+            Date t = new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1));
+            if (this.invitedTimeMap.get(p.player).before(t) && p.inviteTimeMap.get(this.player).before(t)) {
+                this.invitedTimeMap.remove((Object) p.player);
+                p.inviteTimeMap.remove((Object) this.player);
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 }
