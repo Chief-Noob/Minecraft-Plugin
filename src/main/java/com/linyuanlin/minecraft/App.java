@@ -181,6 +181,11 @@ public class App extends JavaPlugin implements Listener {
                         msg = new TextComponent(p1.getName() + "已加入" + "("
                                 + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)");
                     } else if (!allPlayers.get(p.getUniqueId()).team.get().isFull()) {
+                        if (allPlayers.get(p.getUniqueId()).team.get().playerList
+                                .contains((Object) allPlayers.get(p.getUniqueId()))) {
+                            p.sendMessage("您已在此隊伍中");
+                            return true;
+                        }
                         allPlayers.get(p.getUniqueId()).team.get().playerList.add(allPlayers.get(p.getUniqueId()));
                         allPlayers.get(Bukkit.getPlayer(p1.getName()).getUniqueId()).team = allPlayers
                                 .get(p.getUniqueId()).team;
