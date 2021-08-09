@@ -149,66 +149,75 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public boolean onCommand(CommandSender sender, Command cmd, String cmdlable, String[] args) {
-        Player p1 = (Player) sender;
+        Player senderPlayer = (Player) sender;
         if (cmdlable.equals("team")) {
             switch (args[0]) {
-                case "invite": {// p1 invite p to p1's team
-                    Player p = Bukkit.getPlayer(args[1]);
-                    TextComponent a = new TextComponent();
-                    if (allPlayers.get(p.getUniqueId()).team.isPresent()) {
-                        a = new TextComponent(p.getName() + "已經有隊伍了！");
-                        p1.spigot().sendMessage(a);
+                case "invite": {// sender invite receiver to sender's team
+                    Player receiverPlayer = Bukkit.getPlayer(args[1]);
+                    TextComponent msg = new TextComponent();
+                    Optional<Team> team = allPlayers.get(receiverPlayer.getUniqueId()).team;
+                    if (team.isPresent()) {
+                        msg = new TextComponent(receiverPlayer.getName() + "已經有隊伍了！");
+                        senderPlayer.spigot().sendMessage(msg);
                     } else {
-                        a = new TextComponent("[確認 " + p1.getName() +" 的組隊邀請]");
-                        a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                new Text("點擊接受 " + p1.getName() + " 的組隊邀請")));
-                        a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team join " + p1.getName()));
-                        p.spigot().sendMessage(a);
+                        msg = new TextComponent("[確認 " + senderPlayer.getName() + " 的組隊邀請]");
+                        msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                new Text("點擊接受 " + senderPlayer.getName() + " 的組隊邀請")));
+                        msg.setClickEvent(
+                                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team join " + senderPlayer.getName()));
+                        receiverPlayer.spigot().sendMessage(msg);
 
-                        TextComponent b = new TextComponent();
-                        b = new TextComponent("已發送邀請給 " + p.getName());
-                        p1.spigot().sendMessage(b);
+                        senderPlayer.spigot().sendMessage(new TextComponent("已發送邀請給 " + receiverPlayer.getName()));
                     }
                     return true;
                 }
-                case "join": {// p1 join p's team / Todo : check if p1 is invited by p or not
-                    Player p = Bukkit.getPlayer(args[1]);
+                case "join": {// sender join receiver's team
+                    Player receiverPlayer = Bukkit.getPlayer(args[1]);
                     TextComponent msg = new TextComponent("");
-                    if (!allPlayers.get(p.getUniqueId()).team.isPresent()) {
+                    Optional<Team> team = allPlayers.get(receiverPlayer.getUniqueId()).team;
+
+                    if (!team.isPresent()) {
                         List<PlayerData> playerArray = new ArrayList<>();
-                        playerArray.add(allPlayers.get(p.getUniqueId()));
-                        playerArray.add(allPlayers.get(p1.getUniqueId()));
-                        Optional<Team> team = Optional.of(new Team(playerArray));
-                        allPlayers.get(p.getUniqueId()).team = team;
-                        allPlayers.get(p1.getUniqueId()).team = team;
-                        team.get().leader = allPlayers.get(p.getUniqueId());
-                        msg = new TextComponent(p1.getName() + "已加入" + "("
-                                + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)");
-                    } else if (!allPlayers.get(p.getUniqueId()).team.get().isFull()) {
-                        if (allPlayers.get(p.getUniqueId()).team.get().playerList
-                                .contains((Object) allPlayers.get(p1.getUniqueId()))) {
-                            p1.sendMessage("您已在此隊伍中");
+                        Optional<Team> newTeam = Optional.of(new Team(playerArray));
+
+                        playerArray.add(allPlayers.get(receiverPlayer.getUniqueId()));
+                        playerArray.add(allPlayers.get(senderPlayer.getUniqueId()));
+
+                        allPlayers.get(receiverPlayer.getUniqueId()).team = newTeam;
+                        allPlayers.get(senderPlayer.getUniqueId()).team = newTeam;
+
+                        newTeam.get().leader = allPlayers.get(receiverPlayer.getUniqueId());
+
+                        msg = new TextComponent(senderPlayer.getName() + "已加入" + "("
+                                + allPlayers.get(senderPlayer.getUniqueId()).team.get().size() + "/4)");
+
+                    } else if (!team.get().isFull()) {
+                        if (team.get().playerList.contains((Object) allPlayers.get(senderPlayer.getUniqueId()))) {
+                            senderPlayer.sendMessage("你已在此隊伍中");
                             return true;
                         }
-                        allPlayers.get(p.getUniqueId()).team.get().playerList.add(allPlayers.get(p.getUniqueId()));
-                        allPlayers.get(Bukkit.getPlayer(p1.getName()).getUniqueId()).team = allPlayers
-                                .get(p.getUniqueId()).team;
-                        msg = new TextComponent(p1.getName() + "已加入" + "("
-                                + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)");
+
+                        team.get().playerList.add(allPlayers.get(senderPlayer.getUniqueId()));
+                        allPlayers.get(senderPlayer.getUniqueId()).team = team;
+
+                        msg = new TextComponent(senderPlayer.getName() + "已加入" + "("
+                                + allPlayers.get(senderPlayer.getUniqueId()).team.get().size() + "/4)");
                     } else {
-                        msg = new TextComponent("隊伍已滿");
+                        senderPlayer.sendMessage("隊伍已滿");
+                        return true;
                     }
-                    for (PlayerData pd : allPlayers.get(p.getUniqueId()).team.get().playerList) {
+
+                    for (PlayerData pd : allPlayers.get(receiverPlayer.getUniqueId()).team.get().playerList) {
                         pd.player.spigot().sendMessage(msg);
                     }
                     return true;
                 }
                 case "list": {
                     StringBuilder teamMemberNameString = new StringBuilder();
-                    Optional<Team> team = allPlayers.get(p1.getUniqueId()).team;
+                    Optional<Team> team = allPlayers.get(senderPlayer.getUniqueId()).team;
 
                     if (!team.isPresent()) {
-                        p1.sendMessage("你沒隊伍拉");
+                        senderPlayer.sendMessage("你沒隊伍拉");
                         return false;
                     }
 
@@ -218,46 +227,49 @@ public class App extends JavaPlugin implements Listener {
 
                     TextComponent msg = new TextComponent(
                             "隊伍成員：" + teamMemberNameString + " | 隊長:" + team.get().leader.player.getName());
-                    p1.spigot().sendMessage(msg);
+                    senderPlayer.spigot().sendMessage(msg);
                     return true;
                 }
                 case "leave": {
-                    Optional<Team> team = allPlayers.get(p1.getUniqueId()).team;
+                    Optional<Team> team = allPlayers.get(senderPlayer.getUniqueId()).team;
+                    
                     if (!team.isPresent()) {
-                        p1.spigot().sendMessage(new TextComponent("你沒有隊伍"));
+                        senderPlayer.spigot().sendMessage(new TextComponent("你沒有隊伍"));
                         return false;
                     }
 
-                    team.get().playerList.remove((Object) allPlayers.get(p1.getUniqueId()));
+                    team.get().playerList.remove((Object) allPlayers.get(senderPlayer.getUniqueId()));
                     if (team.get().size() == 1) {// 2 members-Team, this team should be deleted.
-                        for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
-                            pd.player.spigot().sendMessage(new TextComponent(p1.getName() + " 離開了隊伍, 隊伍人數不足，自動解散"));
+                        for (PlayerData pd : allPlayers.get(senderPlayer.getUniqueId()).team.get().playerList) {
+                            pd.player.spigot()
+                                    .sendMessage(new TextComponent(senderPlayer.getName() + " 離開了隊伍, 隊伍人數不足，自動解散"));
                             pd.team = Optional.empty();
                         }
                     } else if (team.get().size() > 1) {// >2 members-Team, this Team should be remained.
-                        if (team.get().leader == allPlayers.get(p1.getUniqueId())) {
-                            for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
-                                if (team.get().leader != p1) {
+                        if (team.get().leader == allPlayers.get(senderPlayer.getUniqueId())) {
+                            for (PlayerData pd : allPlayers.get(senderPlayer.getUniqueId()).team.get().playerList) {
+                                if (team.get().leader != senderPlayer) {
                                     team.get().leader = pd;
                                     break;
                                 }
                             }
-                            for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
-                                pd.player.spigot()
-                                        .sendMessage(new TextComponent("隊長 " + p1.getName() + " 離開了隊伍, 新隊長為"
-                                                + team.get().leader.player.getName() + "("
-                                                + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)"));
+                            for (PlayerData pd : allPlayers.get(senderPlayer.getUniqueId()).team.get().playerList) {
+                                pd.player.spigot().sendMessage(new TextComponent("隊長 " + senderPlayer.getName()
+                                        + " 離開了隊伍, 新隊長為" + team.get().leader.player.getName() + "("
+                                        + allPlayers.get(senderPlayer.getUniqueId()).team.get().size() + "/4)"));
                             }
                         } else {
-                            for (PlayerData pd : allPlayers.get(p1.getUniqueId()).team.get().playerList) {
-                                pd.player.spigot().sendMessage(new TextComponent("隊員 " + p1.getName() + " 離開了隊伍" + "("
-                                        + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)"));
+                            for (PlayerData pd : allPlayers.get(senderPlayer.getUniqueId()).team.get().playerList) {
+                                pd.player.spigot()
+                                        .sendMessage(new TextComponent("隊員 " + senderPlayer.getName() + " 離開了隊伍" + "("
+                                                + allPlayers.get(senderPlayer.getUniqueId()).team.get().size()
+                                                + "/4)"));
                             }
                         }
                     }
 
-                    allPlayers.get(p1.getUniqueId()).team = Optional.empty();
-                    p1.spigot().sendMessage(new TextComponent("你離開了隊伍"));
+                    allPlayers.get(senderPlayer.getUniqueId()).team = Optional.empty();
+                    senderPlayer.spigot().sendMessage(new TextComponent("你離開了隊伍"));
                     return true;
                 }
                 default:

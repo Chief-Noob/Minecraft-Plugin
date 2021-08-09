@@ -17,6 +17,7 @@ public class PlayerData {
 
     public Optional<Team> team = Optional.empty();
 
+    
     public PlayerData(UUID uuid) throws Exception {
 
         this.player = Bukkit.getServer().getPlayer(uuid);
@@ -36,4 +37,6 @@ public class PlayerData {
         player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
 
     }
+
+    
 }
