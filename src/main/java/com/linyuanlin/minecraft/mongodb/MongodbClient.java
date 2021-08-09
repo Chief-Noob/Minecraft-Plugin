@@ -3,6 +3,8 @@ package com.linyuanlin.minecraft.mongodb;
 import com.linyuanlin.minecraft.App;
 import com.mongodb.*;
 
+import java.util.logging.Level;
+
 public class MongodbClient {
     public DBCursor cursor;
     private DB database;
@@ -15,6 +17,8 @@ public class MongodbClient {
             MongoClient mongoClient = new MongoClient(
                     new MongoClientURI(this.app.mongodbConnectString)
             );
+
+            app.getLogger().log(Level.INFO, this.app.mongodbConnectString);
 
             this.database = mongoClient.getDB("Minecraft");
             this.collection = database.getCollection(collectionName);
