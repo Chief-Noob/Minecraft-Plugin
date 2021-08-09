@@ -16,6 +16,10 @@ public class MongodbClient {
         new MongoClientURI(this.app.mongodbConnectString)
       );
 
+      this.database = new DB();
+      this.collection = new DBCollection();
+      this.cursor = new DBCursor();
+
       this.database = mongoClient.getDB("Minecraft");
       this.collection = database.getCollection(collectionName);
     } catch (Exception e) {
