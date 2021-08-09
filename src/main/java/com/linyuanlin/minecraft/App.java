@@ -235,19 +235,19 @@ public class App extends JavaPlugin implements Listener {
                     }
 
                     if (senderPlayer.isInviteCooling(receiverPlayer)) {
-                        sender.sendMessage("邀請" + receiverPlayer.player.getName() + "冷卻中");
+                        sender.sendMessage("邀請" + receiverPlayer.player.getName() + "冷卻中" + ChatColor.GOLD + "(1分鐘)");
                         return false;
                     }
 
-                    msg = new TextComponent("[確認 " + senderPlayer.player.getName() + " 的組隊邀請]");
+                    msg = new TextComponent("[確認 " + ChatColor.GOLD + senderPlayer.player.getName() + " 的組隊邀請]");
                     msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                            new Text("點擊接受 " + senderPlayer.player.getName() + " 的組隊邀請")));
+                            new Text("點擊接受 " + ChatColor.GOLD + senderPlayer.player.getName() + " 的組隊邀請")));
                     msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                            "/team join " + senderPlayer.player.getName()));
+                            "/team join " + ChatColor.GOLD + senderPlayer.player.getName()));
                     receiverPlayer.player.spigot().sendMessage(msg);
 
-                    senderPlayer.player.spigot()
-                            .sendMessage(new TextComponent("已發送邀請給 " + receiverPlayer.player.getName()));
+                    senderPlayer.player.spigot().sendMessage(
+                            new TextComponent("已發送邀請給 " + ChatColor.GOLD + receiverPlayer.player.getName()));
 
                     senderPlayer.recordInvite(receiverPlayer);
                     return true;
@@ -263,7 +263,7 @@ public class App extends JavaPlugin implements Listener {
                     Optional<Team> team = receiverPlayer.team;
 
                     if (!senderPlayer.isInvitedBy(receiverPlayer)) {
-                        sender.sendMessage("你並沒有被邀請至 " + receiverPlayer.player.getName() + " 的隊伍");
+                        sender.sendMessage("你並沒有被邀請至 " + ChatColor.GOLD + receiverPlayer.player.getName() + " 的隊伍");
                         return false;
                     }
 
@@ -279,8 +279,8 @@ public class App extends JavaPlugin implements Listener {
 
                         newTeam.get().leader = receiverPlayer;
 
-                        msg = new TextComponent(
-                                senderPlayer.player.getName() + "已加入" + "(" + senderPlayer.team.get().size() + "/4)");
+                        msg = new TextComponent(ChatColor.GOLD + senderPlayer.player.getName() + "已加入" + "("
+                                + senderPlayer.team.get().size() + "/4)");
                     } else if (!team.get().isFull()) {
                         if (team.get().playerList.contains((Object) senderPlayer)) {
                             senderPlayer.player.sendMessage("你已在此隊伍中");
@@ -290,8 +290,8 @@ public class App extends JavaPlugin implements Listener {
                         team.get().playerList.add(senderPlayer);
                         senderPlayer.team = team;
 
-                        msg = new TextComponent(
-                                senderPlayer.player.getName() + "已加入" + "(" + senderPlayer.team.get().size() + "/4)");
+                        msg = new TextComponent(ChatColor.GOLD + senderPlayer.player.getName() + "已加入" + "("
+                                + senderPlayer.team.get().size() + "/4)");
                     } else {
                         senderPlayer.player.sendMessage("隊伍已滿");
                         return false;
@@ -317,8 +317,8 @@ public class App extends JavaPlugin implements Listener {
                         teamMemberNameString.append(pd.player.getName()).append(" ");
                     }
 
-                    TextComponent msg = new TextComponent(
-                            "隊伍成員：" + teamMemberNameString + " | 隊長:" + team.get().leader.player.getName());
+                    TextComponent msg = new TextComponent(ChatColor.GREEN + "隊伍成員：" + teamMemberNameString + " | "
+                            + ChatColor.GREEN + "隊長:" + team.get().leader.player.getName());
                     senderPlayer.player.spigot().sendMessage(msg);
                     return true;
                 }
@@ -333,8 +333,8 @@ public class App extends JavaPlugin implements Listener {
                     team.get().playerList.remove((Object) senderPlayer);
                     if (team.get().size() == 1) {// 2 members-Team, this team should be deleted.
                         for (PlayerData pd : senderPlayer.team.get().playerList) {
-                            pd.player.spigot().sendMessage(
-                                    new TextComponent(senderPlayer.player.getName() + " 離開了隊伍, 隊伍人數不足，自動解散"));
+                            pd.player.spigot().sendMessage(new TextComponent(
+                                    ChatColor.GOLD + senderPlayer.player.getName() + " 離開了隊伍, 隊伍人數不足，自動解散"));
                             pd.team = Optional.empty();
                         }
                     } else if (team.get().size() > 1) {// >2 members-Team, this Team should be remained.
@@ -346,15 +346,16 @@ public class App extends JavaPlugin implements Listener {
                                 }
                             }
                             for (PlayerData pd : senderPlayer.team.get().playerList) {
-                                pd.player.spigot()
-                                        .sendMessage(new TextComponent("隊長 " + senderPlayer.player.getName()
-                                                + " 離開了隊伍, 新隊長為" + team.get().leader.player.getName() + "("
-                                                + senderPlayer.team.get().size() + "/4)"));
+                                pd.player.spigot().sendMessage(
+                                        new TextComponent("隊長 " + ChatColor.GOLD + senderPlayer.player.getName()
+                                                + " 離開了隊伍, 新隊長為" + ChatColor.GOLD + team.get().leader.player.getName()
+                                                + "(" + senderPlayer.team.get().size() + "/4)"));
                             }
                         } else {
                             for (PlayerData pd : senderPlayer.team.get().playerList) {
-                                pd.player.spigot().sendMessage(new TextComponent("隊員 " + senderPlayer.player.getName()
-                                        + " 離開了隊伍" + "(" + senderPlayer.team.get().size() + "/4)"));
+                                pd.player.spigot().sendMessage(
+                                        new TextComponent("隊員 " + ChatColor.GOLD + senderPlayer.player.getName()
+                                                + " 離開了隊伍" + "(" + senderPlayer.team.get().size() + "/4)"));
                             }
                         }
                     }
