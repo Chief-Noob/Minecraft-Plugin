@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerData {
@@ -26,7 +27,7 @@ public class PlayerData {
 
     public Optional<Team> team = Optional.empty();
 
-    public InviteCommand inviteCommand = new InviteCommand();
+    public HashMap<Player, Date> invitedTime = new HashMap<>();
 
     public PlayerData(UUID uuid) throws Exception {
         this.player = Bukkit.getServer().getPlayer(uuid);
@@ -52,12 +53,12 @@ public class PlayerData {
         player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
     }
 
-    public boolean inviteIsCooling(){
+    public boolean inviteIsCooling(Player p) {
         Date date = new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1));
-        return date.after(inviteCommand.time);
+        return date.after(invitedTime.get(p));
     }
 
-    public Player invitedPlayer(){
-        return inviteCommand.invitedPlayer;
+    public boolean isInvitedBy(PlayerData p) {
+        return p.invitedTime.get(this.player) != null;
     }
 }

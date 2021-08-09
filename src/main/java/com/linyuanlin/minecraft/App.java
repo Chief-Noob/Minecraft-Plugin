@@ -168,12 +168,12 @@ public class App extends JavaPlugin implements Listener {
         if (cmdlable.equals("team")) {
             switch (args[0]) {
                 case "invite": {// sender invite receiver to sender's team
-                    if (allPlayers.get(senderPlayer.getUniqueId()).inviteIsCooling()) {
-                        sender.sendMessage("邀請冷卻中");
+                    Player receiverPlayer = Bukkit.getPlayer(args[1]);
+                    if (allPlayers.get(senderPlayer.getUniqueId()).inviteIsCooling(receiverPlayer)) {
+                        sender.sendMessage("邀請" + receiverPlayer.getName() + "冷卻中");
                         return false;
                     }
 
-                    Player receiverPlayer = Bukkit.getPlayer(args[1]);
                     TextComponent msg = new TextComponent();
                     Optional<Team> team = allPlayers.get(receiverPlayer.getUniqueId()).team;
                     if (team.isPresent()) {
@@ -188,6 +188,8 @@ public class App extends JavaPlugin implements Listener {
                         receiverPlayer.spigot().sendMessage(msg);
 
                         senderPlayer.spigot().sendMessage(new TextComponent("已發送邀請給 " + receiverPlayer.getName()));
+
+                        allPlayers.get(senderPlayer.getUniqueId()).invitedTime.put(receiverPlayer, new Date());
                     }
                     return true;
                 }
@@ -196,7 +198,7 @@ public class App extends JavaPlugin implements Listener {
                     TextComponent msg = new TextComponent("");
                     Optional<Team> team = allPlayers.get(receiverPlayer.getUniqueId()).team;
 
-                    if (allPlayers.get(receiverPlayer.getUniqueId()).invitedPlayer() != senderPlayer) {
+                    if (allPlayers.get(receiverPlayer.getUniqueId()).isInvitedBy(allPlayers.get(receiverPlayer.getUniqueId()))) {
                         sender.sendMessage("你並沒有被邀請至 " + receiverPlayer.getName() + " 的隊伍");
                         return false;
                     }
