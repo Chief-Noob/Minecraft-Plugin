@@ -14,6 +14,7 @@ public class MongodbClient {
     public MongodbClient(App app, String collectionName) {
         try {
             this.app = app;
+            new MongoClient();
             MongoClient mongoClient = new MongoClient(
                     new MongoClientURI(this.app.mongodbConnectString)
             );
