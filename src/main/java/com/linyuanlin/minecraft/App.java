@@ -186,7 +186,7 @@ public class App extends JavaPlugin implements Listener {
                                 + allPlayers.get(p1.getUniqueId()).team.get().size() + "/4)");
                     } else if (!allPlayers.get(p.getUniqueId()).team.get().isFull()) {
                         if (allPlayers.get(p.getUniqueId()).team.get().playerList
-                                .contains((Object) allPlayers.get(p.getUniqueId()))) {
+                                .contains((Object) allPlayers.get(p1.getUniqueId()))) {
                             p1.sendMessage("您已在此隊伍中");
                             return true;
                         }
