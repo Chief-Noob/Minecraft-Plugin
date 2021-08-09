@@ -1,7 +1,9 @@
 main: com.linyuanlin.minecraft.App
-name: MainSystem 
+name: MainSystem
 version: 0.1
-depend: [HolographicDisplays]
+depend: [ HolographicDisplays ]
 commands:
-  team: 
-    description: 組隊系統 
+  team:
+    description: 組隊系統
+  pay:
+    description: 金錢系統

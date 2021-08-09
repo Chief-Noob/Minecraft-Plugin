@@ -163,7 +163,32 @@ public class App extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public boolean onCommand(CommandSender sender, Command cmd, String cmdlable, String[] args) {
+    public boolean onPayCommand(CommandSender sender, Command cmd, String cmdlable, String[] args) {
+        Player senderPlayer = (Player) sender;
+        if (cmdlable.equals("pay")) {
+            String target = args[0];
+            String amountStr = args[1];
+            int amount = Integer.parseInt(amountStr);
+            Player p = Bukkit.getPlayer(target);
+            if (p == null) {
+                sender.sendMessage(ChatColor.RED + "玩家 " + target + " 不在線上！");
+                return false;
+            }
+            PlayerData senderData = allPlayers.get(((Player) sender).getUniqueId());
+            if (senderData.balance < amount) {
+                sender.sendMessage(ChatColor.GOLD + "你沒那麼多錢拉，窮逼。");
+                sender.sendMessage(ChatColor.GOLD + "但是因為現在伺服器是開發階段，所以轉帳還是成功了，而你不用被扣錢，超讚");
+            }
+            PlayerData targetData = allPlayers.get(p.getUniqueId());
+            targetData.balance += amount;
+            sender.sendMessage(ChatColor.GREEN + "成功轉帳 " + ChatColor.WHITE + amountStr + ChatColor.GREEN + " 元給玩家 " + ChatColor.WHITE + target + ChatColor.GREEN + " 了～");
+            p.sendMessage(ChatColor.GREEN + "收到來自玩家 " + ChatColor.WHITE + sender.getName() + ChatColor.GREEN + " 的轉帳 " + ChatColor.WHITE + amountStr + ChatColor.GREEN + " 元");
+        }
+        return false;
+    }
+
+    @EventHandler
+    public boolean onTeamCommand(CommandSender sender, Command cmd, String cmdlable, String[] args) {
         Player senderPlayer = (Player) sender;
         if (cmdlable.equals("team")) {
             switch (args[0]) {
@@ -207,7 +232,7 @@ public class App extends JavaPlugin implements Listener {
                         List<PlayerData> playerArray = new ArrayList<>();
                         playerArray.add(allPlayers.get(receiverPlayer.getUniqueId()));
                         playerArray.add(allPlayers.get(senderPlayer.getUniqueId()));
-                        
+
                         Optional<Team> newTeam = Optional.of(new Team(playerArray));
 
                         allPlayers.get(receiverPlayer.getUniqueId()).team = newTeam;
@@ -302,7 +327,6 @@ public class App extends JavaPlugin implements Listener {
                 default:
                     break;
             }
-
             return true;
         }
         return false;
