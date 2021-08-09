@@ -1,34 +1,27 @@
 package com.linyuanlin.minecraft.models;
 
+import com.linyuanlin.minecraft.App;
 import com.linyuanlin.minecraft.mongodb.MongodbClient;
-import com.mongodb.*;
-
-import java.sql.Time;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import net.md_5.bungee.api.ChatMessageType;
+import com.mongodb.BasicDBObject;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PlayerDeathEvent;
 
+import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerData {
     public Player player;
-
     public int balance = 0;
-
     public BasicDBObject mongoObject;
-
     public Optional<Team> team = Optional.empty();
+    private App app;
+    private InviteCommand inviteCommand;
 
-    public InviteCommand inviteCommand = new InviteCommand();
-
-    public PlayerData(UUID uuid) throws Exception {
+    public PlayerData(App app, UUID uuid) throws Exception {
+        this.app = app;
         this.player = Bukkit.getServer().getPlayer(uuid);
 
         if (this.player == null)
@@ -45,19 +38,19 @@ public class PlayerData {
 
     public void saveData() {
         /* Save data into database */
-        MongodbClient client = new MongodbClient("PlayerData");
+        MongodbClient client = new MongodbClient(this.app, "PlayerData");
         this.wrapMongoObject();
         client.insert(this.mongoObject);
 
         player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
     }
 
-    public boolean inviteIsCooling(){
+    public boolean inviteIsCooling() {
         Date date = new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1));
         return date.after(inviteCommand.time);
     }
 
-    public Player invitedPlayer(){
+    public Player invitedPlayer() {
         return inviteCommand.invitedPlayer;
     }
 }
