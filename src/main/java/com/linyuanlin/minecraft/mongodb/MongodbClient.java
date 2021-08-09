@@ -1,12 +1,20 @@
-package com.mongodb;
+package com.linyuanlin.minecraft.mongodb;
 
-import com.mongodb.*;
+import com.linyuanlin.minecraft.mongodb.*;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import org.bukkit.plugin.java.JavaPlugin.*;
 
 public class MongodbClient {
   private DB database;
+
   private DBCollection collection;
+
   public DBCursor cursor;
 
   public MongodbClient(String collectionName) {
