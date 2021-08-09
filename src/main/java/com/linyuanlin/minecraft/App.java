@@ -167,7 +167,7 @@ public class App extends JavaPlugin implements Listener {
                     }
                     return true;
                 }
-                case "join": {// p join p1's team / Todo : check if p is invited by p1 or not
+                case "join": {// p1 join p's team / Todo : check if p1 is invited by p or not
                     Player p = Bukkit.getPlayer(args[1]);
                     TextComponent msg = new TextComponent("");
                     if (!allPlayers.get(p.getUniqueId()).team.isPresent()) {
@@ -183,7 +183,7 @@ public class App extends JavaPlugin implements Listener {
                     } else if (!allPlayers.get(p.getUniqueId()).team.get().isFull()) {
                         if (allPlayers.get(p.getUniqueId()).team.get().playerList
                                 .contains((Object) allPlayers.get(p.getUniqueId()))) {
-                            p.sendMessage("您已在此隊伍中");
+                            p1.sendMessage("您已在此隊伍中");
                             return true;
                         }
                         allPlayers.get(p.getUniqueId()).team.get().playerList.add(allPlayers.get(p.getUniqueId()));
