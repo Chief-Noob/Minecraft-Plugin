@@ -2,6 +2,10 @@ package com.linyuanlin.minecraft.models;
 
 import com.linyuanlin.minecraft.mongodb.MongodbClient;
 import com.mongodb.*;
+
+import java.sql.Time;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,36 +13,51 @@ import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.PlayerDeathEvent;
+
+import java.util.concurrent.TimeUnit;
 
 public class PlayerData {
-  public Player player;
+    public Player player;
 
-  public int balance = 0;
+    public int balance = 0;
 
-  public BasicDBObject mongoObject;
+    public BasicDBObject mongoObject;
 
-  public Optional<Team> team = Optional.empty();
+    public Optional<Team> team = Optional.empty();
 
-  public PlayerData(UUID uuid) throws Exception {
-    this.player = Bukkit.getServer().getPlayer(uuid);
+    public InviteCommand inviteCommand = new InviteCommand();
 
-    if (this.player == null) throw new Exception("PLAYER_NOT_ONLINE");
+    public PlayerData(UUID uuid) throws Exception {
+        this.player = Bukkit.getServer().getPlayer(uuid);
 
-    /* Import data from database */
+        if (this.player == null)
+            throw new Exception("PLAYER_NOT_ONLINE");
 
-    player.sendMessage(ChatColor.GRAY + "你的資料已從資料庫同步完成");
-  }
+        /* Import data from database */
 
-  public void wrapMongoObject() {
-    this.mongoObject.append("balance", this.balance);
-  }
+        player.sendMessage(ChatColor.GRAY + "你的資料已從資料庫同步完成");
+    }
 
-  public void saveData() {
-    /* Save data into database */
-    MongodbClient client = new MongodbClient("PlayerData");
-    this.wrapMongoObject();
-    client.insert(this.mongoObject);
+    public void wrapMongoObject() {
+        this.mongoObject.append("balance", this.balance);
+    }
 
-    player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
-  }
+    public void saveData() {
+        /* Save data into database */
+        MongodbClient client = new MongodbClient("PlayerData");
+        this.wrapMongoObject();
+        client.insert(this.mongoObject);
+
+        player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
+    }
+
+    public boolean inviteIsCooling(){
+        Date date = new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1));
+        return date.after(inviteCommand.time);
+    }
+
+    public Player invitedPlayer(){
+        return inviteCommand.invitedPlayer;
+    }
 }

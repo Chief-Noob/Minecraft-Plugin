@@ -47,13 +47,12 @@ public class App extends JavaPlugin implements Listener {
 
         mongodbConnectString = this.getConfig().getString("mongo_connection_string");
 
-        if(mongodbConnectString == null || mongodbConnectString.equals("mongodb://username:password@host")) {
+        if (mongodbConnectString == null || mongodbConnectString.equals("mongodb://username:password@host")) {
             getLogger().log(Level.SEVERE, "There is no valid mongodb connection string in config file !!");
-            for(Player p : getServer().getOnlinePlayers()) {
+            for (Player p : getServer().getOnlinePlayers()) {
                 p.sendMessage(ChatColor.RED + "伺服器主系統啟動失敗，資料庫設定無效，請聯繫工程師處理！");
             }
         }
-
 
         try {
             downloadAllUserData();
@@ -169,6 +168,11 @@ public class App extends JavaPlugin implements Listener {
         if (cmdlable.equals("team")) {
             switch (args[0]) {
                 case "invite": {// sender invite receiver to sender's team
+                    if (allPlayers.get(senderPlayer.getUniqueId()).inviteIsCooling()) {
+                        sender.sendMessage("邀請冷卻中");
+                        return false;
+                    }
+
                     Player receiverPlayer = Bukkit.getPlayer(args[1]);
                     TextComponent msg = new TextComponent();
                     Optional<Team> team = allPlayers.get(receiverPlayer.getUniqueId()).team;
@@ -192,6 +196,10 @@ public class App extends JavaPlugin implements Listener {
                     TextComponent msg = new TextComponent("");
                     Optional<Team> team = allPlayers.get(receiverPlayer.getUniqueId()).team;
 
+                    if (allPlayers.get(receiverPlayer.getUniqueId()).invitedPlayer() != senderPlayer) {
+                        sender.sendMessage("你並沒有被邀請至 " + receiverPlayer.getName() + " 的隊伍");
+                        return false;
+                    }
                     if (!team.isPresent()) {
                         List<PlayerData> playerArray = new ArrayList<>();
                         Optional<Team> newTeam = Optional.of(new Team(playerArray));
