@@ -94,6 +94,7 @@
                 <directory>${project.basedir}/src/main/resources</directory>
                 <includes>
                     <include>plugin.yml</include>
+                    <include>simpleLogger.properties</include>
                     <include>config.yml</include>
                 </includes>
             </resource>
