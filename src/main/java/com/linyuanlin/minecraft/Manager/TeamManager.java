@@ -18,9 +18,11 @@ import java.util.UUID;
 
 public class TeamManager {
 	private HashMap<UUID, PlayerData> allPlayers;
+	App app;
 
 	public TeamManager(App app) {
 		this.allPlayers = app.allPlayers;
+		this.app = app;
 	}
 
 	public boolean onCommandTeam(CommandSender sender, Command cmd, String cmdlable, String[] args,
@@ -134,7 +136,7 @@ public class TeamManager {
 
 		receiverPlayer.team.get().sendMessageToAll(msg);
 
-		receiverPlayer.destroyInviteRecord(senderPlayer);
+		senderPlayer.destroyInvitedRecord();
 
 		return true;
 	}
@@ -149,9 +151,10 @@ public class TeamManager {
 			return false;
 		}
 
-		senderPlayer.player.spigot().sendMessage(new TextComponent(ChatColor.GREEN + "隊伍成員："
-				+ team.get().allTeamMemberString() + ChatColor.BLACK + " | " + ChatColor.GREEN + "隊長:"
-				+ ChatColor.GOLD + team.get().leader().player.getName()));
+		senderPlayer.player.spigot()
+				.sendMessage(new TextComponent("隊伍成員：" + team.get().allTeamMemberString()
+						+ ChatColor.GRAY + " | " + ChatColor.WHITE + "隊長:" + ChatColor.GOLD
+						+ team.get().leader().player.getName()));
 
 		return true;
 	}

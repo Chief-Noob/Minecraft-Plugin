@@ -42,7 +42,7 @@ public class Team {
 	}
 
 	public void add(PlayerData p) throws Exception {
-		if (leader == null){
+		if (leader == null) {
 			leader = p;
 		}
 		this.playerList.add(p);
@@ -66,7 +66,7 @@ public class Team {
 	public String allTeamMemberString() {
 		String teamMemberNameString = new String();
 		for (PlayerData pd : this.playerList) {
-			teamMemberNameString += pd.player.getName() + ",";
+			teamMemberNameString += pd.player.getName() + " ";
 		}
 		return ChatColor.GOLD + teamMemberNameString;
 	}

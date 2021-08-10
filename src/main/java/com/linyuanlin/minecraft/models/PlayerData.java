@@ -59,9 +59,11 @@ public class PlayerData {
         p.invitedTimeMap.put(this.player, t);
     }
 
-    public void destroyInviteRecord(PlayerData p) {// possible exception
-        this.inviteTimeMap.remove((Object) p.player);
-        p.invitedTimeMap.remove((Object) this.player);
+    public void destroyInvitedRecord() {// possible exception
+        for (Player p : this.invitedTimeMap.keySet()) {
+            invitedTimeMap.remove(p);
+            app.allPlayers.get(p.getUniqueId()).inviteTimeMap.remove(this.player);
+        }
     }
 
     public boolean isInviteCooling(PlayerData p) {
@@ -91,12 +93,7 @@ public class PlayerData {
         if (this.team.isPresent()) {
             this.player.performCommand("team leave");// command shouldn't include `/`
         }
-        for (Player p : this.inviteTimeMap.keySet()) {
-            this.destroyInviteRecord(allPlayers.get(p.getUniqueId()));
-        }
 
-        for (Player p : this.invitedTimeMap.keySet()) {
-            allPlayers.get(p.getUniqueId()).destroyInviteRecord(this);
-        }
+        this.destroyInvitedRecord();
     }
 }
