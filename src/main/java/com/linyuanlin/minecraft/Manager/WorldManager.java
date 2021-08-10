@@ -1,4 +1,4 @@
-package com.linyuanlin.minecraft;
+package com.linyuanlin.minecraft.Manager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
