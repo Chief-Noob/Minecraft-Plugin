@@ -3,10 +3,11 @@ package com.linyuanlin.minecraft.models;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Team {
-	private List<PlayerData> playerList;
+	private List<PlayerData> playerList = new ArrayList<>();
 	private PlayerData leader;
 
 	public boolean isEmpty() {
@@ -41,6 +42,9 @@ public class Team {
 	}
 
 	public void add(PlayerData p) throws Exception {
+		if (leader == null){
+			leader = p;
+		}
 		this.playerList.add(p);
 	}
 

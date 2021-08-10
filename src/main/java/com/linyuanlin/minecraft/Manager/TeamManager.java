@@ -84,20 +84,17 @@ public class TeamManager {
 		if (receiverPlayer == null) {
 			senderPlayer.player.sendMessage(
 					"你要加入的隊伍的邀請人" + ChatColor.GOLD + args[1] + ChatColor.WHITE + "不存在");
-
 			return false;
 		}
 
 		if (senderPlayer.team.isPresent()) {
 			senderPlayer.player.sendMessage("你已有隊伍");
-
 			return false;
 		}
 
 		if (!senderPlayer.isInvitedBy(receiverPlayer)) {
 			sender.sendMessage("你並沒有被邀請至 " + ChatColor.GOLD + receiverPlayer.player.getName()
 					+ ChatColor.WHITE + " 的隊伍");
-
 			return false;
 		}
 
@@ -115,8 +112,6 @@ public class TeamManager {
 
 			receiverPlayer.team = Optional.of(newTeam);
 			senderPlayer.team = Optional.of(newTeam);
-
-			newTeam.newLeader();
 
 			msg = new TextComponent(ChatColor.GOLD + senderPlayer.player.getName() + ChatColor.WHITE + "已加入"
 					+ senderPlayer.teamCapacityStatus());
@@ -218,7 +213,7 @@ public class TeamManager {
 	private boolean help(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
 		senderPlayer.player.sendMessage("沒有這個指令");
-		senderPlayer.player.sendMessage(ChatColor.BLACK + "/team 的使用方式：");
+		senderPlayer.player.sendMessage(ChatColor.AQUA + "/team 的使用方式：");
 		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team invite <對象>");
 		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team join <對象>");
 		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team list");
