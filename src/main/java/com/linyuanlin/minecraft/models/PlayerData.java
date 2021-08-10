@@ -17,7 +17,7 @@ public class PlayerData {
     public int balance = 0;
     public Document mongoObject;
     public Optional<Team> team;
-    private HashMap<Player, Date> invitedTimeMap, inviteTimeMap;
+    private HashMap<Player, Date> invitedTimeMap, inviteTimeMap;// inviteTimeMap is enough!!!
     private App app;
 
     public PlayerData(App app, UUID uuid) throws Exception {
