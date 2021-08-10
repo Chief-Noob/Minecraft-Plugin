@@ -1,27 +1,25 @@
 package com.linyuanlin.minecraft.mongodb;
 
 import com.linyuanlin.minecraft.App;
-import com.mongodb.*;
-
-import java.util.logging.Level;
+import com.mongodb.BasicDBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 
 public class MongodbClient {
-    public DBCursor cursor;
-    private DB database;
+    public FindIterable<Document> cursor;
     private App app;
-    private DBCollection collection;
+    private MongoCollection<Document> collection;
 
     public MongodbClient(App app, String collectionName) {
         try {
             this.app = app;
             new MongoClient();
-            MongoClient mongoClient = new MongoClient(
-                    new MongoClientURI(this.app.mongodbConnectString)
-            );
-
-            app.getLogger().log(Level.INFO, this.app.mongodbConnectString);
-
-            this.database = mongoClient.getDB("Minecraft");
+            MongoClient mongoClient = new MongoClient(new MongoClientURI(this.app.mongodbConnectString));
+            MongoDatabase database = mongoClient.getDatabase("Minecraft");
             this.collection = database.getCollection(collectionName);
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,17 +34,17 @@ public class MongodbClient {
         }
     }
 
-    public void insert(DBObject dbObject) {
+    public void insert(Document dbObject) {
         try {
-            this.collection.insert(dbObject);
+            this.collection.insertOne(dbObject);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void updateById(String objectId, DBObject dbObject) {
+    public void updateById(String objectId, Document dbObject) {
         try {
-            this.collection.update(new BasicDBObject("_id", objectId), dbObject);
+            this.collection.updateOne(new BasicDBObject("_id", objectId), dbObject);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,7 +52,7 @@ public class MongodbClient {
 
     public void deleteById(String objectId) {
         try {
-            this.collection.remove(new BasicDBObject("_id", objectId));
+            this.collection.deleteOne(new BasicDBObject("_id", objectId));
         } catch (Exception e) {
             e.printStackTrace();
         }

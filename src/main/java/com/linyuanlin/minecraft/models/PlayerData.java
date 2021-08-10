@@ -2,7 +2,7 @@ package com.linyuanlin.minecraft.models;
 
 import com.linyuanlin.minecraft.App;
 import com.linyuanlin.minecraft.mongodb.MongodbClient;
-import com.mongodb.BasicDBObject;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class PlayerData {
     public Player player;
     public int balance = 0;
-    public BasicDBObject mongoObject;
+    public Document mongoObject;
     public Optional<Team> team;
     private HashMap<Player, Date> invitedTimeMap, inviteTimeMap;
     private App app;
@@ -26,7 +26,7 @@ public class PlayerData {
 
         this.player = Bukkit.getServer().getPlayer(uuid);
 
-        this.mongoObject = new BasicDBObject();
+        this.mongoObject = new Document();
 
         this.invitedTimeMap = new HashMap<>();
 
@@ -88,7 +88,7 @@ public class PlayerData {
         return ChatColor.MAGIC + "(" + this.team.get().size() + "/4)";
     }
 
-    public void logOut(HashMap<UUID, PlayerData> allPlayers){
+    public void logOut(HashMap<UUID, PlayerData> allPlayers) {
         this.saveData();
         if (this.team.isPresent()) {
             this.player.performCommand("team leave");// command shouldn't include `/`

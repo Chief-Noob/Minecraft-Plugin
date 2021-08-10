@@ -26,6 +26,12 @@
             <id>codemc-repo</id>
             <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>resouces</id>
+            <url>
+                ${project.basedir}/src/main/resources/discord_bot-1.0.jar
+            </url>
+        </repository>
     </repositories>
 
     <properties>
@@ -47,7 +53,6 @@
             <version>2.4.0</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -59,7 +64,15 @@
             <version>3.0.2</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.linyuanlin.mc_discord_bot</groupId>
+            <artifactId>discord_bot</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>
+                ${project.basedir}/src/main/resources/discord_bot-1.0.jar
+            </systemPath>
+        </dependency>
     </dependencies>
 
     <build>

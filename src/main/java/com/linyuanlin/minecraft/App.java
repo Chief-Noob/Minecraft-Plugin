@@ -2,6 +2,7 @@ package com.linyuanlin.minecraft;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.linyuanlin.mc_discord_bot.models.DiscordBot;
 import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.models.Team;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -22,7 +23,11 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import javax.security.auth.login.LoginException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
@@ -31,6 +36,7 @@ public class App extends JavaPlugin implements Listener {
     public WorldManager worldManager = new WorldManager();
     public LocationManager locationManager = new LocationManager();
     public String mongodbConnectString = "";
+    public DiscordBot testBot;
 
     public void downloadAllUserData() throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -39,7 +45,7 @@ public class App extends JavaPlugin implements Listener {
     }
 
     private boolean onCommandPay(CommandSender sender, Command cmd, String cmdlable, String[] args,
-            PlayerData senderPlayer) {
+                                 PlayerData senderPlayer) {
         if (args.length < 2) {
             senderPlayer.player.sendMessage(ChatColor.GRAY + "使用方式： /pay <對象> <金額>");
             return false;
@@ -71,7 +77,7 @@ public class App extends JavaPlugin implements Listener {
     }
 
     private boolean onCommandTeam(CommandSender sender, Command cmd, String cmdlable, String[] args,
-            PlayerData senderPlayer) {
+                                  PlayerData senderPlayer) {
         switch (args[0]) {
             case "invite": {// sender invite receiver to sender's team
                 PlayerData receiverPlayer = allPlayers.get((Object) Bukkit.getPlayer(args[1]));
@@ -275,6 +281,23 @@ public class App extends JavaPlugin implements Listener {
         worldManager.loadWorlds();
 
         getLogger().info("Main system enabled");
+
+        String discordBotToken = this.getConfig().getString("discord_bot_token");
+
+        if (discordBotToken == null || discordBotToken.equals("null")) {
+
+            getLogger().log(Level.SEVERE, "There is no valid discord bot token in config file !!");
+
+        } else {
+
+            try {
+                this.testBot = new DiscordBot(null, discordBotToken);
+            } catch (LoginException e) {
+                e.printStackTrace();
+            }
+
+            this.testBot.sendMessage("873512076184813588", "系統重啟完成～");
+        }
     }
 
     @Override
