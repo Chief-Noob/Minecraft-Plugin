@@ -96,6 +96,12 @@ public class App extends JavaPlugin implements Listener {
         field.set(null, newValue);
     }
 
+    @Override
+    public void onLoad() {
+        Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
+        disableMbdLogging();
+    }
+
     public void downloadAllUserData() throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {
             allPlayers.put(p.getUniqueId(), new PlayerData(this, p.getUniqueId()));
@@ -106,7 +112,6 @@ public class App extends JavaPlugin implements Listener {
     public void onEnable() {
 
         Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
-        disableMbdLogging();
 
         getServer().getPluginManager().registerEvents(this, this);
 
