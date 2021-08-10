@@ -3,9 +3,12 @@ package com.linyuanlin.minecraft;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.linyuanlin.mc_discord_bot.models.DiscordBot;
+import com.linyuanlin.minecraft.Manager.LocationManager;
+import com.linyuanlin.minecraft.Manager.TeamManager;
+import com.linyuanlin.minecraft.Manager.TradeManager;
+import com.linyuanlin.minecraft.Manager.WorldManager;
 import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.mongodb.MongodbClient;
-import com.linyuanlin.minecraft.Manager.*;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -23,6 +26,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
@@ -30,6 +34,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class App extends JavaPlugin implements Listener {
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
@@ -74,6 +79,9 @@ public class App extends JavaPlugin implements Listener {
 
         getLogger().info("Main system enabled");
 
+        Logger logger = (Logger) LoggerFactory.getLogger("org.mongodb.driver.cluster");
+        logger.setLevel(Level.WARNING);
+
         String discordBotToken = this.getConfig().getString("discord_bot_token");
 
         if (discordBotToken == null || discordBotToken.equals("null")) {
@@ -83,7 +91,7 @@ public class App extends JavaPlugin implements Listener {
         } else {
 
             try {
-                this.testBot = new DiscordBot(null, discordBotToken);
+                this.testBot = new DiscordBot(this.getLogger(), discordBotToken);
             } catch (LoginException e) {
                 e.printStackTrace();
             }
