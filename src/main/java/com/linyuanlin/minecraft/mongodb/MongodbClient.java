@@ -17,7 +17,6 @@ public class MongodbClient {
     public MongodbClient(App app, String databaseName) {
         try {
             this.app = app;
-            new MongoClient();
             this.client = new MongoClient(new MongoClientURI(this.app.mongodbConnectString));
             this.database = this.client.getDatabase(databaseName);
         } catch (Exception e) {
