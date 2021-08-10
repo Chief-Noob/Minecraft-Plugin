@@ -26,9 +26,9 @@ public class TeamManager {
 	public boolean onCommandTeam(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
 		switch (args[0]) {
-			case "invite": // sender invite receiver to sender's team
+			case "invite":
 				return this.invite(sender, cmd, cmdlable, args, senderPlayer);
-			case "join": // sender join receiver's team
+			case "join":
 				return this.join(sender, cmd, cmdlable, args, senderPlayer);
 			case "list":
 				return this.list(sender, cmd, cmdlable, args, senderPlayer);
@@ -41,10 +41,9 @@ public class TeamManager {
 
 	private boolean invite(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
-		PlayerData receiverPlayer = allPlayers.get((Object) Bukkit.getPlayer(args[1]));
+		PlayerData receiverPlayer = allPlayers.get((Object) Bukkit.getPlayer(args[1]).getUniqueId());
 		if (receiverPlayer == null) {
-			senderPlayer.player.sendMessage("你邀請的玩家" + ChatColor.GOLD + args[1] + ChatColor.WHITE + "人不存在");
-
+			senderPlayer.player.sendMessage("你邀請的玩家" + ChatColor.GOLD + args[1] + ChatColor.WHITE + "不存在");
 			return false;
 		}
 
@@ -61,7 +60,6 @@ public class TeamManager {
 		if (senderPlayer.isInviteCooling(receiverPlayer)) {
 			sender.sendMessage("邀請" + ChatColor.GOLD + receiverPlayer.player.getName() + ChatColor.WHITE
 					+ "冷卻中" + ChatColor.RED + "(1分鐘)");
-
 			return false;
 		}
 
@@ -82,7 +80,7 @@ public class TeamManager {
 
 	private boolean join(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
-		PlayerData receiverPlayer = allPlayers.get((Object) Bukkit.getPlayer(args[1]));
+		PlayerData receiverPlayer = allPlayers.get((Object) Bukkit.getPlayer(args[1]).getUniqueId());
 		if (receiverPlayer == null) {
 			senderPlayer.player.sendMessage(
 					"你要加入的隊伍的邀請人" + ChatColor.GOLD + args[1] + ChatColor.WHITE + "不存在");
