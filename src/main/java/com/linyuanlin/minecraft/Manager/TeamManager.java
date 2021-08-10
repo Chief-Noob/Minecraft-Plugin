@@ -117,6 +117,8 @@ public class TeamManager {
 
 			msg = new TextComponent(ChatColor.GOLD + senderPlayer.player.getName() + ChatColor.WHITE + "已加入"
 					+ senderPlayer.teamCapacityStatus());
+
+			receiverPlayer.destroyInvitedRecord();
 		} else if (!team.get().isFull()) {
 			try {
 				team.get().add(senderPlayer);
