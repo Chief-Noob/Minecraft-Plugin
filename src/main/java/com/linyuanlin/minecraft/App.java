@@ -311,6 +311,8 @@ public class App extends JavaPlugin implements Listener {
             pair.getValue().saveData();
         }
 
+        this.dbClient.close();
+
         getLogger().info("See you again, SpigotMC!");
     }
 

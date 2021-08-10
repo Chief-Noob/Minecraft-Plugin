@@ -11,17 +11,22 @@ import org.bson.Document;
 public class MongodbClient {
     public FindIterable<Document> cursor;
     private App app;
+    private MongoClient client;
     private MongoDatabase database;
 
     public MongodbClient(App app, String databaseName) {
         try {
             this.app = app;
             new MongoClient();
-            MongoClient mongoClient = new MongoClient(new MongoClientURI(this.app.mongodbConnectString));
-            MongoDatabase database = mongoClient.getDatabase(databaseName);
+            this.client = new MongoClient(new MongoClientURI(this.app.mongodbConnectString));
+            this.database = this.client.getDatabase(databaseName);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void close() {
+        this.client.close();
     }
 
     public void getById(String collectionName, String id) {
