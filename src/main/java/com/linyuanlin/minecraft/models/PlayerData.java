@@ -83,7 +83,7 @@ public class PlayerData {
     }
 
     public String teamCapacityStatus() {
-        return ChatColor.MAGIC + "(" + this.team.get().size() + "/4)";
+        return ChatColor.GRAY + "(" + this.team.get().size() + "/4)";
     }
 
     public void logOut(HashMap<UUID, PlayerData> allPlayers) {
