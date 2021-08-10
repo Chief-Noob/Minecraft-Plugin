@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
 public class App extends JavaPlugin implements Listener {
-
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
     public WorldManager worldManager = new WorldManager();
     public String mongodbConnectString = "";
@@ -45,8 +44,7 @@ public class App extends JavaPlugin implements Listener {
             return false;
         }
 
-        String target = args[0];
-        String amountStr = args[1];
+        String target = args[0], amountStr = args[1];
         int amount = Integer.parseInt(amountStr);
         Player p = Bukkit.getPlayer(target);
 
@@ -250,7 +248,6 @@ public class App extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-
         getServer().getPluginManager().registerEvents(this, this);
 
         this.saveDefaultConfig();
@@ -328,7 +325,6 @@ public class App extends JavaPlugin implements Listener {
      * 對話時產生 hologram 在玩家頭上
      */
     public boolean setholo(Player Player, String msg, int second) {
-
         final Hologram hologram = HologramsAPI.createHologram(this, Player.getLocation().add(0.0, 2.0, 0.0));
         hologram.appendTextLine(msg);
 
