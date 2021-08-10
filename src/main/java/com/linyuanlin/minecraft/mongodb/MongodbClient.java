@@ -2,9 +2,9 @@ package com.linyuanlin.minecraft.mongodb;
 
 import com.linyuanlin.minecraft.App;
 import com.mongodb.BasicDBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
@@ -17,7 +17,8 @@ public class MongodbClient {
     public MongodbClient(App app, String databaseName) {
         try {
             this.app = app;
-            this.client = new MongoClient(new MongoClientURI(this.app.mongodbConnectString));
+            MongoClient mongoClient = MongoClients.create();
+            this.client = MongoClients.create(this.app.mongodbConnectString);
             this.database = this.client.getDatabase(databaseName);
         } catch (Exception e) {
             e.printStackTrace();

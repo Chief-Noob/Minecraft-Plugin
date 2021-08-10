@@ -9,10 +9,6 @@ import com.linyuanlin.minecraft.Manager.TradeManager;
 import com.linyuanlin.minecraft.Manager.WorldManager;
 import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.mongodb.MongodbClient;
-import com.mongodb.diagnostics.logging.Loggers;
-import com.mongodb.internal.connection.AbstractMultiServerCluster;
-import com.mongodb.internal.connection.InternalStreamConnection;
-import com.mongodb.internal.connection.SingleServerCluster;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -32,8 +28,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.security.auth.login.LoginException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -51,56 +45,6 @@ public class App extends JavaPlugin implements Listener {
     public String mongodbConnectString = "";
     public DiscordBot testBot;
     public MongodbClient dbClient;
-
-    public static void disableMbdLogging() {
-        try {
-            // force logger to be JULL
-            Field loggerType = Loggers.class.getDeclaredField("USE_SLF4J");
-            setFinalStatic(loggerType, false);
-
-            // recreate logger with new setting
-            Field logger = InternalStreamConnection.class.getDeclaredField("LOGGER");
-            setFinalStatic(logger, Loggers.getLogger("hacked"));
-
-            logger = AbstractMultiServerCluster.class.getDeclaredField("LOGGER");
-            setFinalStatic(logger, Loggers.getLogger("hacked"));
-
-            logger = SingleServerCluster.class.getDeclaredField("LOGGER");
-            setFinalStatic(logger, Loggers.getLogger("hacked"));
-
-            //get non public clases
-            Class<?> c = Class.forName("com.mongodb.internal.connection.BaseCluster");
-            logger = c.getDeclaredField("LOGGER");
-            setFinalStatic(logger, Loggers.getLogger("hacked"));
-
-            c = Class.forName("com.mongodb.internal.connection.DefaultServerMonitor");
-            logger = c.getDeclaredField("LOGGER");
-            setFinalStatic(logger, Loggers.getLogger("hacked"));
-
-            // disabel logger in JULL
-            Logger mongoLogger = Logger.getLogger("org.mongodb.driver.hacked");
-            mongoLogger.setLevel(Level.WARNING);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    static void setFinalStatic(Field field, Object newValue) throws Exception {
-        field.setAccessible(true);
-
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-        field.set(null, newValue);
-    }
-
-    @Override
-    public void onLoad() {
-        Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
-        disableMbdLogging();
-    }
 
     public void downloadAllUserData() throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {

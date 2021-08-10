@@ -60,8 +60,14 @@
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>3.12.2</version>
+            <artifactId>mongodb-driver</artifactId>
+            <version>3.7.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>3.7.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
