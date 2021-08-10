@@ -1,5 +1,8 @@
 package com.linyuanlin.minecraft;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.linyuanlin.mc_discord_bot.models.DiscordBot;
@@ -33,8 +36,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class App extends JavaPlugin implements Listener {
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
@@ -61,7 +62,7 @@ public class App extends JavaPlugin implements Listener {
         mongodbConnectString = this.getConfig().getString("mongo_connection_string");
 
         if (mongodbConnectString == null || mongodbConnectString.equals("mongodb://username:password@host")) {
-            getLogger().log(Level.SEVERE, "There is no valid mongodb connection string in config file !!");
+            getLogger().log(java.util.logging.Level.WARNING, "There is no valid mongodb connection string in config file !!");
             for (Player p : getServer().getOnlinePlayers()) {
                 p.sendMessage(ChatColor.RED + "伺服器主系統啟動失敗，資料庫設定無效，請聯繫工程師處理！");
             }
@@ -79,14 +80,14 @@ public class App extends JavaPlugin implements Listener {
 
         getLogger().info("Main system enabled");
 
-        Logger logger = (Logger) LoggerFactory.getLogger("org.mongodb.driver.cluster");
-        logger.setLevel(Level.WARNING);
-
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
+        rootLogger.setLevel(Level.WARN);
         String discordBotToken = this.getConfig().getString("discord_bot_token");
 
         if (discordBotToken == null || discordBotToken.equals("null")) {
 
-            getLogger().log(Level.SEVERE, "There is no valid discord bot token in config file !!");
+            getLogger().log(java.util.logging.Level.WARNING, "There is no valid discord bot token in config file !!");
 
         } else {
 
