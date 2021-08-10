@@ -61,7 +61,7 @@ public class PlayerData {
         p.invitedTimeMap.put(this.player, t);
     }
 
-    public void destroyInviteRecord(PlayerData p) {//possible exception
+    public void destroyInviteRecord(PlayerData p) {// possible exception
         this.inviteTimeMap.remove((Object) p.player);
         p.invitedTimeMap.remove((Object) this.player);
     }
@@ -82,5 +82,9 @@ public class PlayerData {
             return true;
         }
         return false;
+    }
+
+    public String teamCapacityStatus() {
+        return ChatColor.MAGIC + "(" + this.team.get().size() + "/4)";
     }
 }

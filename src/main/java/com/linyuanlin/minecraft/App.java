@@ -216,12 +216,14 @@ public class App extends JavaPlugin implements Listener {
         if (senderPlayer == null) {
 
         }
+
         if (cmdlable.equals("team")) {
             switch (args[0]) {
                 case "invite": {// sender invite receiver to sender's team
                     PlayerData receiverPlayer = allPlayers.get((Object) Bukkit.getPlayer(args[1]));
                     if (receiverPlayer == null) {
                         senderPlayer.player.sendMessage("你邀請的人不存在");
+
                         return false;
                     }
 
@@ -235,7 +237,9 @@ public class App extends JavaPlugin implements Listener {
                     }
 
                     if (senderPlayer.isInviteCooling(receiverPlayer)) {
-                        sender.sendMessage("邀請" + receiverPlayer.player.getName() + "冷卻中" + ChatColor.GOLD + "(1分鐘)");
+                        sender.sendMessage("邀請" + ChatColor.GOLD + receiverPlayer.player.getName() + ChatColor.BLACK
+                                + "冷卻中" + ChatColor.RED + "(1分鐘)");
+
                         return false;
                     }
 
@@ -248,60 +252,71 @@ public class App extends JavaPlugin implements Listener {
 
                     senderPlayer.player.spigot().sendMessage(
                             new TextComponent("已發送邀請給 " + ChatColor.GOLD + receiverPlayer.player.getName()));
-
                     senderPlayer.recordInvite(receiverPlayer);
+
                     return true;
                 }
                 case "join": {// sender join receiver's team
                     PlayerData receiverPlayer = allPlayers.get((Object) Bukkit.getPlayer(args[1]));
                     if (receiverPlayer == null) {
                         senderPlayer.player.sendMessage("你要加入的隊伍的邀請人不存在");
+
+                        return false;
+                    }
+
+                    if (senderPlayer.team.isPresent()) {
+                        senderPlayer.player.sendMessage("你已有隊伍");
+
+                        return false;
+                    }
+
+                    if (!senderPlayer.isInvitedBy(receiverPlayer)) {
+                        sender.sendMessage("你並沒有被邀請至 " + ChatColor.GOLD + receiverPlayer.player.getName()
+                                + ChatColor.BLACK + " 的隊伍");
+
                         return false;
                     }
 
                     TextComponent msg = new TextComponent("");
                     Optional<Team> team = receiverPlayer.team;
 
-                    if (!senderPlayer.isInvitedBy(receiverPlayer)) {
-                        sender.sendMessage("你並沒有被邀請至 " + ChatColor.GOLD + receiverPlayer.player.getName() + " 的隊伍");
-                        return false;
-                    }
-
                     if (!team.isPresent()) {
-                        List<PlayerData> playerArray = new ArrayList<>();
-                        playerArray.add(receiverPlayer);
-                        playerArray.add(senderPlayer);
-
-                        Optional<Team> newTeam = Optional.of(new Team(playerArray));
-
-                        receiverPlayer.team = newTeam;
-                        senderPlayer.team = newTeam;
-
-                        newTeam.get().leader = receiverPlayer;
-
-                        msg = new TextComponent(ChatColor.GOLD + senderPlayer.player.getName() + "已加入" + "("
-                                + senderPlayer.team.get().size() + "/4)");
-                    } else if (!team.get().isFull()) {
-                        if (team.get().playerList.contains((Object) senderPlayer)) {
-                            senderPlayer.player.sendMessage("你已在此隊伍中");
-                            return false;
+                        Team newTeam = new Team();
+                        try {
+                            newTeam.add(receiverPlayer);
+                            newTeam.add(senderPlayer);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
 
-                        team.get().playerList.add(senderPlayer);
+                        receiverPlayer.team = Optional.of(newTeam);
+                        senderPlayer.team = Optional.of(newTeam);
+
+                        newTeam.newLeader();
+
+                        msg = new TextComponent(ChatColor.GOLD + senderPlayer.player.getName() + ChatColor.BLACK + "已加入"
+                                + senderPlayer.teamCapacityStatus());
+                    } else if (!team.get().isFull()) {
+                        try {
+                            team.get().add(senderPlayer);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                         senderPlayer.team = team;
 
-                        msg = new TextComponent(ChatColor.GOLD + senderPlayer.player.getName() + "已加入" + "("
-                                + senderPlayer.team.get().size() + "/4)");
+                        msg = new TextComponent(ChatColor.GOLD + senderPlayer.player.getName() + ChatColor.BLACK + "已加入"
+                                + senderPlayer.teamCapacityStatus());
                     } else {
                         senderPlayer.player.sendMessage("隊伍已滿");
+
                         return false;
                     }
 
-                    for (PlayerData pd : receiverPlayer.team.get().playerList) {
-                        pd.player.spigot().sendMessage(msg);
-                    }
+                    receiverPlayer.team.get().sendMessageToAll(msg);
 
                     receiverPlayer.destroyInviteRecord(senderPlayer);
+
                     return true;
                 }
                 case "list": {
@@ -310,6 +325,7 @@ public class App extends JavaPlugin implements Listener {
 
                     if (!team.isPresent()) {
                         senderPlayer.player.sendMessage("你沒隊伍拉");
+
                         return false;
                     }
 
@@ -317,9 +333,11 @@ public class App extends JavaPlugin implements Listener {
                         teamMemberNameString.append(pd.player.getName()).append(" ");
                     }
 
-                    TextComponent msg = new TextComponent(ChatColor.GREEN + "隊伍成員：" + teamMemberNameString + " | "
-                            + ChatColor.GREEN + "隊長:" + team.get().leader.player.getName());
-                    senderPlayer.player.spigot().sendMessage(msg);
+                    senderPlayer.player.spigot()
+                            .sendMessage(new TextComponent(ChatColor.GREEN + "隊伍成員：" + ChatColor.GOLD
+                                    + teamMemberNameString + ChatColor.BLACK + " | " + ChatColor.GREEN + "隊長:"
+                                    + ChatColor.GOLD + team.get().leader.player.getName()));
+
                     return true;
                 }
                 case "leave": {
@@ -330,7 +348,12 @@ public class App extends JavaPlugin implements Listener {
                         return false;
                     }
 
-                    team.get().playerList.remove((Object) senderPlayer);
+                    try {
+                        team.get().delete(senderPlayer);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     if (team.get().size() == 1) {// 2 members-Team, this team should be deleted.
                         for (PlayerData pd : senderPlayer.team.get().playerList) {
                             pd.player.spigot().sendMessage(new TextComponent(
@@ -339,37 +362,31 @@ public class App extends JavaPlugin implements Listener {
                         }
                     } else if (team.get().size() > 1) {// >2 members-Team, this Team should be remained.
                         if (team.get().leader == senderPlayer) {
-                            for (PlayerData pd : senderPlayer.team.get().playerList) {
-                                if (team.get().leader != senderPlayer) {
-                                    team.get().leader = pd;
-                                    break;
-                                }
-                            }
-                            for (PlayerData pd : senderPlayer.team.get().playerList) {
-                                pd.player.spigot().sendMessage(
-                                        new TextComponent("隊長 " + ChatColor.GOLD + senderPlayer.player.getName()
-                                                + " 離開了隊伍, 新隊長為" + ChatColor.GOLD + team.get().leader.player.getName()
-                                                + "(" + senderPlayer.team.get().size() + "/4)"));
-                            }
+                            senderPlayer.team.get().newLeader();
+
+                            senderPlayer.team.get().sendMessageToAll(new TextComponent("隊長 " + ChatColor.GOLD
+                                    + senderPlayer.player.getName() + ChatColor.BLACK + " 離開了隊伍, 新隊長為" + ChatColor.GOLD
+                                    + team.get().leader.player.getName() + senderPlayer.teamCapacityStatus()));
                         } else {
-                            for (PlayerData pd : senderPlayer.team.get().playerList) {
-                                pd.player.spigot().sendMessage(
-                                        new TextComponent("隊員 " + ChatColor.GOLD + senderPlayer.player.getName()
-                                                + " 離開了隊伍" + "(" + senderPlayer.team.get().size() + "/4)"));
-                            }
+                            senderPlayer.team.get().sendMessageToAll(
+                                    new TextComponent("隊員 " + ChatColor.GOLD + senderPlayer.player.getName()
+                                            + ChatColor.BLACK + " 離開了隊伍" + senderPlayer.teamCapacityStatus()));
                         }
                     }
 
                     senderPlayer.team = Optional.empty();
                     senderPlayer.player.spigot().sendMessage(new TextComponent("你離開了隊伍"));
+
                     return true;
                 }
-                default:
-                    break;
+                default: {
+                    senderPlayer.player.sendMessage("沒有這個指令");
+
+                    return false;
+                }
             }
-            return true;
         }
-        return false;
+        return true;
     }
 
 }
