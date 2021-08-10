@@ -37,11 +37,6 @@ import java.util.logging.Logger;
 
 public class App extends JavaPlugin implements Listener {
 
-    static {
-        Logger mongoLogger = Logger.getLogger("com.mongodb");
-        mongoLogger.setLevel(Level.WARNING);
-    }
-
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
     public WorldManager worldManager = new WorldManager();
     public LocationManager locationManager = new LocationManager();
@@ -59,6 +54,9 @@ public class App extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+
+        Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
+
         getServer().getPluginManager().registerEvents(this, this);
 
         this.saveDefaultConfig();
