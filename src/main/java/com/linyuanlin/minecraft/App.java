@@ -38,6 +38,12 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class App extends JavaPlugin implements Listener {
+    static {
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
+        rootLogger.setLevel(Level.WARN);
+    }
+
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
     public WorldManager worldManager = new WorldManager();
     public LocationManager locationManager = new LocationManager();
@@ -80,9 +86,6 @@ public class App extends JavaPlugin implements Listener {
 
         getLogger().info("Main system enabled");
 
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
-        rootLogger.setLevel(Level.WARN);
         String discordBotToken = this.getConfig().getString("discord_bot_token");
 
         if (discordBotToken == null || discordBotToken.equals("null")) {
