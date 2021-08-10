@@ -103,18 +103,7 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
-        PlayerData player = allPlayers.get(e.getPlayer().getUniqueId());
-        player.saveData();
-        if (player.team.isPresent()) {
-            player.player.performCommand("team leave");// command shouldn't include `/`
-        }
-        for (Player p : player.inviteTimeMap.keySet()) {
-            player.destroyInviteRecord(allPlayers.get(p.getUniqueId()));
-        }
-
-        for (Player p : player.invitedTimeMap.keySet()) {
-            allPlayers.get(p.getUniqueId()).destroyInviteRecord(player);
-        }
+        allPlayers.get(e.getPlayer().getUniqueId()).logOut(allPlayers);
     }
 
     @EventHandler
@@ -172,12 +161,12 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public boolean onCommand(CommandSender sender, Command cmd, String cmdlable, String[] args) {
-        Player senderPlayer = (Player) sender;
+        PlayerData senderPlayer = allPlayers.get(((Player) sender).getUniqueId());
 
         if (cmdlable.equals("pay")) {
 
             if (args.length < 2) {
-                sender.sendMessage(ChatColor.GRAY + "使用方式： /pay <對象> <金額>");
+                senderPlayer.player.sendMessage(ChatColor.GRAY + "使用方式： /pay <對象> <金額>");
                 return false;
             }
 
@@ -320,7 +309,6 @@ public class App extends JavaPlugin implements Listener {
                     return true;
                 }
                 case "list": {
-                    StringBuilder teamMemberNameString = new StringBuilder();
                     Optional<Team> team = senderPlayer.team;
 
                     if (!team.isPresent()) {
@@ -329,14 +317,10 @@ public class App extends JavaPlugin implements Listener {
                         return false;
                     }
 
-                    for (PlayerData pd : team.get().playerList) {
-                        teamMemberNameString.append(pd.player.getName()).append(" ");
-                    }
-
                     senderPlayer.player.spigot()
-                            .sendMessage(new TextComponent(ChatColor.GREEN + "隊伍成員：" + ChatColor.GOLD
-                                    + teamMemberNameString + ChatColor.BLACK + " | " + ChatColor.GREEN + "隊長:"
-                                    + ChatColor.GOLD + team.get().leader.player.getName()));
+                            .sendMessage(new TextComponent(ChatColor.GREEN + "隊伍成員：" + team.get().allTeamMemberString()
+                                    + ChatColor.BLACK + " | " + ChatColor.GREEN + "隊長:" + ChatColor.GOLD
+                                    + team.get().leader().player.getName()));
 
                     return true;
                 }
@@ -348,30 +332,38 @@ public class App extends JavaPlugin implements Listener {
                         return false;
                     }
 
-                    try {
-                        team.get().delete(senderPlayer);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    if (team.get().size() == 1) {// 2 members-Team, this team should be deleted.
-                        for (PlayerData pd : senderPlayer.team.get().playerList) {
-                            pd.player.spigot().sendMessage(new TextComponent(
-                                    ChatColor.GOLD + senderPlayer.player.getName() + " 離開了隊伍, 隊伍人數不足，自動解散"));
-                            pd.team = Optional.empty();
+                    if (team.get().size() == 2) {
+                        team.get().sendMessageToAll(new TextComponent(ChatColor.GOLD + senderPlayer.player.getName()
+                                + ChatColor.BLACK + " 離開了隊伍, 隊伍人數不足，自動解散"));
+                        try {
+                            team.get().delete(senderPlayer);
+                            senderPlayer.team = Optional.empty();
+                            team.get().leader().team = Optional.empty();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } else if (team.get().size() > 1) {// >2 members-Team, this Team should be remained.
-                        if (team.get().leader == senderPlayer) {
-                            senderPlayer.team.get().newLeader();
-
+                    } else if (team.get().size() > 2) {
+                        if (team.get().leader() == senderPlayer) {
+                            try {
+                                team.get().delete(senderPlayer);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             senderPlayer.team.get().sendMessageToAll(new TextComponent("隊長 " + ChatColor.GOLD
                                     + senderPlayer.player.getName() + ChatColor.BLACK + " 離開了隊伍, 新隊長為" + ChatColor.GOLD
-                                    + team.get().leader.player.getName() + senderPlayer.teamCapacityStatus()));
+                                    + team.get().leader().player.getName() + senderPlayer.teamCapacityStatus()));
                         } else {
+                            try {
+                                team.get().delete(senderPlayer);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             senderPlayer.team.get().sendMessageToAll(
                                     new TextComponent("隊員 " + ChatColor.GOLD + senderPlayer.player.getName()
                                             + ChatColor.BLACK + " 離開了隊伍" + senderPlayer.teamCapacityStatus()));
                         }
+                    } else {
+                        return false;
                     }
 
                     senderPlayer.team = Optional.empty();
@@ -386,7 +378,7 @@ public class App extends JavaPlugin implements Listener {
                 }
             }
         }
-        return true;
+        return false;
     }
 
 }

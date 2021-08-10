@@ -18,7 +18,7 @@ public class PlayerData {
     public int balance = 0;
     public BasicDBObject mongoObject;
     public Optional<Team> team;
-    public HashMap<Player, Date> invitedTimeMap, inviteTimeMap;
+    private HashMap<Player, Date> invitedTimeMap, inviteTimeMap;
     private App app;
 
     public PlayerData(App app, UUID uuid) throws Exception {
@@ -86,5 +86,19 @@ public class PlayerData {
 
     public String teamCapacityStatus() {
         return ChatColor.MAGIC + "(" + this.team.get().size() + "/4)";
+    }
+
+    public void logOut(HashMap<UUID, PlayerData> allPlayers){
+        this.saveData();
+        if (this.team.isPresent()) {
+            this.player.performCommand("team leave");// command shouldn't include `/`
+        }
+        for (Player p : this.inviteTimeMap.keySet()) {
+            this.destroyInviteRecord(allPlayers.get(p.getUniqueId()));
+        }
+
+        for (Player p : this.invitedTimeMap.keySet()) {
+            allPlayers.get(p.getUniqueId()).destroyInviteRecord(this);
+        }
     }
 }

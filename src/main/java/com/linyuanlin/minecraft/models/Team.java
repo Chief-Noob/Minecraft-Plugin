@@ -1,19 +1,13 @@
 package com.linyuanlin.minecraft.models;
 
-import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class Team {
-	public List<PlayerData> playerList;
-	public PlayerData leader;
+	private List<PlayerData> playerList;
+	private PlayerData leader;
 
 	public boolean isEmpty() {
 		return this.playerList.size() == 0;
@@ -34,10 +28,14 @@ public class Team {
 	}
 
 	public void newLeader() {
-		for (PlayerData pd : this.playerList) {
-			if (this.leader != pd) {
-				this.leader = pd;
-				break;
+		if (this.size() == 0) {
+			this.leader = null;
+		} else {
+			for (PlayerData pd : this.playerList) {
+				if (this.leader != pd) {
+					this.leader = pd;
+					break;
+				}
 			}
 		}
 	}
@@ -47,10 +45,25 @@ public class Team {
 	}
 
 	public void delete(PlayerData p) throws Exception {
+		if (this.leader == p)
+			this.newLeader();
+
 		this.playerList.remove((Object) p);
 	}
 
-	public boolean contain(PlayerData p){
+	public boolean contain(PlayerData p) {
 		return this.playerList.contains((Object) p);
+	}
+
+	public PlayerData leader() {
+		return this.leader;
+	}
+
+	public String allTeamMemberString() {
+		String teamMemberNameString = new String();
+		for (PlayerData pd : this.playerList) {
+			teamMemberNameString += pd.player.getName() + ",";
+		}
+		return ChatColor.GOLD + teamMemberNameString;
 	}
 }
