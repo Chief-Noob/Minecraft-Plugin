@@ -68,7 +68,7 @@ public class TeamManager {
 		msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊接受 " + ChatColor.GOLD
 				+ senderPlayer.player.getName() + ChatColor.WHITE + " 的組隊邀請")));
 		msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-				"/team join " + ChatColor.GOLD + senderPlayer.player.getName()));
+				"/team join " + senderPlayer.player.getName()));
 		receiverPlayer.player.spigot().sendMessage(msg);
 
 		senderPlayer.player.spigot().sendMessage(
@@ -149,7 +149,7 @@ public class TeamManager {
 		Optional<Team> team = senderPlayer.team;
 
 		if (!team.isPresent()) {
-			senderPlayer.player.sendMessage("你沒隊伍拉");
+			senderPlayer.player.sendMessage("你不在任何隊伍裡");
 
 			return false;
 		}
@@ -218,10 +218,11 @@ public class TeamManager {
 	private boolean help(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
 		senderPlayer.player.sendMessage("沒有這個指令");
-		senderPlayer.player.sendMessage(ChatColor.GRAY + "使用方式： /team invite <對象>");
-		senderPlayer.player.sendMessage(ChatColor.GRAY + "使用方式： /team join <對象>");
-		senderPlayer.player.sendMessage(ChatColor.GRAY + "使用方式： /team list");
-		senderPlayer.player.sendMessage(ChatColor.GRAY + "使用方式： /team help <對象>");
+		senderPlayer.player.sendMessage(ChatColor.BLACK + "/team 的使用方式：");
+		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team invite <對象>");
+		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team join <對象>");
+		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team list");
+		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team help <對象>");
 
 		return false;
 	}

@@ -66,7 +66,8 @@ public class TradeManager {
 	private boolean help(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
 		senderPlayer.player.sendMessage("沒有這個指令");
-		senderPlayer.player.sendMessage(ChatColor.GRAY + "使用方式： /trade pay <對象> <金額>");
+		senderPlayer.player.sendMessage(ChatColor.BLACK + "/trade 的使用方式：");
+		senderPlayer.player.sendMessage(ChatColor.GRAY + "/trade pay <對象> <金額>");
 
 		return false;
 	}
