@@ -51,7 +51,7 @@ public class Team {
 		this.playerList.remove((Object) p);
 	}
 
-	public boolean contain(PlayerData p) {
+	public boolean isContain(PlayerData p) {
 		return this.playerList.contains((Object) p);
 	}
 
