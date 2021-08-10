@@ -121,7 +121,7 @@ public class App extends JavaPlugin implements Listener {
         Player p = e.getPlayer();
         p.sendTitle(ChatColor.YELLOW + "歡迎光臨", ChatColor.GRAY + "本伺服器目前仍在開發階段", 20, 80, 40);
         e.setJoinMessage(
-                ChatColor.WHITE + "玩家 " + ChatColor.YELLOW + e.getPlayer().getName() + ChatColor.WHITE + " 登入了, 讚啦！");
+                ChatColor.WHITE + "玩家 " + ChatColor.GOLD + e.getPlayer().getName() + ChatColor.WHITE + " 登入了, 讚啦！");
         allPlayers.put(p.getUniqueId(), new PlayerData(this, p.getUniqueId()));
 
         World lobbyWorld = Bukkit.getWorld("world_lobby");

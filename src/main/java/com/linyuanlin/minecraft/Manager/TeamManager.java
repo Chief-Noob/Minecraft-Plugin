@@ -171,9 +171,7 @@ public class TeamManager {
 			try {
 				team.get().delete(senderPlayer);
 				team.get().delete(team.get().leader());
-
-				// team = Optional.empty()?
-				// team.get().leader().team = Optional.empty();
+				team.get().leader().team = Optional.empty();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -203,8 +201,7 @@ public class TeamManager {
 			return false;
 		}
 
-		team = Optional.empty();
-		// senderPlayer.team = Optional.empty();
+		senderPlayer.team = Optional.empty();
 		senderPlayer.player.spigot().sendMessage(new TextComponent("你離開了隊伍"));
 
 		return true;
