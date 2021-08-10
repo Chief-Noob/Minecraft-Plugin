@@ -29,6 +29,7 @@ import java.util.logging.Level;
 public class App extends JavaPlugin implements Listener {
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
     public WorldManager worldManager = new WorldManager();
+    public LocationManager locationManager = new LocationManager();
     public String mongodbConnectString = "";
 
     public void downloadAllUserData() throws Exception {
@@ -201,6 +202,9 @@ public class App extends JavaPlugin implements Listener {
                             ChatColor.GOLD + senderPlayer.player.getName() + ChatColor.BLACK + " 離開了隊伍, 隊伍人數不足，自動解散"));
                     try {
                         team.get().delete(senderPlayer);
+                        team.get().delete(team.get().leader());
+
+                        //team = Optional.empty()?
                         team.get().leader().team = Optional.empty();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -229,6 +233,7 @@ public class App extends JavaPlugin implements Listener {
                     return false;
                 }
 
+                //team = Optional.empty()?
                 senderPlayer.team = Optional.empty();
                 senderPlayer.player.spigot().sendMessage(new TextComponent("你離開了隊伍"));
 

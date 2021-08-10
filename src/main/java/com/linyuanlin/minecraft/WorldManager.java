@@ -6,7 +6,6 @@ import org.bukkit.WorldCreator;
 import java.io.File;
 
 public class WorldManager {
-
     public void loadWorlds() {
         loadHouseWorld();
         loadLobbyWorld();
