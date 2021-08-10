@@ -5,6 +5,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.linyuanlin.mc_discord_bot.models.DiscordBot;
 import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.models.Team;
+import com.linyuanlin.minecraft.mongodb.MongodbClient;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -37,6 +38,7 @@ public class App extends JavaPlugin implements Listener {
     public LocationManager locationManager = new LocationManager();
     public String mongodbConnectString = "";
     public DiscordBot testBot;
+    public MongodbClient dbClient;
 
     public void downloadAllUserData() throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -271,6 +273,8 @@ public class App extends JavaPlugin implements Listener {
                 p.sendMessage(ChatColor.RED + "伺服器主系統啟動失敗，資料庫設定無效，請聯繫工程師處理！");
             }
         }
+
+        this.dbClient = new MongodbClient(this, "Minecraft");
 
         try {
             downloadAllUserData();

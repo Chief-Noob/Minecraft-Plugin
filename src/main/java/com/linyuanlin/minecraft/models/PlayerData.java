@@ -1,7 +1,6 @@
 package com.linyuanlin.minecraft.models;
 
 import com.linyuanlin.minecraft.App;
-import com.linyuanlin.minecraft.mongodb.MongodbClient;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -48,9 +47,8 @@ public class PlayerData {
 
     public void saveData() {
         /* Save data into database */
-        MongodbClient client = new MongodbClient(this.app, "PlayerData");
         this.wrapMongoObject();
-        client.insert(this.mongoObject);
+        this.app.dbClient.insert("PlayerData", this.mongoObject);
 
         player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
     }
