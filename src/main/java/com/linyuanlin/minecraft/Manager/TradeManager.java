@@ -38,7 +38,7 @@ public class TradeManager {
 			return false;
 		}
 
-		String target = args[0], amountStr = args[1];
+		String target = args[1], amountStr = args[2];
 		int amount = Integer.parseInt(amountStr);
 		Player p = Bukkit.getPlayer(target);
 		if (p == null) {
