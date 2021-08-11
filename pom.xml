@@ -71,12 +71,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.linyuanlin.mc_discord_bot</groupId>
-            <artifactId>discord_bot</artifactId>
+            <groupId>com.tjplaysnow</groupId>
+            <artifactId>DiscordBotAPI</artifactId>
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>
-                ${project.basedir}/src/main/resources/discord_bot-1.0.jar
+                ${project.basedir}/src/main/resources/Discord_Bot_API_V_4.0.jar
             </systemPath>
         </dependency>
     </dependencies>

@@ -2,13 +2,14 @@ package com.linyuanlin.minecraft;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.linyuanlin.mc_discord_bot.models.DiscordBot;
 import com.linyuanlin.minecraft.Manager.LocationManager;
 import com.linyuanlin.minecraft.Manager.TeamManager;
 import com.linyuanlin.minecraft.Manager.TradeManager;
 import com.linyuanlin.minecraft.Manager.WorldManager;
 import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.mongodb.MongodbClient;
+import com.tjplaysnow.discord.object.Bot;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -27,7 +28,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import javax.security.auth.login.LoginException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -43,7 +43,7 @@ public class App extends JavaPlugin implements Listener {
     public TeamManager teamManager = new TeamManager(this);
     public TradeManager tradeManager = new TradeManager(this);
     public String mongodbConnectString = "";
-    public DiscordBot testBot;
+    public Bot testBot;
     public MongodbClient dbClient;
 
     public void downloadAllUserData() throws Exception {
@@ -85,18 +85,12 @@ public class App extends JavaPlugin implements Listener {
         String discordBotToken = this.getConfig().getString("discord_bot_token");
 
         if (discordBotToken == null || discordBotToken.equals("null")) {
-
             getLogger().log(java.util.logging.Level.WARNING, "There is no valid discord bot token in config file !!");
-
         } else {
-
-            try {
-                this.testBot = new DiscordBot(this.getLogger(), discordBotToken);
-            } catch (LoginException e) {
-                e.printStackTrace();
-            }
-
-            this.testBot.sendMessage("873512076184813588", "系統重啟完成～");
+            this.testBot = new Bot(discordBotToken, "TEST");
+            TextChannel c = this.testBot.getBot().getTextChannelById("873512076184813588");
+            if (c != null)
+                c.sendMessage("系統重啟完成～").queue(r -> getLogger().info(r.getContentDisplay()));
         }
     }
 
@@ -150,8 +144,9 @@ public class App extends JavaPlugin implements Listener {
 
         e.setFormat(t);
 
-
-        testBot.sendMessage("873512076184813588", t);
+        TextChannel c = this.testBot.getBot().getTextChannelById("873512076184813588");
+        if (c != null)
+            c.sendMessage(t).queue(r -> getLogger().info(r.getContentDisplay()));
 
         // 顯示對話泡泡
         Bukkit.getScheduler().callSyncMethod(this, () -> this.setholo(e.getPlayer(), e.getMessage(), 1)).get();
