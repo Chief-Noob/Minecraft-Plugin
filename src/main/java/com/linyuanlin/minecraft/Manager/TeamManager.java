@@ -45,15 +45,23 @@ public class TeamManager {
 
 	private boolean invite(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
-		Player p = Bukkit.getPlayer(args[1]);
-		if (p == null) {
-			senderPlayer.player.sendMessage("你邀請的玩家" + ChatColor.GOLD + args[1] + ChatColor.WHITE + "不存在");
+		if (args.length != 2) {
+			senderPlayer.player.sendMessage("邀請指令錯誤");
+			this.help(sender, cmd, cmdlable, args, senderPlayer);
 			return false;
 		}
+
+		Player p = Bukkit.getPlayer(args[1]);
+		if (p == null) {
+			senderPlayer.player.sendMessage(
+					"你邀請的玩家 " + ChatColor.GOLD + args[1] + ChatColor.WHITE + " 不存在或是不在線上！");
+			return false;
+		}
+
 		PlayerData receiverPlayer = allPlayers.get((Object) p.getUniqueId());
 		if (receiverPlayer == null) {
-			senderPlayer.player.sendMessage("你邀請的玩家" + ChatColor.GOLD + args[1] + ChatColor.WHITE
-					+ "不存在於allPlayers中,請聯繫開發人員");
+			senderPlayer.player.sendMessage("你邀請的玩家 " + ChatColor.GOLD + args[1] + ChatColor.WHITE
+					+ " 不存在於allPlayers中,請聯繫開發人員");
 			return false;
 		}
 
@@ -93,10 +101,16 @@ public class TeamManager {
 
 	private boolean join(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
+		if (args.length != 2) {
+			senderPlayer.player.sendMessage("邀請指令錯誤");
+			this.help(sender, cmd, cmdlable, args, senderPlayer);
+			return false;
+		}
+
 		Player p = Bukkit.getPlayer(args[1]);
 		if (p == null) {
 			senderPlayer.player.sendMessage(
-					"你要加入的隊伍的邀請人" + ChatColor.GOLD + args[1] + ChatColor.WHITE + "不存在");
+					"你要加入的隊伍的邀請人 " + ChatColor.GOLD + args[1] + ChatColor.WHITE + " 不存在或是不在線上！");
 			return false;
 		}
 		PlayerData receiverPlayer = allPlayers.get((Object) p.getUniqueId());
@@ -163,7 +177,6 @@ public class TeamManager {
 	private boolean list(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
 		Optional<Team> team = senderPlayer.team;
-
 		if (!team.isPresent()) {
 			senderPlayer.player.sendMessage("你不在任何隊伍裡");
 
@@ -181,7 +194,6 @@ public class TeamManager {
 	private boolean leave(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
 		Optional<Team> team = senderPlayer.team;
-
 		if (!team.isPresent()) {
 			senderPlayer.player.spigot().sendMessage(new TextComponent("你沒有隊伍"));
 			return false;
