@@ -145,8 +145,14 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onMessage(AsyncPlayerChatEvent e) throws InterruptedException, ExecutionException {
-        e.setFormat(ChatColor.WHITE + "[" + ChatColor.AQUA + "工程師" + ChatColor.WHITE + "] " + e.getPlayer().getName()
-                + " 說 " + ChatColor.GRAY + e.getMessage());
+        String t = ChatColor.WHITE + "[" + ChatColor.AQUA + "工程師" + ChatColor.WHITE + "] " + e.getPlayer().getName()
+                + " 說 " + ChatColor.GRAY + e.getMessage();
+
+        e.setFormat(t);
+
+
+        testBot.sendMessage("873512076184813588", t);
+
         // 顯示對話泡泡
         Bukkit.getScheduler().callSyncMethod(this, () -> this.setholo(e.getPlayer(), e.getMessage(), 1)).get();
     }
