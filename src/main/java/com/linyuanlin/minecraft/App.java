@@ -62,7 +62,8 @@ public class App extends JavaPlugin implements Listener {
         mongodbConnectString = this.getConfig().getString("mongo_connection_string");
 
         if (mongodbConnectString == null || mongodbConnectString.equals("mongodb://username:password@host")) {
-            getLogger().log(java.util.logging.Level.WARNING, "There is no valid mongodb connection string in config file !!");
+            getLogger().log(java.util.logging.Level.WARNING,
+                    "There is no valid mongodb connection string in config file !!");
             for (Player p : getServer().getOnlinePlayers()) {
                 p.sendMessage(ChatColor.RED + "伺服器主系統啟動失敗，資料庫設定無效，請聯繫工程師處理！");
             }
@@ -139,7 +140,7 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
-        allPlayers.get(e.getPlayer().getUniqueId()).logOut(allPlayers);
+        allPlayers.get(e.getPlayer().getUniqueId()).logOut();
     }
 
     @EventHandler

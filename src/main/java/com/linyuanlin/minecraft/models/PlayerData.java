@@ -17,7 +17,7 @@ public class PlayerData {
     public int balance = 0;
     public Document mongoObject;
     public Optional<Team> team;
-    private HashMap<Player, Date> invitedTimeMap, inviteTimeMap;// inviteTimeMap is enough!!!
+    private HashMap<Player, Date> invitedTimeMap, inviteTimeMap;
     private App app;
 
     public PlayerData(App app, UUID uuid) throws Exception {
@@ -61,9 +61,16 @@ public class PlayerData {
 
     public void destroyInvitedRecord() {// possible exception
         for (Player p : this.invitedTimeMap.keySet()) {
-            invitedTimeMap.remove(p);
             app.allPlayers.get(p.getUniqueId()).inviteTimeMap.remove(this.player);
         }
+        this.invitedTimeMap.clear();
+    }
+
+    public void destroyInviteRecord() {
+        for (Player p : this.inviteTimeMap.keySet()) {
+            app.allPlayers.get(p.getUniqueId()).invitedTimeMap.remove(this.player);
+        }
+        this.inviteTimeMap.clear();
     }
 
     public boolean isInviteCooling(PlayerData p) {
@@ -88,12 +95,13 @@ public class PlayerData {
         return ChatColor.GRAY + "(" + this.team.get().size() + "/4)";
     }
 
-    public void logOut(HashMap<UUID, PlayerData> allPlayers) {
+    public void logOut() {
         this.saveData();
         if (this.team.isPresent()) {
             this.player.performCommand("team leave");// command shouldn't include `/`
         }
 
         this.destroyInvitedRecord();
+        this.destroyInviteRecord();
     }
 }
