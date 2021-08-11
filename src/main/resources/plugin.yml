@@ -5,5 +5,5 @@ depend: [ HolographicDisplays, DiscordBot ]
 commands:
   team:
     description: 組隊系統
-  pay:
-    description: 金錢系統
+  trade:
+    description: 交易系統
