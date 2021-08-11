@@ -39,7 +39,7 @@ public class TeamManager {
 			case "leave":
 				return this.leave(sender, cmd, cmdlable, args, senderPlayer);
 			default:
-				return this.help(sender, cmd, cmdlable, args, senderPlayer);
+				return this.help(senderPlayer);
 		}
 	}
 
@@ -47,7 +47,7 @@ public class TeamManager {
 			PlayerData senderPlayer) {
 		if (args.length != 2) {
 			senderPlayer.player.sendMessage("邀請指令錯誤");
-			this.help(sender, cmd, cmdlable, args, senderPlayer);
+			this.help(senderPlayer);
 			return false;
 		}
 
@@ -102,8 +102,8 @@ public class TeamManager {
 	private boolean join(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
 		if (args.length != 2) {
-			senderPlayer.player.sendMessage("邀請指令錯誤");
-			this.help(sender, cmd, cmdlable, args, senderPlayer);
+			senderPlayer.player.sendMessage("組隊指令錯誤");
+			this.help(senderPlayer);
 			return false;
 		}
 
@@ -241,8 +241,7 @@ public class TeamManager {
 		return true;
 	}
 
-	private boolean help(CommandSender sender, Command cmd, String cmdlable, String[] args,
-			PlayerData senderPlayer) {
+	private boolean help(PlayerData senderPlayer) {
 		senderPlayer.player.sendMessage("沒有這個指令");
 		senderPlayer.player.sendMessage(ChatColor.AQUA + "/team 的使用方式：");
 		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team invite <對象>");
