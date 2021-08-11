@@ -15,6 +15,8 @@ import com.linyuanlin.minecraft.App;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
+import com.linyuanlin.minecraft.Manager.TeamManager;
+import org.bukkit.entity.Player;
 
 public class TeamManager {
 	private HashMap<UUID, PlayerData> allPlayers;
@@ -43,19 +45,29 @@ public class TeamManager {
 
 	private boolean invite(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
-		PlayerData receiverPlayer = allPlayers.get((Object) Bukkit.getPlayer(args[1]).getUniqueId());
-		if (receiverPlayer == null) {
+		Player p = Bukkit.getPlayer(args[1]);
+		if (p == null) {
 			senderPlayer.player.sendMessage("你邀請的玩家" + ChatColor.GOLD + args[1] + ChatColor.WHITE + "不存在");
+			return false;
+		}
+		PlayerData receiverPlayer = allPlayers.get((Object) p.getUniqueId());
+		if (receiverPlayer == null) {
+			senderPlayer.player.sendMessage("你邀請的玩家" + ChatColor.GOLD + args[1] + ChatColor.WHITE
+					+ "不存在於allPlayers中,請聯繫開發人員");
 			return false;
 		}
 
 		TextComponent msg = new TextComponent();
 		Optional<Team> team = allPlayers.get(receiverPlayer.player.getUniqueId()).team;
 
+		if (receiverPlayer == senderPlayer) {
+			senderPlayer.player.sendMessage("不能邀請自己");
+			return false;
+		}
+
 		if (team.isPresent()) {
-			msg = new TextComponent(
+			senderPlayer.player.sendMessage(
 					ChatColor.GOLD + receiverPlayer.player.getName() + ChatColor.WHITE + "已經有隊伍了！");
-			senderPlayer.player.spigot().sendMessage(msg);
 			return false;
 		}
 
@@ -73,8 +85,7 @@ public class TeamManager {
 				"/team join " + senderPlayer.player.getName()));
 		receiverPlayer.player.spigot().sendMessage(msg);
 
-		senderPlayer.player.spigot().sendMessage(
-				new TextComponent("已發送邀請給 " + ChatColor.GOLD + receiverPlayer.player.getName()));
+		senderPlayer.player.sendMessage("已發送邀請給 " + ChatColor.GOLD + receiverPlayer.player.getName());
 		senderPlayer.recordInvite(receiverPlayer);
 
 		return true;
@@ -82,10 +93,16 @@ public class TeamManager {
 
 	private boolean join(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
-		PlayerData receiverPlayer = allPlayers.get((Object) Bukkit.getPlayer(args[1]).getUniqueId());
-		if (receiverPlayer == null) {
+		Player p = Bukkit.getPlayer(args[1]);
+		if (p == null) {
 			senderPlayer.player.sendMessage(
 					"你要加入的隊伍的邀請人" + ChatColor.GOLD + args[1] + ChatColor.WHITE + "不存在");
+			return false;
+		}
+		PlayerData receiverPlayer = allPlayers.get((Object) p.getUniqueId());
+		if (receiverPlayer == null) {
+			senderPlayer.player.sendMessage("你要加入的隊伍的邀請人" + ChatColor.GOLD + args[1] + ChatColor.WHITE
+					+ "不存在於allPlayers中, 請聯繫開發人員");
 			return false;
 		}
 

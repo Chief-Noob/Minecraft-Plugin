@@ -95,7 +95,7 @@ public class PlayerData {
         return ChatColor.GRAY + "(" + this.team.get().size() + "/4)";
     }
 
-    public void logOut(HashMap<UUID, PlayerData> allPlayers) {
+    public void logOut() {
         this.saveData();
         if (this.team.isPresent()) {
             this.player.performCommand("team leave");// command shouldn't include `/`
