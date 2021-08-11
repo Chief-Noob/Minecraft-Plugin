@@ -6,6 +6,7 @@ import com.tjplaysnow.discord.object.ThreadSpigot;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class DiscordBotManager {
 
@@ -29,6 +30,12 @@ public class DiscordBotManager {
 
     public void registerNewTextChannel(String channelTag, String channelId) {
         textChannels.put(channelTag, channelId);
+    }
+
+    public void shutDownAllBot() {
+        for (Map.Entry<String, Bot> pair : bots.entrySet()) {
+            pair.getValue().getBot().shutdown();
+        }
     }
 
     public void sendMessage(String botTag, String channelTag, String message) {
