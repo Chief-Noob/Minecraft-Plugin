@@ -2,6 +2,7 @@ package com.linyuanlin.minecraft.Manager;
 
 import com.linyuanlin.minecraft.App;
 import com.tjplaysnow.discord.object.Bot;
+import com.tjplaysnow.discord.object.ThreadSpigot;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.HashMap;
@@ -21,7 +22,9 @@ public class DiscordBotManager {
     }
 
     public void registerNewBot(String tag, String token) {
-        bots.put(tag, new Bot(token, tag));
+        Bot b = new Bot(token, tag);
+        b.setBotThread(new ThreadSpigot(this.app));
+        bots.put(tag, b);
     }
 
     public void registerNewTextChannel(String channelTag, String channelId) {
