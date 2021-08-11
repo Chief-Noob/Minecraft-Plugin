@@ -2,10 +2,7 @@ package com.linyuanlin.minecraft;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.linyuanlin.minecraft.Manager.LocationManager;
-import com.linyuanlin.minecraft.Manager.TeamManager;
-import com.linyuanlin.minecraft.Manager.TradeManager;
-import com.linyuanlin.minecraft.Manager.WorldManager;
+import com.linyuanlin.minecraft.Manager.*;
 import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.mongodb.MongodbClient;
 import com.tjplaysnow.discord.object.Bot;
@@ -28,6 +25,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -40,6 +39,7 @@ public class App extends JavaPlugin implements Listener {
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
     public WorldManager worldManager = new WorldManager();
     public LocationManager locationManager = new LocationManager();
+    public DiscordBotManager discordBotManager = new DiscordBotManager(this);
     public TeamManager teamManager = new TeamManager(this);
     public TradeManager tradeManager = new TradeManager(this);
     public String mongodbConnectString = "";
@@ -55,9 +55,32 @@ public class App extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
 
+        // Starting discord bot
+
+        String discordBotToken = this.getConfig().getString("discord_bot_token");
+
+        if (discordBotToken == null || discordBotToken.equals("null")) {
+            getLogger().log(java.util.logging.Level.WARNING, "There is no valid discord bot token in config file !!");
+        } else {
+            discordBotManager.registerNewBot("TEST", discordBotToken);
+            discordBotManager.registerNewTextChannel("Project-Minecraft", "873512076184813588");
+            Bukkit.getScheduler().runTaskLater(this, new Runnable() {
+                @Override
+                public void run() {
+                    discordBotManager.sendMessage("TEST", "Project-Minecraft", "Server main system enabled.");
+                }
+            }, 100L);
+        }
+
+        // register event listeners
+
         getServer().getPluginManager().registerEvents(this, this);
 
+        // handling configs
+
         this.saveDefaultConfig();
+
+        // starting database connections
 
         mongodbConnectString = this.getConfig().getString("mongo_connection_string");
 
@@ -72,84 +95,118 @@ public class App extends JavaPlugin implements Listener {
         Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
         this.dbClient = new MongodbClient(this, "Minecraft");
 
+        // Download all user data
+
         try {
             downloadAllUserData();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        // load all worlds
+
         worldManager.loadWorlds();
 
         getLogger().info("Main system enabled");
 
-        String discordBotToken = this.getConfig().getString("discord_bot_token");
-
-        if (discordBotToken == null || discordBotToken.equals("null")) {
-            getLogger().log(java.util.logging.Level.WARNING, "There is no valid discord bot token in config file !!");
-        } else {
-            this.testBot = new Bot(discordBotToken, "TEST");
-            TextChannel c = this.testBot.getBot().getTextChannelById("873512076184813588");
-            if (c != null)
-                c.sendMessage("系統重啟完成～").queue(r -> getLogger().info(r.getContentDisplay()));
-        }
     }
 
     @Override
     public void onDisable() {
+        try {
 
-        for (Map.Entry<UUID, PlayerData> pair : allPlayers.entrySet()) {
-            pair.getValue().saveData();
+            for (Map.Entry<UUID, PlayerData> pair : allPlayers.entrySet()) {
+                pair.getValue().saveData();
+            }
+
+            this.dbClient.close();
+
+            getLogger().info("See you again, SpigotMC!");
+
+        } catch (Exception exception) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            exception.printStackTrace(pw);
+            discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
         }
 
-        this.dbClient.close();
-
-        getLogger().info("See you again, SpigotMC!");
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) throws Exception {
-        Player p = e.getPlayer();
-        p.sendTitle(ChatColor.YELLOW + "歡迎光臨", ChatColor.GRAY + "本伺服器目前仍在開發階段", 20, 80, 40);
-        e.setJoinMessage(
-                ChatColor.WHITE + "玩家 " + ChatColor.GOLD + e.getPlayer().getName() + ChatColor.WHITE + " 登入了, 讚啦！");
-        allPlayers.put(p.getUniqueId(), new PlayerData(this, p.getUniqueId()));
+        try {
+            Player p = e.getPlayer();
+            p.sendTitle(ChatColor.YELLOW + "歡迎光臨", ChatColor.GRAY + "本伺服器目前仍在開發階段", 20, 80, 40);
+            e.setJoinMessage(
+                    ChatColor.WHITE + "玩家 " + ChatColor.GOLD + e.getPlayer().getName() + ChatColor.WHITE + " 登入了, 讚啦！");
+            allPlayers.put(p.getUniqueId(), new PlayerData(this, p.getUniqueId()));
 
-        World lobbyWorld = Bukkit.getWorld("world_lobby");
-        if (lobbyWorld != null) {
-            p.teleport(lobbyWorld.getSpawnLocation());
+            World lobbyWorld = Bukkit.getWorld("world_lobby");
+            if (lobbyWorld != null) {
+                p.teleport(lobbyWorld.getSpawnLocation());
+            }
+        } catch (Exception exception) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            exception.printStackTrace(pw);
+            discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
         }
     }
 
     @EventHandler
     public void onPlayerWorldChange(PlayerChangedWorldEvent e) {
-        Player p = e.getPlayer();
-        String newWorldName = p.getWorld().getName();
-        if (newWorldName.equals("house_world")) {
-            p.sendTitle(ChatColor.YELLOW + "小屋世界", "你能用收集來的資源建造你的居所，也能儲存你的戰利品以及勳章和物資", 20, 80, 20);
-        }
-        if (newWorldName.equals("world_lobby")) {
-            p.sendTitle(ChatColor.YELLOW + "大廳", "所有玩家一開始進入遊戲時的交誼廳，擁有通往各個區域的傳送門", 20, 80, 20);
+        try {
+            Player p = e.getPlayer();
+            String newWorldName = p.getWorld().getName();
+            if (newWorldName.equals("house_world")) {
+                p.sendTitle(ChatColor.YELLOW + "小屋世界", "你能用收集來的資源建造你的居所，也能儲存你的戰利品以及勳章和物資", 20, 80, 20);
+            }
+            if (newWorldName.equals("world_lobby")) {
+                p.sendTitle(ChatColor.YELLOW + "大廳", "所有玩家一開始進入遊戲時的交誼廳，擁有通往各個區域的傳送門", 20, 80, 20);
+            }
+        } catch (Exception exception) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            exception.printStackTrace(pw);
+            discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
         }
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
-        allPlayers.get(e.getPlayer().getUniqueId()).logOut();
+        try {
+            allPlayers.get(e.getPlayer().getUniqueId()).logOut();
+        } catch (Exception exception) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            exception.printStackTrace(pw);
+            discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
+        }
     }
 
     @EventHandler
     public void onMessage(AsyncPlayerChatEvent e) throws InterruptedException, ExecutionException {
-        String t = ChatColor.WHITE + "[" + ChatColor.AQUA + "工程師" + ChatColor.WHITE + "] " + e.getPlayer().getName()
-                + " 說 " + ChatColor.GRAY + e.getMessage();
 
-        e.setFormat(t);
+        try {
 
-        TextChannel c = this.testBot.getBot().getTextChannelById("873512076184813588");
-        if (c != null)
-            c.sendMessage(t).queue(r -> getLogger().info(r.getContentDisplay()));
+            String t = ChatColor.WHITE + "[" + ChatColor.AQUA + "工程師" + ChatColor.WHITE + "] " + e.getPlayer().getName()
+                    + " 說 " + ChatColor.GRAY + e.getMessage();
 
-        // 顯示對話泡泡
-        Bukkit.getScheduler().callSyncMethod(this, () -> this.setholo(e.getPlayer(), e.getMessage(), 1)).get();
+            e.setFormat(t);
+
+            TextChannel c = this.testBot.getBot().getTextChannelById("873512076184813588");
+            if (c != null)
+                c.sendMessage(t).queue(r -> getLogger().info(r.getContentDisplay()));
+
+            // 顯示對話泡泡
+            Bukkit.getScheduler().callSyncMethod(this, () -> this.setholo(e.getPlayer(), e.getMessage(), 1)).get();
+
+        } catch (Exception exception) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            exception.printStackTrace(pw);
+            discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
+        }
     }
 
     /**
@@ -184,31 +241,53 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEntityEvent event1) {
-        Player p = event1.getPlayer();
-        Entity entity = event1.getRightClicked();
-        if (entity instanceof Player && event1.getHand() == EquipmentSlot.HAND) {
-            p.sendMessage("他是 " + entity.getName());
-            p.sendMessage("該玩家擁有財產 " + allPlayers.get(entity.getUniqueId()).balance + " 元");
-            TextComponent a = new TextComponent("[傳送組隊邀請]");
-            a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊發送組隊邀請給 " + entity.getName())));
-            a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite " + entity.getName()));
-            p.spigot().sendMessage(a);
+
+        try {
+
+            Player p = event1.getPlayer();
+            Entity entity = event1.getRightClicked();
+            if (entity instanceof Player && event1.getHand() == EquipmentSlot.HAND) {
+                p.sendMessage("他是 " + entity.getName());
+                p.sendMessage("該玩家擁有財產 " + allPlayers.get(entity.getUniqueId()).balance + " 元");
+                TextComponent a = new TextComponent("[傳送組隊邀請]");
+                a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊發送組隊邀請給 " + entity.getName())));
+                a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite " + entity.getName()));
+                p.spigot().sendMessage(a);
+            }
+
+        } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
         }
     }
 
     @EventHandler
     public boolean onCommand(CommandSender sender, Command cmd, String cmdlable, String[] args) {
-        PlayerData senderPlayer = allPlayers.get(((Player) sender).getUniqueId());
-        if (senderPlayer == null)
-            return false;
 
-        switch (cmdlable) {
-            case "trade":
-                return tradeManager.onCommandTrade(sender, cmd, cmdlable, args, senderPlayer);
-            case "team":
-                return teamManager.onCommandTeam(sender, cmd, cmdlable, args, senderPlayer);
-            default:
+        try {
+
+            PlayerData senderPlayer = allPlayers.get(((Player) sender).getUniqueId());
+            if (senderPlayer == null)
                 return false;
+
+            switch (cmdlable) {
+                case "trade":
+                    return tradeManager.onCommandTrade(sender, cmd, cmdlable, args, senderPlayer);
+                case "team":
+                    return teamManager.onCommandTeam(sender, cmd, cmdlable, args, senderPlayer);
+                default:
+                    return false;
+            }
+
+        } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
         }
+
+        return false;
     }
 }
