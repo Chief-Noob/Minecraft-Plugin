@@ -28,13 +28,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.security.auth.login.LoginException;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class App extends JavaPlugin implements Listener {
@@ -57,14 +55,6 @@ public class App extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
 
-        Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
-
-        final LogManager lm = LogManager.getLogManager();
-        for (final Enumeration<String> i = lm.getLoggerNames(); i.hasMoreElements(); ) {
-            getLogger().log(Level.INFO, i.toString());
-            lm.getLogger(i.nextElement()).setLevel(Level.OFF);
-        }
-
         getServer().getPluginManager().registerEvents(this, this);
 
         this.saveDefaultConfig();
@@ -78,6 +68,7 @@ public class App extends JavaPlugin implements Listener {
             }
         }
 
+        Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
         this.dbClient = new MongodbClient(this, "Minecraft");
 
         try {
