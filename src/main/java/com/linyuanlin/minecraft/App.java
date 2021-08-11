@@ -115,6 +115,8 @@ public class App extends JavaPlugin implements Listener {
     public void onDisable() {
         try {
 
+            discordBotManager.shutDownAllBot();
+
             for (Map.Entry<UUID, PlayerData> pair : allPlayers.entrySet()) {
                 pair.getValue().saveData();
             }
