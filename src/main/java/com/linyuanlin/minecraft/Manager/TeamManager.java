@@ -46,7 +46,7 @@ public class TeamManager {
 	private boolean invite(CommandSender sender, Command cmd, String cmdlable, String[] args,
 			PlayerData senderPlayer) {
 		if (args.length != 2) {
-			senderPlayer.player.sendMessage("邀請指令錯誤");
+			senderPlayer.player.sendMessage(ChatColor.RED + "邀請指令錯誤");
 			this.help(senderPlayer);
 			return false;
 		}
@@ -242,7 +242,7 @@ public class TeamManager {
 	}
 
 	private boolean help(PlayerData senderPlayer) {
-		senderPlayer.player.sendMessage("沒有這個指令");
+		senderPlayer.player.sendMessage(ChatColor.RED + "沒有這個指令");
 		senderPlayer.player.sendMessage(ChatColor.AQUA + "/team 的使用方式：");
 		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team invite <對象>");
 		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team join <對象>");
