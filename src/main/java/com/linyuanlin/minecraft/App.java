@@ -5,8 +5,6 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.linyuanlin.minecraft.Manager.*;
 import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.mongodb.MongodbClient;
-import com.tjplaysnow.discord.object.Bot;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -43,7 +41,6 @@ public class App extends JavaPlugin implements Listener {
     public TeamManager teamManager = new TeamManager(this);
     public TradeManager tradeManager = new TradeManager(this);
     public String mongodbConnectString = "";
-    public Bot testBot;
     public MongodbClient dbClient;
 
     public void downloadAllUserData() throws Exception {
@@ -190,9 +187,7 @@ public class App extends JavaPlugin implements Listener {
 
             e.setFormat(t);
 
-            TextChannel c = this.testBot.getBot().getTextChannelById("873512076184813588");
-            if (c != null)
-                c.sendMessage(t).queue(r -> getLogger().info(r.getContentDisplay()));
+            discordBotManager.sendMessage("TEST", "Project-Minecraft", t);
 
             // 顯示對話泡泡
             Bukkit.getScheduler().callSyncMethod(this, () -> this.setholo(e.getPlayer(), e.getMessage(), 1)).get();
