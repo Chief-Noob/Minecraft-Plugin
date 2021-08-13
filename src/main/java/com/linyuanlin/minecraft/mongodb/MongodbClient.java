@@ -36,6 +36,17 @@ public class MongodbClient {
         }
     }
 
+    public Document findOne(String collectionName, String fieldName, String value) {
+        try {
+            this.cursor = this.database.getCollection(collectionName)
+                    .find(new BasicDBObject(fieldName, value));
+            return cursor.explain();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void insert(String collectionName, Document dbObject) {
         try {
             this.database.getCollection(collectionName).insertOne(dbObject);

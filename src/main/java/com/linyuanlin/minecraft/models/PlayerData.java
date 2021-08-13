@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 public class PlayerData {
     public Player player;
     public int balance = 0;
-    public Document mongoObject;
     public Optional<Team> team;
     private HashMap<Player, Date> invitedTimeMap, inviteTimeMap;
     private App app;
@@ -23,9 +22,11 @@ public class PlayerData {
     public PlayerData(App app, UUID uuid) throws Exception {
         this.app = app;
 
-        this.player = Bukkit.getServer().getPlayer(uuid);
+        Document d = app.dbClient.findOne("Player", "uuid", uuid.toString());
 
-        this.mongoObject = new Document();
+        this.balance = d.getInteger("balance");
+
+        this.player = Bukkit.getServer().getPlayer(uuid);
 
         this.invitedTimeMap = new HashMap<>();
 
@@ -41,15 +42,11 @@ public class PlayerData {
         player.sendMessage(ChatColor.GRAY + "你的資料已從資料庫同步完成");
     }
 
-    public void wrapMongoObject() {
-        this.mongoObject.append("balance", this.balance);
-    }
-
     public void saveData() {
-        /* Save data into database */
-        this.wrapMongoObject();
-        this.app.dbClient.insert("PlayerData", this.mongoObject);
-
+        Document d = new Document();
+        d.append("uuid", player.getUniqueId());
+        d.append("balance", this.balance);
+        app.dbClient.insert("PlayerData", d);
         player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
     }
 
@@ -82,8 +79,8 @@ public class PlayerData {
         if (p.inviteTimeMap.get(this.player) != null && this.invitedTimeMap.get(p.player) != null) {
             Date t = new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1));
             if (this.invitedTimeMap.get(p.player).before(t) && p.inviteTimeMap.get(this.player).before(t)) {
-                this.invitedTimeMap.remove((Object) p.player);
-                p.inviteTimeMap.remove((Object) this.player);
+                this.invitedTimeMap.remove(p.player);
+                p.inviteTimeMap.remove(this.player);
                 return false;
             }
             return true;
