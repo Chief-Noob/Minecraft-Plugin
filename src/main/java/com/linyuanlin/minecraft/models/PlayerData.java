@@ -26,9 +26,7 @@ public class PlayerData {
         Document d = app.dbClient.findOne("PlayerData", "uuid", uuid.toString());
 
         if (!d.isEmpty()) {
-
             this.balance = d.getInteger("balance");
-
         }
 
         this.player = Bukkit.getServer().getPlayer(uuid);

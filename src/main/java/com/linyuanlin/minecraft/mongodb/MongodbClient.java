@@ -38,9 +38,8 @@ public class MongodbClient {
 
     public Document findOne(String collectionName, String fieldName, String value) {
         try {
-            this.cursor = this.database.getCollection(collectionName)
-                    .find(new BasicDBObject(fieldName, value));
-            return cursor.explain();
+            this.cursor = this.database.getCollection(collectionName).find(new BasicDBObject(fieldName, value));
+            return cursor.first();
         } catch (Exception e) {
             e.printStackTrace();
         }
