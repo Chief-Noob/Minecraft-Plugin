@@ -137,7 +137,10 @@ public class App extends JavaPlugin implements Listener {
             Player p = e.getPlayer();
             PlayerData pd = new PlayerData(this, p.getUniqueId());
             allPlayers.put(p.getUniqueId(), pd);
+            String msg = ChatColor.WHITE + "玩家 " + ChatColor.GOLD + e.getPlayer().getName() + ChatColor.WHITE + " 登入了, 讚啦！";
+            e.setJoinMessage(msg);
             World lobbyWorld = Bukkit.getWorld("world_lobby");
+            discordBotManager.sendMessage("TEST", "Project-Minecraft", msg);
             if (lobbyWorld != null) {
                 p.teleport(lobbyWorld.getSpawnLocation());
             }
@@ -169,6 +172,9 @@ public class App extends JavaPlugin implements Listener {
     public void onLeave(PlayerQuitEvent e) {
         try {
             allPlayers.get(e.getPlayer().getUniqueId()).logOut();
+            String msg = ChatColor.WHITE + "玩家 " + ChatColor.GOLD + e.getPlayer().getName() + ChatColor.WHITE + " 登出了！";
+            e.setQuitMessage(msg);
+            discordBotManager.sendMessage("TEST", "Project-Minecraft", msg);
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
