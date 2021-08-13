@@ -13,6 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerData {
+
     public Player player;
     public int balance = 0;
     public Optional<Team> team;
@@ -24,8 +25,10 @@ public class PlayerData {
 
         Document d = app.dbClient.findOne("PlayerData", "uuid", uuid.toString());
 
-        if (d != null) {
+        if (!d.isEmpty()) {
+
             this.balance = d.getInteger("balance");
+
         }
 
         this.player = Bukkit.getServer().getPlayer(uuid);
@@ -58,7 +61,8 @@ public class PlayerData {
         p.invitedTimeMap.put(this.player, t);
     }
 
-    public void destroyInvitedRecord() {// possible exception
+    // possible exception
+    public void destroyInvitedRecord() {
         for (Player p : this.invitedTimeMap.keySet()) {
             app.allPlayers.get(p.getUniqueId()).inviteTimeMap.remove(this.player);
         }
