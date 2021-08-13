@@ -138,15 +138,13 @@ public class App extends JavaPlugin implements Listener {
     public void onJoin(PlayerJoinEvent e) throws Exception {
         try {
             Player p = e.getPlayer();
-            p.sendTitle(ChatColor.YELLOW + "歡迎光臨", ChatColor.GRAY + "本伺服器目前仍在開發階段", 20, 80, 40);
-            e.setJoinMessage(
-                    ChatColor.WHITE + "玩家 " + ChatColor.GOLD + e.getPlayer().getName() + ChatColor.WHITE + " 登入了, 讚啦！");
-            allPlayers.put(p.getUniqueId(), new PlayerData(this, p.getUniqueId()));
-
+            PlayerData pd = new PlayerData(this, p.getUniqueId());
+            allPlayers.put(p.getUniqueId(), pd);
             World lobbyWorld = Bukkit.getWorld("world_lobby");
             if (lobbyWorld != null) {
                 p.teleport(lobbyWorld.getSpawnLocation());
             }
+            pd.sendWorldTitle(p.getWorld().getName());
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -160,12 +158,8 @@ public class App extends JavaPlugin implements Listener {
         try {
             Player p = e.getPlayer();
             String newWorldName = p.getWorld().getName();
-            if (newWorldName.equals("house_world")) {
-                p.sendTitle(ChatColor.YELLOW + "小屋世界", "你能用收集來的資源建造你的居所，也能儲存你的戰利品以及勳章和物資", 20, 80, 20);
-            }
-            if (newWorldName.equals("world_lobby")) {
-                p.sendTitle(ChatColor.YELLOW + "大廳", "所有玩家一開始進入遊戲時的交誼廳，擁有通往各個區域的傳送門", 20, 80, 20);
-            }
+            PlayerData pd = allPlayers.get(p.getUniqueId());
+            pd.sendWorldTitle(newWorldName);
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);

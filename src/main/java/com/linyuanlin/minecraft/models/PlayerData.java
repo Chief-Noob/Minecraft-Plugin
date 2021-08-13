@@ -75,7 +75,7 @@ public class PlayerData {
 
     public boolean isInviteCooling(PlayerData p) {
         Date t = inviteTimeMap.get(p.player);
-        return t == null ? false : new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1)).before(t);
+        return t != null && new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1)).before(t);
     }
 
     public boolean isInvitedBy(PlayerData p) {
@@ -103,5 +103,11 @@ public class PlayerData {
 
         this.destroyInvitedRecord();
         this.destroyInviteRecord();
+    }
+
+    public void sendWorldTitle(String worldName) {
+        WorldData wd = app.worldManager.getWorldData(worldName);
+        if (wd == null) return;
+        player.sendTitle(ChatColor.YELLOW + wd.worldName, wd.worldDescription, 20, 80, 20);
     }
 }
