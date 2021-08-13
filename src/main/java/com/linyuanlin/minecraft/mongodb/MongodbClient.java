@@ -6,7 +6,9 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
+
 
 public class MongodbClient {
     public FindIterable<Document> cursor;
@@ -56,7 +58,7 @@ public class MongodbClient {
 
     public void updateById(String collectionName, String objectId, Document dbObject) {
         try {
-            this.database.getCollection(collectionName).updateOne(new BasicDBObject("_id", objectId), dbObject);
+            this.database.getCollection(collectionName).updateOne(Filters.eq("_id", objectId), dbObject);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,7 +66,7 @@ public class MongodbClient {
 
     public void updateOne(String collectionName, String field, String value, Document dbObject) {
         try {
-            database.getCollection(collectionName).updateOne(new BasicDBObject(field, value), dbObject);
+            database.getCollection(collectionName).updateOne(Filters.eq(field, value), dbObject);
         } catch (Exception e) {
             e.printStackTrace();
         }

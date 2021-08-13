@@ -54,7 +54,6 @@ public class PlayerData {
         Document d = new Document();
         d.append("uuid", player.getUniqueId().toString());
         d.append("balance", this.balance);
-        app.dbClient.insert("PlayerData", d);
         app.dbClient.updateOne("PlayerData", "uuid", player.getUniqueId().toString(), d);
         player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
     }
