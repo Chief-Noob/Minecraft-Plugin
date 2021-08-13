@@ -22,9 +22,11 @@ public class PlayerData {
     public PlayerData(App app, UUID uuid) throws Exception {
         this.app = app;
 
-        Document d = app.dbClient.findOne("Player", "uuid", uuid.toString());
+        Document d = app.dbClient.findOne("PlayerData", "uuid", uuid.toString());
 
-        this.balance = d.getInteger("balance");
+        if (d != null) {
+            this.balance = d.getInteger("balance");
+        }
 
         this.player = Bukkit.getServer().getPlayer(uuid);
 
