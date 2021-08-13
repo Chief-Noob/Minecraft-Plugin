@@ -62,6 +62,14 @@ public class MongodbClient {
         }
     }
 
+    public void updateOne(String collectionName, String field, String value, Document dbObject) {
+        try {
+            database.getCollection(collectionName).updateOne(new BasicDBObject(field, value), dbObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void deleteById(String collectionName, String objectId) {
         try {
             this.database.getCollection(collectionName).deleteOne(new BasicDBObject("_id", objectId));

@@ -27,6 +27,11 @@ public class PlayerData {
 
         if (d != null) {
             this.balance = d.getInteger("balance");
+        } else {
+            Document newDocument = new Document();
+            newDocument.append("uuid", player.getUniqueId().toString());
+            newDocument.append("balance", this.balance);
+            app.dbClient.insert("PlayerData", newDocument);
         }
 
         this.player = Bukkit.getServer().getPlayer(uuid);
@@ -50,6 +55,7 @@ public class PlayerData {
         d.append("uuid", player.getUniqueId().toString());
         d.append("balance", this.balance);
         app.dbClient.insert("PlayerData", d);
+        app.dbClient.updateOne("PlayerData", "uuid", player.getUniqueId().toString(), d);
         player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
     }
 
