@@ -25,7 +25,7 @@ public class PlayerData {
 
         Document d = app.dbClient.findOne("PlayerData", "uuid", uuid.toString());
 
-        if (!d.isEmpty()) {
+        if (d != null) {
             this.balance = d.getInteger("balance");
         }
 
