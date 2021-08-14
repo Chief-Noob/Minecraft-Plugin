@@ -25,15 +25,6 @@ public class PlayerData {
 
         Document d = app.dbClient.findOne("PlayerData", "uuid", uuid.toString());
 
-        if (d != null) {
-            this.balance = d.getInteger("balance");
-        } else {
-            Document newDocument = new Document();
-            newDocument.append("uuid", player.getUniqueId().toString());
-            newDocument.append("balance", this.balance);
-            app.dbClient.insert("PlayerData", newDocument);
-        }
-
         this.player = Bukkit.getServer().getPlayer(uuid);
 
         this.invitedTimeMap = new HashMap<>();
@@ -45,7 +36,14 @@ public class PlayerData {
         if (this.player == null)
             throw new Exception("PLAYER_NOT_ONLINE");
 
-        /* Import data from database */
+        if (d != null) {
+            this.balance = d.getInteger("balance");
+        } else {
+            Document newDocument = new Document();
+            newDocument.append("uuid", player.getUniqueId().toString());
+            newDocument.append("balance", this.balance);
+            app.dbClient.insert("PlayerData", newDocument);
+        }
 
         player.sendMessage(ChatColor.GRAY + "你的資料已從資料庫同步完成");
     }
