@@ -16,8 +16,8 @@ import java.util.concurrent.TimeUnit;
 public class PlayerData {
 
     public Player player;
-    public int balance = 0;
     public Optional<Team> team;
+    private int balance = 0;
     private HashMap<Player, Date> invitedTimeMap, inviteTimeMap;
     private App app;
 
@@ -110,9 +110,31 @@ public class PlayerData {
         this.destroyInviteRecord();
     }
 
+    /**
+     * Send a title to player about a world's information
+     */
     public void sendWorldTitle(String worldName) {
         WorldData wd = app.worldManager.getWorldData(worldName);
         if (wd == null) return;
         player.sendTitle(ChatColor.YELLOW + wd.worldName, wd.worldDescription, 20, 80, 20);
+    }
+
+    /**
+     * Modify the balance of player and leave a modification record into database
+     */
+    public void modifyBalance(int delta, String reason) {
+        Document d = new Document();
+        d.append("before", balance);
+        d.append("after", balance + delta);
+        d.append("reason", reason);
+        this.app.dbClient.insert("BalanceModify", d);
+        balance += delta;
+    }
+
+    /**
+     * Get player's balance
+     */
+    public int getBalance() {
+        return this.balance;
     }
 }

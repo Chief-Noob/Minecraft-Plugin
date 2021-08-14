@@ -2,7 +2,10 @@ package com.linyuanlin.minecraft;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.linyuanlin.minecraft.Manager.*;
+import com.linyuanlin.minecraft.Manager.DiscordBotManager;
+import com.linyuanlin.minecraft.Manager.TeamManager;
+import com.linyuanlin.minecraft.Manager.TradeManager;
+import com.linyuanlin.minecraft.Manager.WorldManager;
 import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.mongodb.MongodbClient;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -12,8 +15,6 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,14 +23,13 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,7 +37,6 @@ public class App extends JavaPlugin implements Listener {
 
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
     public WorldManager worldManager = new WorldManager();
-    public LocationManager locationManager = new LocationManager();
     public DiscordBotManager discordBotManager = new DiscordBotManager(this);
     public TeamManager teamManager = new TeamManager(this);
     public TradeManager tradeManager = new TradeManager(this);
@@ -62,12 +61,9 @@ public class App extends JavaPlugin implements Listener {
         } else {
             discordBotManager.registerNewBot("TEST", discordBotToken);
             discordBotManager.registerNewTextChannel("Project-Minecraft", "873512076184813588");
-            Bukkit.getScheduler().runTaskLater(this, new Runnable() {
-                @Override
-                public void run() {
-                    discordBotManager.sendMessage("TEST", "Project-Minecraft", "Server main system enabled.");
-                }
-            }, 100L);
+            Bukkit.getScheduler().runTaskLater(this,
+                    () -> discordBotManager.sendMessage("TEST", "Project-Minecraft", "Server main system enabled."),
+                    100L);
         }
 
         // register event listeners
@@ -107,6 +103,10 @@ public class App extends JavaPlugin implements Listener {
 
         getLogger().info("Main system enabled");
 
+        // register command
+        Objects.requireNonNull(this.getCommand("trade")).setExecutor(this.tradeManager);
+        Objects.requireNonNull(this.getCommand("team")).setExecutor(this.teamManager);
+
     }
 
     @Override
@@ -133,7 +133,7 @@ public class App extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e) throws Exception {
+    public void onJoin(PlayerJoinEvent e) {
         try {
             Player p = e.getPlayer();
             PlayerData pd = new PlayerData(this, p.getUniqueId());
@@ -185,7 +185,7 @@ public class App extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onMessage(AsyncPlayerChatEvent e) throws InterruptedException, ExecutionException {
+    public void onMessage(AsyncPlayerChatEvent e) {
 
         try {
 
@@ -197,7 +197,7 @@ public class App extends JavaPlugin implements Listener {
             discordBotManager.sendMessage("TEST", "Project-Minecraft", t);
 
             // 顯示對話泡泡
-            Bukkit.getScheduler().callSyncMethod(this, () -> this.setholo(e.getPlayer(), e.getMessage(), 1)).get();
+            Bukkit.getScheduler().callSyncMethod(this, () -> this.setHolo(e.getPlayer(), e.getMessage(), 1)).get();
 
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
@@ -210,7 +210,7 @@ public class App extends JavaPlugin implements Listener {
     /**
      * 對話時產生 hologram 在玩家頭上
      */
-    public boolean setholo(Player Player, String msg, int second) {
+    public boolean setHolo(Player Player, String msg, int second) {
         final Hologram hologram = HologramsAPI.createHologram(this, Player.getLocation().add(0.0, 2.0, 0.0));
         hologram.appendTextLine(msg);
 
@@ -246,7 +246,7 @@ public class App extends JavaPlugin implements Listener {
             Entity entity = event1.getRightClicked();
             if (entity instanceof Player && event1.getHand() == EquipmentSlot.HAND) {
                 p.sendMessage("他是 " + entity.getName());
-                p.sendMessage("該玩家擁有財產 " + allPlayers.get(entity.getUniqueId()).balance + " 元");
+                p.sendMessage("該玩家擁有財產 " + allPlayers.get(entity.getUniqueId()).getBalance() + " 元");
                 TextComponent a = new TextComponent("[傳送組隊邀請]");
                 a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊發送組隊邀請給 " + entity.getName())));
                 a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite " + entity.getName()));
@@ -259,33 +259,5 @@ public class App extends JavaPlugin implements Listener {
             e.printStackTrace(pw);
             discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
         }
-    }
-
-    @EventHandler
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String cmdLabel, String[] args) {
-
-        try {
-
-            PlayerData senderPlayer = allPlayers.get(((Player) sender).getUniqueId());
-            if (senderPlayer == null)
-                return false;
-
-            switch (cmdLabel) {
-                case "trade":
-                    return tradeManager.onCommandTrade(sender, cmd, cmdLabel, args, senderPlayer);
-                case "team":
-                    return teamManager.onCommandTeam(sender, cmd, cmdLabel, args, senderPlayer);
-                default:
-                    return false;
-            }
-
-        } catch (Exception e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
-        }
-
-        return false;
     }
 }

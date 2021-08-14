@@ -1,5 +1,6 @@
 package com.linyuanlin.minecraft.Manager;
 
+import com.linyuanlin.minecraft.App;
 import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.models.Team;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -9,246 +10,258 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-
-import com.linyuanlin.minecraft.App;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
-import com.linyuanlin.minecraft.Manager.TeamManager;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-public class TeamManager {
-	private HashMap<UUID, PlayerData> allPlayers;
-	App app;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Optional;
 
-	public TeamManager(App app) {
-		this.allPlayers = app.allPlayers;
-		this.app = app;
-	}
+public class TeamManager implements CommandExecutor {
+    App app;
 
-	public boolean onCommandTeam(CommandSender sender, Command cmd, String cmdlable, String[] args,
-			PlayerData senderPlayer) {
-		switch (args[0]) {
-			case "invite":
-				return this.invite(sender, cmd, cmdlable, args, senderPlayer);
-			case "join":
-				return this.join(sender, cmd, cmdlable, args, senderPlayer);
-			case "list":
-				return this.list(sender, cmd, cmdlable, args, senderPlayer);
-			case "leave":
-				return this.leave(sender, cmd, cmdlable, args, senderPlayer);
-			default:
-				return this.help(senderPlayer);
-		}
-	}
+    public TeamManager(App app) {
+        this.app = app;
+    }
 
-	private boolean invite(CommandSender sender, Command cmd, String cmdlable, String[] args,
-			PlayerData senderPlayer) {
-		if (args.length != 2) {
-			senderPlayer.player.sendMessage(ChatColor.RED + "邀請指令錯誤");
-			this.help(senderPlayer);
-			return false;
-		}
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        try {
 
-		Player p = Bukkit.getPlayer(args[1]);
-		if (p == null) {
-			senderPlayer.player.sendMessage(
-					"你邀請的玩家 " + ChatColor.GOLD + args[1] + ChatColor.WHITE + " 不存在或是不在線上！");
-			return false;
-		}
+            PlayerData p = app.allPlayers.get(((Player) sender).getUniqueId());
 
-		PlayerData receiverPlayer = allPlayers.get((Object) p.getUniqueId());
-		if (receiverPlayer == null) {
-			senderPlayer.player.sendMessage("你邀請的玩家 " + ChatColor.GOLD + args[1] + ChatColor.WHITE
-					+ " 不存在於allPlayers中,請聯繫開發人員");
-			return false;
-		}
+            if (p == null) {
+                return false;
+            }
 
-		TextComponent msg = new TextComponent();
-		Optional<Team> team = allPlayers.get(receiverPlayer.player.getUniqueId()).team;
+            switch (args[0]) {
+                case "invite":
+                    return this.invite(sender, args, p);
+                case "join":
+                    return this.join(sender, args, p);
+                case "list":
+                    return this.list(p);
+                case "leave":
+                    return this.leave(p);
+                default:
+                    return this.help(p);
+            }
 
-		if (receiverPlayer == senderPlayer) {
-			senderPlayer.player.sendMessage("不能邀請自己");
-			return false;
-		}
+        } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            app.discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
+            return false;
+        }
+    }
 
-		if (team.isPresent()) {
-			senderPlayer.player.sendMessage(
-					ChatColor.GOLD + receiverPlayer.player.getName() + ChatColor.WHITE + "已經有隊伍了！");
-			return false;
-		}
+    private boolean invite(CommandSender sender, String[] args, PlayerData senderPlayer) {
+        if (args.length != 2) {
+            senderPlayer.player.sendMessage(ChatColor.RED + "邀請指令錯誤");
+            this.help(senderPlayer);
+            return false;
+        }
 
-		if (senderPlayer.isInviteCooling(receiverPlayer)) {
-			sender.sendMessage("邀請" + ChatColor.GOLD + receiverPlayer.player.getName() + ChatColor.WHITE
-					+ "冷卻中" + ChatColor.RED + "(1分鐘)");
-			return false;
-		}
+        Player p = Bukkit.getPlayer(args[1]);
+        if (p == null) {
+            senderPlayer.player.sendMessage(
+                    "你邀請的玩家 " + ChatColor.GOLD + args[1] + ChatColor.WHITE + " 不存在或是不在線上！");
+            return false;
+        }
 
-		msg = new TextComponent(
-				"[確認 " + ChatColor.GOLD + senderPlayer.player.getName() + ChatColor.WHITE + " 的組隊邀請]");
-		msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊接受 " + ChatColor.GOLD
-				+ senderPlayer.player.getName() + ChatColor.WHITE + " 的組隊邀請")));
-		msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-				"/team join " + senderPlayer.player.getName()));
-		receiverPlayer.player.spigot().sendMessage(msg);
+        PlayerData receiverPlayer = app.allPlayers.get(p.getUniqueId());
+        if (receiverPlayer == null) {
+            senderPlayer.player.sendMessage("你邀請的玩家 " + ChatColor.GOLD + args[1] + ChatColor.WHITE
+                    + " 不存在於allPlayers中,請聯繫開發人員");
+            return false;
+        }
 
-		senderPlayer.player.sendMessage("已發送邀請給 " + ChatColor.GOLD + receiverPlayer.player.getName());
-		senderPlayer.recordInvite(receiverPlayer);
+        Optional<Team> team = app.allPlayers.get(receiverPlayer.player.getUniqueId()).team;
 
-		return true;
-	}
+        if (receiverPlayer == senderPlayer) {
+            senderPlayer.player.sendMessage("不能邀請自己");
+            return false;
+        }
 
-	private boolean join(CommandSender sender, Command cmd, String cmdlable, String[] args,
-			PlayerData senderPlayer) {
-		if (args.length != 2) {
-			senderPlayer.player.sendMessage("組隊指令錯誤");
-			this.help(senderPlayer);
-			return false;
-		}
+        if (team.isPresent()) {
+            senderPlayer.player.sendMessage(
+                    ChatColor.GOLD + receiverPlayer.player.getName() + ChatColor.WHITE + "已經有隊伍了！");
+            return false;
+        }
 
-		Player p = Bukkit.getPlayer(args[1]);
-		if (p == null) {
-			senderPlayer.player.sendMessage(
-					"你要加入的隊伍的邀請人 " + ChatColor.GOLD + args[1] + ChatColor.WHITE + " 不存在或是不在線上！");
-			return false;
-		}
-		PlayerData receiverPlayer = allPlayers.get((Object) p.getUniqueId());
-		if (receiverPlayer == null) {
-			senderPlayer.player.sendMessage("你要加入的隊伍的邀請人" + ChatColor.GOLD + args[1] + ChatColor.WHITE
-					+ "不存在於allPlayers中, 請聯繫開發人員");
-			return false;
-		}
+        if (senderPlayer.isInviteCooling(receiverPlayer)) {
+            sender.sendMessage("邀請" + ChatColor.GOLD + receiverPlayer.player.getName() + ChatColor.WHITE
+                    + "冷卻中" + ChatColor.RED + "(1分鐘)");
+            return false;
+        }
 
-		if (senderPlayer.team.isPresent()) {
-			senderPlayer.player.sendMessage("你已有隊伍");
-			return false;
-		}
+        TextComponent msg;
+        msg = new TextComponent(
+                "[確認 " + ChatColor.GOLD + senderPlayer.player.getName() + ChatColor.WHITE + " 的組隊邀請]");
+        msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊接受 " + ChatColor.GOLD
+                + senderPlayer.player.getName() + ChatColor.WHITE + " 的組隊邀請")));
+        msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                "/team join " + senderPlayer.player.getName()));
+        receiverPlayer.player.spigot().sendMessage(msg);
 
-		if (!senderPlayer.isInvitedBy(receiverPlayer)) {
-			sender.sendMessage("你並沒有被邀請至 " + ChatColor.GOLD + receiverPlayer.player.getName()
-					+ ChatColor.WHITE + " 的隊伍");
-			return false;
-		}
+        senderPlayer.player.sendMessage("已發送邀請給 " + ChatColor.GOLD + receiverPlayer.player.getName());
+        senderPlayer.recordInvite(receiverPlayer);
 
-		TextComponent msg = new TextComponent("");
-		Optional<Team> team = receiverPlayer.team;
+        return true;
+    }
 
-		if (!team.isPresent()) {
-			Team newTeam = new Team();
-			try {
-				newTeam.add(receiverPlayer);
-				newTeam.add(senderPlayer);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+    private boolean join(CommandSender sender, String[] args, PlayerData senderPlayer) {
+        if (args.length != 2) {
+            senderPlayer.player.sendMessage("組隊指令錯誤");
+            this.help(senderPlayer);
+            return false;
+        }
 
-			receiverPlayer.team = Optional.of(newTeam);
-			senderPlayer.team = Optional.of(newTeam);
+        Player p = Bukkit.getPlayer(args[1]);
+        if (p == null) {
+            senderPlayer.player.sendMessage(
+                    "你要加入的隊伍的邀請人 " + ChatColor.GOLD + args[1] + ChatColor.WHITE + " 不存在或是不在線上！");
+            return false;
+        }
+        PlayerData receiverPlayer = app.allPlayers.get(p.getUniqueId());
+        if (receiverPlayer == null) {
+            senderPlayer.player.sendMessage("你要加入的隊伍的邀請人" + ChatColor.GOLD + args[1] + ChatColor.WHITE
+                    + "不存在於allPlayers中, 請聯繫開發人員");
+            return false;
+        }
 
-			msg = new TextComponent(ChatColor.GOLD + senderPlayer.player.getName() + ChatColor.WHITE + "已加入"
-					+ senderPlayer.teamCapacityStatus());
+        if (senderPlayer.team.isPresent()) {
+            senderPlayer.player.sendMessage("你已有隊伍");
+            return false;
+        }
 
-			receiverPlayer.destroyInvitedRecord();
-		} else if (!team.get().isFull()) {
-			try {
-				team.get().add(senderPlayer);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+        if (!senderPlayer.isInvitedBy(receiverPlayer)) {
+            sender.sendMessage("你並沒有被邀請至 " + ChatColor.GOLD + receiverPlayer.player.getName()
+                    + ChatColor.WHITE + " 的隊伍");
+            return false;
+        }
 
-			senderPlayer.team = team;
+        Optional<Team> team = receiverPlayer.team;
 
-			msg = new TextComponent(ChatColor.GOLD + senderPlayer.player.getName() + ChatColor.WHITE + "已加入"
-					+ senderPlayer.teamCapacityStatus());
-		} else {
-			senderPlayer.player.sendMessage("隊伍已滿");
+        TextComponent msg;
+        if (!team.isPresent()) {
+            Team newTeam = new Team();
+            try {
+                newTeam.add(receiverPlayer);
+                newTeam.add(senderPlayer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-			return false;
-		}
+            receiverPlayer.team = Optional.of(newTeam);
+            senderPlayer.team = Optional.of(newTeam);
 
-		receiverPlayer.team.get().sendMessageToAll(msg);
+            msg = new TextComponent(ChatColor.GOLD + senderPlayer.player.getName() + ChatColor.WHITE + "已加入"
+                    + senderPlayer.teamCapacityStatus());
 
-		senderPlayer.destroyInvitedRecord();
+            receiverPlayer.destroyInvitedRecord();
+        } else if (!team.get().isFull()) {
+            try {
+                team.get().add(senderPlayer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-		return true;
-	}
+            senderPlayer.team = team;
 
-	private boolean list(CommandSender sender, Command cmd, String cmdlable, String[] args,
-			PlayerData senderPlayer) {
-		Optional<Team> team = senderPlayer.team;
-		if (!team.isPresent()) {
-			senderPlayer.player.sendMessage("你不在任何隊伍裡");
+            msg = new TextComponent(ChatColor.GOLD + senderPlayer.player.getName() + ChatColor.WHITE + "已加入"
+                    + senderPlayer.teamCapacityStatus());
+        } else {
+            senderPlayer.player.sendMessage("隊伍已滿");
 
-			return false;
-		}
+            return false;
+        }
 
-		senderPlayer.player.spigot()
-				.sendMessage(new TextComponent("隊伍成員：" + team.get().allTeamMemberString()
-						+ ChatColor.GRAY + " | " + ChatColor.WHITE + "隊長:" + ChatColor.GOLD
-						+ team.get().leader().player.getName()));
+        receiverPlayer.team.ifPresent(t -> t.sendMessageToAll(msg));
 
-		return true;
-	}
+        senderPlayer.destroyInvitedRecord();
 
-	private boolean leave(CommandSender sender, Command cmd, String cmdlable, String[] args,
-			PlayerData senderPlayer) {
-		Optional<Team> team = senderPlayer.team;
-		if (!team.isPresent()) {
-			senderPlayer.player.spigot().sendMessage(new TextComponent("你沒有隊伍"));
-			return false;
-		}
+        return true;
+    }
 
-		if (team.get().size() == 2) {
-			team.get().sendMessageToAll(new TextComponent(ChatColor.GOLD + senderPlayer.player.getName()
-					+ ChatColor.WHITE + " 離開了隊伍, 隊伍人數不足，自動解散"));
-			try {
-				team.get().delete(senderPlayer);
-				team.get().delete(team.get().leader());
-				team.get().leader().team = Optional.empty();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} else if (team.get().size() > 2) {
-			if (team.get().leader() == senderPlayer) {
-				try {
-					team.get().delete(senderPlayer);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				senderPlayer.team.get().sendMessageToAll(new TextComponent("隊長 " + ChatColor.GOLD
-						+ senderPlayer.player.getName() + ChatColor.WHITE + " 離開了隊伍, 新隊長為"
-						+ ChatColor.GOLD + team.get().leader().player.getName()
-						+ senderPlayer.teamCapacityStatus()));
-			} else {
-				try {
-					team.get().delete(senderPlayer);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				senderPlayer.team.get()
-						.sendMessageToAll(new TextComponent("隊員 " + ChatColor.GOLD
-								+ senderPlayer.player.getName() + ChatColor.WHITE
-								+ " 離開了隊伍" + senderPlayer.teamCapacityStatus()));
-			}
-		} else {
-			return false;
-		}
+    private boolean list(PlayerData senderPlayer) {
+        Optional<Team> team = senderPlayer.team;
+        if (!team.isPresent()) {
+            senderPlayer.player.sendMessage("你不在任何隊伍裡");
 
-		senderPlayer.team = Optional.empty();
-		senderPlayer.player.spigot().sendMessage(new TextComponent("你離開了隊伍"));
+            return false;
+        }
 
-		return true;
-	}
+        senderPlayer.player.spigot()
+                .sendMessage(new TextComponent("隊伍成員：" + team.get().allTeamMemberString()
+                        + ChatColor.GRAY + " | " + ChatColor.WHITE + "隊長:" + ChatColor.GOLD
+                        + team.get().leader().player.getName()));
 
-	private boolean help(PlayerData senderPlayer) {
-		senderPlayer.player.sendMessage(ChatColor.RED + "沒有這個指令");
-		senderPlayer.player.sendMessage(ChatColor.AQUA + "/team 的使用方式：");
-		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team invite <對象>");
-		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team join <對象>");
-		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team list");
-		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team help <對象>");
+        return true;
+    }
 
-		return false;
-	}
+    private boolean leave(PlayerData senderPlayer) {
+        Optional<Team> team = senderPlayer.team;
+        if (!team.isPresent()) {
+            senderPlayer.player.spigot().sendMessage(new TextComponent("你沒有隊伍"));
+            return false;
+        }
+
+        if (team.get().size() == 2) {
+            team.get().sendMessageToAll(new TextComponent(ChatColor.GOLD + senderPlayer.player.getName()
+                    + ChatColor.WHITE + " 離開了隊伍, 隊伍人數不足，自動解散"));
+            try {
+                team.get().delete(senderPlayer);
+                team.get().delete(team.get().leader());
+                team.get().leader().team = Optional.empty();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (team.get().size() > 2) {
+            if (team.get().leader() == senderPlayer) {
+                try {
+                    team.get().delete(senderPlayer);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                senderPlayer.team.ifPresent(t -> t.sendMessageToAll(new TextComponent("隊長 " + ChatColor.GOLD
+                        + senderPlayer.player.getName() + ChatColor.WHITE + " 離開了隊伍, 新隊長為"
+                        + ChatColor.GOLD + team.get().leader().player.getName()
+                        + senderPlayer.teamCapacityStatus())));
+            } else {
+                try {
+                    team.get().delete(senderPlayer);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                senderPlayer.team.ifPresent(t ->
+                        t.sendMessageToAll(new TextComponent("隊員 " + ChatColor.GOLD
+                                + senderPlayer.player.getName() + ChatColor.WHITE
+                                + " 離開了隊伍" + senderPlayer.teamCapacityStatus()))
+                );
+            }
+        } else {
+            return false;
+        }
+
+        senderPlayer.team = Optional.empty();
+        senderPlayer.player.spigot().sendMessage(new TextComponent("你離開了隊伍"));
+
+        return true;
+    }
+
+    private boolean help(PlayerData senderPlayer) {
+        senderPlayer.player.sendMessage(ChatColor.RED + "沒有這個指令");
+        senderPlayer.player.sendMessage(ChatColor.AQUA + "/team 的使用方式：");
+        senderPlayer.player.sendMessage(ChatColor.GRAY + "/team invite <對象>");
+        senderPlayer.player.sendMessage(ChatColor.GRAY + "/team join <對象>");
+        senderPlayer.player.sendMessage(ChatColor.GRAY + "/team list");
+        senderPlayer.player.sendMessage(ChatColor.GRAY + "/team help <對象>");
+
+        return false;
+    }
+
 }

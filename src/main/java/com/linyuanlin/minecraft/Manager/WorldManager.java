@@ -7,6 +7,7 @@ import org.bukkit.WorldCreator;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class WorldManager {
 
@@ -36,15 +37,14 @@ public class WorldManager {
         return worlds.get(worldId);
     }
 
-    // Check if a world folder is exist
-    private boolean checkWorldDataExist(String worldName) {
+    // Check if a world folder exist
+    public boolean checkWorldDataExist(String worldName) {
 
         File file = Bukkit.getWorldContainer();
 
         String[] directories = file.list((current, name) -> new File(current, name).isDirectory());
-        assert directories != null;
 
-        for (String d : directories) {
+        for (String d : Objects.requireNonNull(directories)) {
             if (d.equals(worldName)) return true;
         }
 
