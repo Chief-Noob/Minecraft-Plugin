@@ -71,7 +71,7 @@ public class TradeManager implements CommandExecutor {
 
         Player p = Bukkit.getPlayer(target);
         if (p == null) {
-            sender.player.sendMessage(ChatColor.RED + "玩家 " + target + " 不存在或是不在線上！");
+            sender.player.sendMessage("玩家 " + ChatColor.GOLD + target + ChatColor.WHITE + " 不存在或是不在線上");
             return false;
         }
 
@@ -82,8 +82,7 @@ public class TradeManager implements CommandExecutor {
 
         PlayerData targetData = app.allPlayers.get(p.getUniqueId());
         if (targetData == null) {
-            sender.player.sendMessage("你轉帳的玩家 " + ChatColor.GOLD + p.getName() + ChatColor.WHITE
-                    + " 不存在於allPlayers中,請聯繫開發人員");
+            sender.player.sendMessage("玩家 " + ChatColor.GOLD + target + ChatColor.WHITE + " 不存在或是不在線上");
             return false;
         }
 
@@ -101,9 +100,10 @@ public class TradeManager implements CommandExecutor {
     }
 
     private boolean help(PlayerData senderPlayer) {
-        senderPlayer.player.sendMessage("沒有這個指令");
-        senderPlayer.player.sendMessage(ChatColor.AQUA + "/trade 的使用方式：");
-        senderPlayer.player.sendMessage(ChatColor.GRAY + "/trade pay <對象> <金額>");
+        senderPlayer.player.sendMessage("");
+        senderPlayer.player.sendMessage(ChatColor.YELLOW + "/trade 的使用方式：");
+        senderPlayer.player.sendMessage(ChatColor.WHITE + "/trade pay <對象> <金額>" + ChatColor.GRAY + " - 向其他玩家轉帳");
+        senderPlayer.player.sendMessage(ChatColor.WHITE + "/trade me" + ChatColor.GRAY + " - 查看自己的經濟狀況");
 
         return false;
     }
