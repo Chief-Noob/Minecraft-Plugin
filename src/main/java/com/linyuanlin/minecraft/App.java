@@ -22,6 +22,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -261,7 +262,7 @@ public class App extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public boolean onCommand(CommandSender sender, Command cmd, String cmdlable, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String cmdLabel, String[] args) {
 
         try {
 
@@ -269,11 +270,11 @@ public class App extends JavaPlugin implements Listener {
             if (senderPlayer == null)
                 return false;
 
-            switch (cmdlable) {
+            switch (cmdLabel) {
                 case "trade":
-                    return tradeManager.onCommandTrade(sender, cmd, cmdlable, args, senderPlayer);
+                    return tradeManager.onCommandTrade(sender, cmd, cmdLabel, args, senderPlayer);
                 case "team":
-                    return teamManager.onCommandTeam(sender, cmd, cmdlable, args, senderPlayer);
+                    return teamManager.onCommandTeam(sender, cmd, cmdLabel, args, senderPlayer);
                 default:
                     return false;
             }

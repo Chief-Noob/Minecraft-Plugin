@@ -1,6 +1,7 @@
 package com.linyuanlin.minecraft.models;
 
 import com.linyuanlin.minecraft.App;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -52,7 +53,7 @@ public class PlayerData {
         Document d = new Document();
         d.append("uuid", player.getUniqueId().toString());
         d.append("balance", this.balance);
-        app.dbClient.updateOne("PlayerData", "uuid", player.getUniqueId().toString(), d);
+        app.dbClient.replaceOne("PlayerData", Filters.eq("uuid", player.getUniqueId().toString()), d);
         player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
     }
 

@@ -8,6 +8,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 
 public class MongodbClient {
@@ -64,9 +65,10 @@ public class MongodbClient {
         }
     }
 
-    public void updateOne(String collectionName, String field, String value, Document dbObject) {
+    // Replace a document which match the condition with new document
+    public void replaceOne(String collectionName, Bson condition, Document dbObject) {
         try {
-            database.getCollection(collectionName).updateOne(Filters.eq(field, value), dbObject);
+            database.getCollection(collectionName).replaceOne(condition, dbObject);
         } catch (Exception e) {
             e.printStackTrace();
         }
