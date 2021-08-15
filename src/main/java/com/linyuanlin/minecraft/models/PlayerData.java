@@ -137,4 +137,8 @@ public class PlayerData {
     public int getBalance() {
         return this.balance;
     }
+
+    public String getBalanceString(){
+        return ChatColor.GRAY + "(餘額： " + this.getBalance() + ")";
+    }
 }
