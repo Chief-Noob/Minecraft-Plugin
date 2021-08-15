@@ -15,6 +15,14 @@ public class LocationManager {
 	}
 
 	public void loadLocations() {
+		Document newDocument = new Document();
+		newDocument.append("tag", "lobby_spawn");
+		newDocument.append("x", 2);
+		newDocument.append("y", 83);
+		newDocument.append("z", 0);
+
+		app.dbClient.insert("Location", newDocument);
+
 		this.tagLocationMap = new HashMap<>();
 		Document doc = app.dbClient.findOne("Location", "tag", "lobby_spawn");
 		tagLocationMap.put("lobby_spawn",
