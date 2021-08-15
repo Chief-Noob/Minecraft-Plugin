@@ -1,13 +1,10 @@
 package com.linyuanlin.minecraft;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.gmail.filoghost.holographicdisplays.api.*;
 import com.linyuanlin.minecraft.manager.*;
 import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.mongodb.MongodbClient;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,14 +18,10 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.*;
+import java.util.*;
+import java.util.logging.*;
+import org.bukkit.*;
 
 public class App extends JavaPlugin implements Listener {
 
@@ -152,7 +145,8 @@ public class App extends JavaPlugin implements Listener {
                 p.sendMessage("world not found");
             }
 
-            p.teleport(locationManager.getLocation(LocationManager.lobby_spawn));
+            // p.teleport(locationManager.getLocation(LocationManager.lobby_spawn));
+            p.teleport(new Location(worldManager.getWorldData(WorldManager.world_lobby).world, 0.5, 67, 0.5));
             pd.sendWorldTitle(p.getWorld().getName());
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
