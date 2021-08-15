@@ -30,7 +30,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import java.util.*;
 import org.bson.Document;
 import org.bukkit.*;
 
@@ -157,11 +156,12 @@ public class App extends JavaPlugin implements Listener {
                 Document doc = dbClient.findOne("Location", "tag", "lobby_spawn");
                 p.teleport(new Location(worldManager.getWorldData(WorldManager.world_lobby).world, doc.getInteger("x"),
                         doc.getInteger("y"), doc.getInteger("z")));
-                /*
-                 * if (locationManager.getLocation("lobby_spawn") == null) {
-                 * p.teleport(lobbyWorld.getSpawnLocation()); p.sendMessage("null"); } else {
-                 * p.teleport(locationManager.getLocation("lobby_spawn")); }
-                 */
+                if (locationManager.getLocation("lobby_spawn") == null) {
+                    p.teleport(lobbyWorld.getSpawnLocation());
+                    p.sendMessage("null");
+                } else {
+                    p.teleport(locationManager.getLocation("lobby_spawn"));
+                }
             }
             pd.sendWorldTitle(p.getWorld().getName());
         } catch (Exception exception) {

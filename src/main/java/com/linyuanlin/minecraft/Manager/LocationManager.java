@@ -4,7 +4,6 @@ import com.linyuanlin.minecraft.App;
 import java.util.*;
 import org.bson.Document;
 import org.bukkit.*;
-import java.io.*;
 
 public class LocationManager {
 	private App app;
@@ -17,8 +16,8 @@ public class LocationManager {
 	public void loadLocations() {
 		Document newDocument = new Document();
 		newDocument.append("tag", "lobby_spawn");
-		newDocument.append("x", 2);
-		newDocument.append("y", 83);
+		newDocument.append("x", 0);
+		newDocument.append("y", 67);
 		newDocument.append("z", 0);
 
 		app.dbClient.insert("Location", newDocument);
