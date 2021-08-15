@@ -148,12 +148,11 @@ public class App extends JavaPlugin implements Listener {
             e.setJoinMessage(msg);
             World lobbyWorld = Bukkit.getWorld("world_lobby");
             discordBotManager.sendMessage("TEST", "Project-Minecraft", msg);
-            if (lobbyWorld != null) {
-                if (locationManager.getLocation("lobby_spawn") == null) {
-                    p.sendMessage("null");
-                }
-                p.teleport(locationManager.getLocation("lobby_spawn"));
+            if (lobbyWorld == null) {
+                p.sendMessage("world not found");
             }
+
+            p.teleport(locationManager.getLocation("lobby_spawn"));
             pd.sendWorldTitle(p.getWorld().getName());
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();

@@ -7,21 +7,14 @@ import org.bukkit.*;
 
 public class LocationManager {
 	private App app;
-	private HashMap<String, Location> tagLocationMap = new HashMap<>();
+	private HashMap<String, Location> tagLocationMap;
 
 	public LocationManager(App app) {
 		this.app = app;
+		tagLocationMap = new HashMap<>();
 	}
 
 	public void loadLocations() {
-		Document newDocument = new Document();
-		newDocument.append("tag", "lobby_spawn");
-		newDocument.append("x", 0.5);
-		newDocument.append("y", 67.0);
-		newDocument.append("z", 0.5);
-
-		app.dbClient.insert("Location", newDocument);
-
 		Document doc = app.dbClient.findOne("Location", "tag", "lobby_spawn");
 		tagLocationMap.put("lobby_spawn",
 				new Location(this.app.worldManager.getWorldData(WorldManager.world_lobby).world,
