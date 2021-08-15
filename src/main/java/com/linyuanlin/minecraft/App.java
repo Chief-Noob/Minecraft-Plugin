@@ -149,7 +149,7 @@ public class App extends JavaPlugin implements Listener {
             World lobbyWorld = Bukkit.getWorld("world_lobby");
             discordBotManager.sendMessage("TEST", "Project-Minecraft", msg);
             if (lobbyWorld != null) {
-                p.teleport(lobbyWorld.getSpawnLocation());
+                p.teleport(locationManager.getLocation("lobby_spawn"));
             }
             pd.sendWorldTitle(p.getWorld().getName());
         } catch (Exception exception) {
