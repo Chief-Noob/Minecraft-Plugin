@@ -30,9 +30,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bson.Document;
-import org.bukkit.*;
-
 public class App extends JavaPlugin implements Listener {
 
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
@@ -152,16 +149,7 @@ public class App extends JavaPlugin implements Listener {
             World lobbyWorld = Bukkit.getWorld("world_lobby");
             discordBotManager.sendMessage("TEST", "Project-Minecraft", msg);
             if (lobbyWorld != null) {
-
-                Document doc = dbClient.findOne("Location", "tag", "lobby_spawn");
-                p.teleport(new Location(worldManager.getWorldData(WorldManager.world_lobby).world, doc.getInteger("x"),
-                        doc.getInteger("y"), doc.getInteger("z")));
-                if (locationManager.getLocation("lobby_spawn") == null) {
-                    p.teleport(lobbyWorld.getSpawnLocation());
-                    p.sendMessage("null");
-                } else {
-                    p.teleport(locationManager.getLocation("lobby_spawn"));
-                }
+                p.teleport(lobbyWorld.getSpawnLocation());
             }
             pd.sendWorldTitle(p.getWorld().getName());
         } catch (Exception exception) {
