@@ -55,8 +55,8 @@ public class GuildManager implements CommandExecutor {
 		 * "/1000)"); return false; }
 		 */
 		senderPlayer.modifyBalance(10000000, "Buy Guild Invitation Paper");
-		senderPlayer.player
-				.sendMessage("你已成功購買公會創立卷！" + ChatColor.GRAY + "(" + senderPlayer.getBalance() + ")");
+		senderPlayer.player.sendMessage(
+				"你已成功購買公會創立卷！ " + ChatColor.GRAY + "(餘額： " + senderPlayer.getBalance() + ")");
 		senderPlayer.player.getInventory().addItem(new ItemStack(CustomItem.guildInvitationPaper));
 		return true;
 	}
