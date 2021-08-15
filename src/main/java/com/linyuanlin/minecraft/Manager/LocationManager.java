@@ -17,9 +17,9 @@ public class LocationManager {
 	public void loadLocations() {
 		Document newDocument = new Document();
 		newDocument.append("tag", "lobby_spawn");
-		newDocument.append("x", 0);
+		newDocument.append("x", 0.5);
 		newDocument.append("y", 67);
-		newDocument.append("z", 0);
+		newDocument.append("z", 0.5);
 
 		app.dbClient.replaceOne("Location", Filters.eq("tag", "lobby_spawn"), newDocument);
 
