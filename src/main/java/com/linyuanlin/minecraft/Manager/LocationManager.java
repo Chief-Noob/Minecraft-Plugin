@@ -8,13 +8,14 @@ import java.io.*;
 
 public class LocationManager {
 	private App app;
-	private HashMap<String, Location> tagLocationMap = new HashMap<>();
+	private HashMap<String, Location> tagLocationMap;
 
 	public LocationManager(App app) {
 		this.app = app;
 	}
 
 	public void loadLocations() {
+		this.tagLocationMap = new HashMap<>();
 		Document doc = app.dbClient.findOne("Location", "tag", "lobby_spawn");
 		tagLocationMap.put("lobby_spawn",
 				new Location(this.app.worldManager.getWorldData(WorldManager.world_lobby).world,
