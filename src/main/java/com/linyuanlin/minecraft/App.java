@@ -101,6 +101,8 @@ public class App extends JavaPlugin implements Listener {
 
         getLogger().info("Main system enabled");
 
+        // load all custom items
+
         // register command
         Objects.requireNonNull(this.getCommand("trade")).setExecutor(this.tradeManager);
         Objects.requireNonNull(this.getCommand("team")).setExecutor(this.teamManager);
