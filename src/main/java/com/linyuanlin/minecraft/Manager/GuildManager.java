@@ -33,6 +33,8 @@ public class GuildManager implements CommandExecutor {
 			switch (args[0]) {
 				case "getInvitationPaper":
 					return this.getInvitationPaper(p);
+				case "second":
+					return this.second(p, args);
 				default:
 					return this.help(p);
 			}
@@ -46,16 +48,18 @@ public class GuildManager implements CommandExecutor {
 	}
 
 	private boolean getInvitationPaper(PlayerData senderPlayer) {
-
 		if (senderPlayer.getBalance() < 1000) {
 			senderPlayer.player.sendMessage(
 					"你的錢不夠購買公會創立卷！ " + ChatColor.RED + "(" + senderPlayer.getBalance() + "/1000)");
 			return false;
 		}
 		senderPlayer.modifyBalance(-1000, "Buy Guild Invitation Paper");
-		senderPlayer.player.sendMessage(
-				"你已成功購買公會創立卷！ " + senderPlayer.getBalanceString());
+		senderPlayer.player.sendMessage("你已成功購買公會創立卷！ " + senderPlayer.getBalanceString());
 		senderPlayer.player.getInventory().addItem(new ItemStack(CustomItem.guildInvitationPaper));
+		return true;
+	}
+
+	private boolean second(PlayerData senderPlayer, String[] args) {
 		return true;
 	}
 
