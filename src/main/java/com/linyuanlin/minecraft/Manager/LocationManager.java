@@ -19,7 +19,7 @@ public class LocationManager {
 		Document doc = app.dbClient.findOne("Location", "tag", lobby_spawn);
 		tagLocationMap.put(lobby_spawn,
 				new Location(this.app.worldManager.getWorldData(WorldManager.world_lobby).world,
-						doc.getInteger("x"), doc.getInteger("y"), doc.getInteger("z")));
+						doc.getDouble("x"), doc.getDouble("y"), doc.getDouble("z")));
 	}
 
 	public Location getLocation(String tag) {
