@@ -1,4 +1,4 @@
-package com.linyuanlin.minecraft.Manager;
+package com.linyuanlin.minecraft.manager;
 
 import com.linyuanlin.minecraft.App;
 import com.linyuanlin.minecraft.models.PlayerData;
@@ -14,8 +14,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class TradeManager implements CommandExecutor {
-
-	App app;
+	private App app;
 
 	public TradeManager(App app) {
 		this.app = app;
@@ -40,7 +39,6 @@ public class TradeManager implements CommandExecutor {
 				default:
 					return this.help(p);
 			}
-
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);

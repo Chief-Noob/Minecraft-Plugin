@@ -1,4 +1,4 @@
-package com.linyuanlin.minecraft.Manager;
+package com.linyuanlin.minecraft.manager;
 
 import com.linyuanlin.minecraft.App;
 import com.linyuanlin.minecraft.models.PlayerData;
@@ -20,7 +20,7 @@ import java.io.StringWriter;
 import java.util.Optional;
 
 public class TeamManager implements CommandExecutor {
-	App app;
+	private App app;
 
 	public TeamManager(App app) {
 		this.app = app;
@@ -30,7 +30,6 @@ public class TeamManager implements CommandExecutor {
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
 			@NotNull String[] args) {
 		try {
-
 			PlayerData p = app.allPlayers.get(((Player) sender).getUniqueId());
 
 			if (p == null) {
@@ -39,9 +38,9 @@ public class TeamManager implements CommandExecutor {
 
 			switch (args[0]) {
 				case "invite":
-					return this.invite(sender, args, p);
+					return this.invite(p, args);
 				case "join":
-					return this.join(sender, args, p);
+					return this.join(p, args);
 				case "list":
 					return this.list(p);
 				case "leave":
@@ -49,7 +48,6 @@ public class TeamManager implements CommandExecutor {
 				default:
 					return this.help(p);
 			}
-
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -59,7 +57,7 @@ public class TeamManager implements CommandExecutor {
 		}
 	}
 
-	private boolean invite(CommandSender sender, String[] args, PlayerData senderPlayer) {
+	private boolean invite(PlayerData senderPlayer, String[] args) {
 		if (args.length != 2) {
 			senderPlayer.player.sendMessage(ChatColor.RED + "邀請指令錯誤");
 			this.help(senderPlayer);
@@ -94,8 +92,8 @@ public class TeamManager implements CommandExecutor {
 		}
 
 		if (senderPlayer.isInviteCooling(receiverPlayer)) {
-			sender.sendMessage("邀請" + ChatColor.GOLD + receiverPlayer.player.getName() + ChatColor.WHITE
-					+ "冷卻中" + ChatColor.RED + "(1分鐘)");
+			senderPlayer.player.sendMessage("邀請" + ChatColor.GOLD + receiverPlayer.player.getName()
+					+ ChatColor.WHITE + "冷卻中" + ChatColor.RED + "(1分鐘)");
 			return false;
 		}
 
@@ -114,7 +112,7 @@ public class TeamManager implements CommandExecutor {
 		return true;
 	}
 
-	private boolean join(CommandSender sender, String[] args, PlayerData senderPlayer) {
+	private boolean join(PlayerData senderPlayer, String[] args) {
 		if (args.length != 2) {
 			senderPlayer.player.sendMessage("組隊指令錯誤");
 			this.help(senderPlayer);
@@ -140,7 +138,7 @@ public class TeamManager implements CommandExecutor {
 		}
 
 		if (!senderPlayer.isInvitedBy(receiverPlayer)) {
-			sender.sendMessage("你並沒有被邀請至 " + ChatColor.GOLD + receiverPlayer.player.getName()
+			senderPlayer.player.sendMessage("你並沒有被邀請至 " + ChatColor.GOLD + receiverPlayer.player.getName()
 					+ ChatColor.WHITE + " 的隊伍");
 			return false;
 		}
@@ -261,5 +259,4 @@ public class TeamManager implements CommandExecutor {
 		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team help - 取得幫助");
 		return false;
 	}
-
 }

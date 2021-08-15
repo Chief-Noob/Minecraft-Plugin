@@ -1,4 +1,4 @@
-package com.linyuanlin.minecraft.Manager;
+package com.linyuanlin.minecraft.manager;
 
 import com.linyuanlin.minecraft.models.WorldData;
 import org.bukkit.Bukkit;
@@ -45,7 +45,8 @@ public class WorldManager {
         String[] directories = file.list((current, name) -> new File(current, name).isDirectory());
 
         for (String d : Objects.requireNonNull(directories)) {
-            if (d.equals(worldName)) return true;
+            if (d.equals(worldName))
+                return true;
         }
 
         return false;

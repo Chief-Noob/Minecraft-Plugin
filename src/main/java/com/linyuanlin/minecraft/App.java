@@ -2,10 +2,7 @@ package com.linyuanlin.minecraft;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.linyuanlin.minecraft.Manager.DiscordBotManager;
-import com.linyuanlin.minecraft.Manager.TeamManager;
-import com.linyuanlin.minecraft.Manager.TradeManager;
-import com.linyuanlin.minecraft.Manager.WorldManager;
+import com.linyuanlin.minecraft.manager.*;
 import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.mongodb.MongodbClient;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -40,6 +37,7 @@ public class App extends JavaPlugin implements Listener {
     public DiscordBotManager discordBotManager = new DiscordBotManager(this);
     public TeamManager teamManager = new TeamManager(this);
     public TradeManager tradeManager = new TradeManager(this);
+    public GuildManager guildManager = new GuildManager(this);
     public String mongodbConnectString = "";
     public MongodbClient dbClient;
 
@@ -106,7 +104,7 @@ public class App extends JavaPlugin implements Listener {
         // register command
         Objects.requireNonNull(this.getCommand("trade")).setExecutor(this.tradeManager);
         Objects.requireNonNull(this.getCommand("team")).setExecutor(this.teamManager);
-
+        Objects.requireNonNull(this.getCommand("guild")).setExecutor(this.guildManager);
     }
 
     @Override
@@ -138,7 +136,8 @@ public class App extends JavaPlugin implements Listener {
             Player p = e.getPlayer();
             PlayerData pd = new PlayerData(this, p.getUniqueId());
             allPlayers.put(p.getUniqueId(), pd);
-            String msg = ChatColor.WHITE + "玩家 " + ChatColor.GOLD + e.getPlayer().getName() + ChatColor.WHITE + " 登入了, 讚啦！";
+            String msg = ChatColor.WHITE + "玩家 " + ChatColor.GOLD + e.getPlayer().getName() + ChatColor.WHITE
+                    + " 登入了, 讚啦！";
             e.setJoinMessage(msg);
             World lobbyWorld = Bukkit.getWorld("world_lobby");
             discordBotManager.sendMessage("TEST", "Project-Minecraft", msg);
