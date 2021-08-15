@@ -1,4 +1,4 @@
-package com.linyuanlin.minecraft.Manager;
+package com.linyuanlin.minecraft.manager;
 
 import com.linyuanlin.minecraft.App;
 import com.linyuanlin.minecraft.models.PlayerData;
