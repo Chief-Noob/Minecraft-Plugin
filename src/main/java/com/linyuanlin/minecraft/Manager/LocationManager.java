@@ -4,6 +4,7 @@ import com.linyuanlin.minecraft.App;
 import java.util.*;
 import org.bson.Document;
 import org.bukkit.*;
+import java.io.*;
 
 public class LocationManager {
 	private App app;
@@ -18,9 +19,18 @@ public class LocationManager {
 	}
 
 	private Location SpawnLocation() {
-		Document doc = app.dbClient.findOne("Location", "tag", "lobby_spawn");
-		return new Location(this.app.worldManager.getWorldData("world_lobby").world, doc.getInteger("x"),
-				doc.getInteger("y"), doc.getInteger("z"));
+		try {
+			Document doc = app.dbClient.findOne("Location", "tag", "lobby_spawn");
+			return new Location(this.app.worldManager.getWorldData(WorldManager.world_lobby).world,
+					doc.getInteger("x"), doc.getInteger("y"), doc.getInteger("z"));
+		} catch (Exception exception) {
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			exception.printStackTrace(pw);
+			this.app.discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
+		}
+		return new Location(this.app.worldManager.getWorldData(WorldManager.world_lobby).world, 0, 0, 0);
+
 	}
 
 	public Location getLocation(String tag) {
