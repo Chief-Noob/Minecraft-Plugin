@@ -4,6 +4,7 @@ import com.linyuanlin.minecraft.App;
 import java.util.*;
 import org.bson.Document;
 import org.bukkit.*;
+import com.mongodb.client.model.Filters;
 
 public class LocationManager {
 	private App app;
@@ -20,7 +21,7 @@ public class LocationManager {
 		newDocument.append("y", 67);
 		newDocument.append("z", 0);
 
-		app.dbClient.insert("Location", newDocument);
+		app.dbClient.replaceOne("Location", Filters.eq("tag", "lobby_spawn"), newDocument);
 
 		this.tagLocationMap = new HashMap<>();
 		Document doc = app.dbClient.findOne("Location", "tag", "lobby_spawn");
