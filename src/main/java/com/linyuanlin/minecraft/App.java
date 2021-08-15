@@ -38,6 +38,7 @@ public class App extends JavaPlugin implements Listener {
     public TeamManager teamManager = new TeamManager(this);
     public TradeManager tradeManager = new TradeManager(this);
     public GuildManager guildManager = new GuildManager(this);
+    public LocationManager locationManager = new LocationManager(this);
     public String mongodbConnectString = "";
     public MongodbClient dbClient;
 
@@ -103,6 +104,10 @@ public class App extends JavaPlugin implements Listener {
 
         // load all custom items
 
+        // load all locations
+
+        locationManager.loadLocations();
+
         // register command
         Objects.requireNonNull(this.getCommand("trade")).setExecutor(this.tradeManager);
         Objects.requireNonNull(this.getCommand("team")).setExecutor(this.teamManager);
@@ -144,7 +149,7 @@ public class App extends JavaPlugin implements Listener {
             World lobbyWorld = Bukkit.getWorld("world_lobby");
             discordBotManager.sendMessage("TEST", "Project-Minecraft", msg);
             if (lobbyWorld != null) {
-                p.teleport(lobbyWorld.getSpawnLocation());
+                p.teleport(locationManager.getLocation("lobby_spawn"));
             }
             pd.sendWorldTitle(p.getWorld().getName());
         } catch (Exception exception) {
