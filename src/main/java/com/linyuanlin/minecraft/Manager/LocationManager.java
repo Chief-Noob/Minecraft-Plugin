@@ -29,7 +29,7 @@ public class LocationManager {
 			exception.printStackTrace(pw);
 			this.app.discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
 		}
-		return new Location(this.app.worldManager.getWorldData(WorldManager.world_lobby).world, 0, 0, 0);
+		return new Location(this.app.worldManager.getWorldData(WorldManager.world_lobby).world, 0, 60, 110);
 
 	}
 
