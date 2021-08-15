@@ -103,8 +103,10 @@ public class TradeManager implements CommandExecutor {
 	private boolean help(PlayerData senderPlayer) {
 		senderPlayer.player.sendMessage(ChatColor.RED + "沒有這個指令");
 		senderPlayer.player.sendMessage(ChatColor.AQUA + "/trade 的使用方式：");
+
 		senderPlayer.player.sendMessage("/trade pay <對象> <金額>" + ChatColor.GRAY + " - 向其他玩家轉帳");
 		senderPlayer.player.sendMessage("/trade me" + ChatColor.GRAY + " - 查看自己的經濟狀況");
+		
 		senderPlayer.player.sendMessage(ChatColor.GRAY + "/trade help - 取得幫助");
 		return false;
 	}
