@@ -8,6 +8,7 @@ import org.bukkit.*;
 public class LocationManager {
 	private App app;
 	private HashMap<String, Location> tagLocationMap;
+	public final static String lobby_spawn = "lobby_spawn";
 
 	public LocationManager(App app) {
 		this.app = app;
@@ -15,10 +16,10 @@ public class LocationManager {
 	}
 
 	public void loadLocations() {
-		Document doc = app.dbClient.findOne("Location", "tag", "lobby_spawn");
-		tagLocationMap.put("lobby_spawn",
+		Document doc = app.dbClient.findOne("Location", "tag", lobby_spawn);
+		tagLocationMap.put(lobby_spawn,
 				new Location(this.app.worldManager.getWorldData(WorldManager.world_lobby).world,
-						doc.getDouble("x"), doc.getDouble("y"), doc.getDouble("z")));
+						doc.getInteger("x"), doc.getInteger("y"), doc.getInteger("z")));
 	}
 
 	public Location getLocation(String tag) {

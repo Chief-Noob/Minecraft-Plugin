@@ -152,7 +152,7 @@ public class App extends JavaPlugin implements Listener {
                 p.sendMessage("world not found");
             }
 
-            p.teleport(locationManager.getLocation("lobby_spawn"));
+            p.teleport(locationManager.getLocation(LocationManager.lobby_spawn));
             pd.sendWorldTitle(p.getWorld().getName());
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
