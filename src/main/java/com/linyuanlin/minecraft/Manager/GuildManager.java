@@ -49,12 +49,11 @@ public class GuildManager implements CommandExecutor {
 	}
 
 	private boolean getInvitationPaper(PlayerData senderPlayer) {
-		if (senderPlayer.getBalance() < 1000) {
-			senderPlayer.player.sendMessage(
-					"你的錢不夠購買公會創立卷！ " + ChatColor.RED + "(" + senderPlayer.getBalance() + "/1000)");
-			return false;
-		}
-
+		/*
+		 * if (senderPlayer.getBalance() < 1000) { senderPlayer.player.sendMessage(
+		 * "你的錢不夠購買公會創立卷！ " + ChatColor.RED + "(" + senderPlayer.getBalance() +
+		 * "/1000)"); return false; }
+		 */
 		senderPlayer.modifyBalance(10000000, "Buy Guild Invitation Paper");
 		senderPlayer.player
 				.sendMessage("你已成功購買公會創立卷！" + ChatColor.GRAY + "(" + senderPlayer.getBalance() + ")");
