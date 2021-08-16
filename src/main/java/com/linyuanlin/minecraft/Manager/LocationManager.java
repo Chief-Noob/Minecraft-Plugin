@@ -1,6 +1,7 @@
 package com.linyuanlin.minecraft.manager;
 
 import com.linyuanlin.minecraft.App;
+import com.mongodb.client.model.Filters;
 import java.util.*;
 import org.bson.Document;
 import org.bukkit.*;
@@ -16,10 +17,12 @@ public class LocationManager {
 	}
 
 	public void loadLocations() {
-		Document doc = app.dbClient.findOne("Location", "tag", lobby_spawn);
-		tagLocationMap.put(lobby_spawn,
-				new Location(this.app.worldManager.getWorldData(WorldManager.world_lobby).world,
-						doc.getDouble("x"), doc.getDouble("y"), doc.getDouble("z")));
+		List<Document> docList = app.dbClient.findMany("Location", Filters.empty());
+		for (Document doc : docList) {
+			tagLocationMap.put(doc.getString("tag"),
+					new Location(this.app.worldManager.getWorldData(WorldManager.world_lobby).world,
+							doc.getDouble("x"), doc.getDouble("y"), doc.getDouble("z")));
+		}
 	}
 
 	public Location getLocation(String tag) {

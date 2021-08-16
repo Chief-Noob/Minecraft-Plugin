@@ -12,7 +12,6 @@ import org.bson.conversions.Bson;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class MongodbClient {
     public FindIterable<Document> cursor;
     private App app;
