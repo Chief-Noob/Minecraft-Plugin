@@ -26,8 +26,6 @@ public class PlayerData {
     public PlayerData(App app, UUID uuid) throws Exception {
         this.app = app;
 
-        Document d = app.dbClient.findOne("PlayerData", "uuid", uuid.toString());
-
         this.player = Bukkit.getServer().getPlayer(uuid);
 
         this.invitedTimeMap = new HashMap<>();
@@ -39,9 +37,12 @@ public class PlayerData {
         if (this.player == null)
             throw new Exception("PLAYER_NOT_ONLINE");
 
+        Document d = app.dbClient.findOne("PlayerData", "uuid", uuid.toString());
         if (d != null) {
+            // should crate a readPlayerFromDoc function
             this.balance = d.getInteger("balance");
         } else {
+            // should crate a createDocForPlayer function
             Document newDocument = new Document();
             newDocument.append("uuid", player.getUniqueId().toString());
             newDocument.append("balance", this.balance);
@@ -51,18 +52,29 @@ public class PlayerData {
         player.sendMessage(ChatColor.GRAY + "你的資料已從資料庫同步完成");
     }
 
+    /**********
+     * System *
+     *********/
+
+    /*
+     * Save player's data into DataBase
+     */
     public void saveData() {
         Document d = new Document();
         d.append("uuid", player.getUniqueId().toString());
         d.append("balance", this.balance);
+
         app.dbClient.replaceOne("PlayerData", Filters.eq("uuid", player.getUniqueId().toString()), d);
         player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
     }
 
+    /*
+     * Perform all actions when player log out
+     */
     public void logOut() throws Exception {
         this.saveData();
         if (this.team.isPresent()) {
-            this.player.performCommand("team leave");// command shouldn't include `/`
+            this.player.performCommand("team leave");
         }
 
         this.destroyInvitedRecord();
