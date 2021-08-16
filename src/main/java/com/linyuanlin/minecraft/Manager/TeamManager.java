@@ -58,6 +58,27 @@ public class TeamManager implements CommandExecutor {
 		}
 	}
 
+	/*
+	 * sender invite receiver to his team
+	 * 
+	 * Behavior:
+	 * 
+	 * 1. send a invitation message to receiver's chat box
+	 * 
+	 * 2. record the invitation record to inviteTimeMap and invitedTimeMap
+	 * 
+	 * 3. set the inviting cooling for sender
+	 * 
+	 * Exception:
+	 * 
+	 * 1. receiver doesn't exist(off-line or not exist)
+	 * 
+	 * 2. receiver is sender himself
+	 * 
+	 * 3. receiver already has team
+	 * 
+	 * 4. sender already invite receiver(cooling)
+	 */
 	private boolean invite(PlayerData senderPlayer, String[] args) {
 		if (args.length != 2) {
 			senderPlayer.player.sendMessage(ChatColor.RED + "邀請指令錯誤");
@@ -113,6 +134,26 @@ public class TeamManager implements CommandExecutor {
 		return true;
 	}
 
+	/*
+	 * sender joins receiver's team
+	 * 
+	 * Behavior:
+	 * 
+	 * 1. if receiver doesn't have a team initially, create a team with receiver as
+	 * the leader and add both receiver and sender to this team
+	 * 
+	 * 2. else, add sender to receiver's team as a team member
+	 * 
+	 * Exception:
+	 * 
+	 * 1. receiver doesn't exist(off-line or not exist)
+	 * 
+	 * 2. sender already has team
+	 * 
+	 * 3. sender is not invited by receiver
+	 * 
+	 * 4. receiver's team is full
+	 */
 	private boolean join(PlayerData senderPlayer, String[] args) throws Exception {
 		if (args.length != 2) {
 			senderPlayer.player.sendMessage("組隊指令錯誤");
@@ -187,6 +228,17 @@ public class TeamManager implements CommandExecutor {
 		return true;
 	}
 
+	/*
+	 * List the player's team status
+	 * 
+	 * Behavior:
+	 * 
+	 * 1. send a team list to player's chat box
+	 * 
+	 * Exception:
+	 * 
+	 * 1. player doesn't have a team
+	 */
 	private boolean list(PlayerData senderPlayer) {
 		Optional<Team> team = senderPlayer.team;
 		if (!team.isPresent()) {
@@ -203,6 +255,20 @@ public class TeamManager implements CommandExecutor {
 		return true;
 	}
 
+	/*
+	 * Player leaves his team
+	 * 
+	 * Behavior:
+	 * 
+	 * 1. if sender's team has more than 2 people(>=3), the team will be kept; else
+	 * the team will be destroy.
+	 * 
+	 * 2. then if sender is the leader, a new leader will be assigned
+	 * 
+	 * Exception:
+	 * 
+	 * 1. player doesn't have team
+	 */
 	private boolean leave(PlayerData senderPlayer) {
 		Optional<Team> team = senderPlayer.team;
 		if (!team.isPresent()) {
@@ -251,6 +317,17 @@ public class TeamManager implements CommandExecutor {
 		return true;
 	}
 
+	/*
+	 * List the helping command for /team
+	 * 
+	 * Behavior:
+	 * 
+	 * send all command messages related to \team to sender's chat box
+	 * 
+	 * Exception:
+	 * 
+	 * Nan
+	 */
 	private boolean help(PlayerData senderPlayer) {
 		senderPlayer.player.sendMessage(ChatColor.RED + "沒有這個指令");
 		senderPlayer.player.sendMessage(ChatColor.AQUA + "/team 的使用方式：");
