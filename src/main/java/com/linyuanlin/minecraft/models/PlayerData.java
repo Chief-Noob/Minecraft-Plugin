@@ -15,11 +15,12 @@ import java.util.concurrent.TimeUnit;
 
 public class PlayerData {
 
+    private final HashMap<Player, Date> invitedTimeMap;
+    private final HashMap<Player, Date> inviteTimeMap;
+    private final App app;
     public Player player;
     public Optional<Team> team;
     private int balance = 0;
-    private HashMap<Player, Date> invitedTimeMap, inviteTimeMap;
-    private App app;
 
     public PlayerData(App app, UUID uuid) throws Exception {
         this.app = app;
@@ -97,6 +98,7 @@ public class PlayerData {
     }
 
     public String teamCapacityStatus() {
+        if (!team.isPresent()) return "";
         return ChatColor.GRAY + "(" + this.team.get().size() + "/4)";
     }
 
@@ -138,7 +140,7 @@ public class PlayerData {
         return this.balance;
     }
 
-    public String getBalanceString(){
+    public String getBalanceString() {
         return ChatColor.GRAY + "(餘額： " + this.getBalance() + ")";
     }
 }
