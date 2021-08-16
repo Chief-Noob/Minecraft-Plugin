@@ -254,11 +254,11 @@ public class TeamManager implements CommandExecutor {
 		senderPlayer.player.sendMessage(ChatColor.RED + "沒有這個指令");
 		senderPlayer.player.sendMessage(ChatColor.AQUA + "/team 的使用方式：");
 
-		senderPlayer.player.sendMessage("/team invite <對象>" + ChatColor.GRAY + " - 邀請其他玩家加入隊伍");
-		senderPlayer.player.sendMessage("/team join <對象>" + ChatColor.GRAY + " - 加入其他玩家的隊伍");
-		senderPlayer.player.sendMessage("/team list" + ChatColor.GRAY + " - 顯示隊伍狀態");
+		senderPlayer.player.sendMessage("/team invite <對象>" + ChatColor.GRAY + "\t - 邀請其他玩家加入隊伍");
+		senderPlayer.player.sendMessage("/team join <對象>" + ChatColor.GRAY + "\t - 加入其他玩家的隊伍");
+		senderPlayer.player.sendMessage("/team list" + ChatColor.GRAY + "\t - 顯示隊伍狀態");
 		
-		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team help - 取得幫助");
+		senderPlayer.player.sendMessage(ChatColor.GRAY + "/team help\t - 取得幫助");
 		return false;
 	}
 }

@@ -14,12 +14,11 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerData {
-
+    public Player player;
+    public Optional<Team> team;
     private final HashMap<Player, Date> invitedTimeMap;
     private final HashMap<Player, Date> inviteTimeMap;
     private final App app;
-    public Player player;
-    public Optional<Team> team;
     private int balance = 0;
 
     public PlayerData(App app, UUID uuid) throws Exception {
@@ -98,7 +97,8 @@ public class PlayerData {
     }
 
     public String teamCapacityStatus() {
-        if (!team.isPresent()) return "";
+        if (!team.isPresent())
+            return "";
         return ChatColor.GRAY + "(" + this.team.get().size() + "/4)";
     }
 
@@ -117,7 +117,8 @@ public class PlayerData {
      */
     public void sendWorldTitle(String worldName) {
         WorldData wd = app.worldManager.getWorldData(worldName);
-        if (wd == null) return;
+        if (wd == null)
+            return;
         player.sendTitle(ChatColor.YELLOW + wd.worldName, wd.worldDescription, 20, 80, 20);
     }
 
