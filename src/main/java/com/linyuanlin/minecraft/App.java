@@ -51,11 +51,8 @@ public class App extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-
         // Starting discord bot
-
         String discordBotToken = this.getConfig().getString("discord_bot_token");
-
         if (discordBotToken == null || discordBotToken.equals("null")) {
             getLogger().log(java.util.logging.Level.WARNING, "There is no valid discord bot token in config file !!");
         } else {
@@ -67,17 +64,13 @@ public class App extends JavaPlugin implements Listener {
         }
 
         // register event listeners
-
         getServer().getPluginManager().registerEvents(this, this);
 
         // handling configs
-
         this.saveDefaultConfig();
 
         // starting database connections
-
         mongodbConnectString = this.getConfig().getString("mongo_connection_string");
-
         if (mongodbConnectString == null || mongodbConnectString.equals("mongodb://username:password@host")) {
             getLogger().log(java.util.logging.Level.WARNING,
                     "There is no valid mongodb connection string in config file !!");
@@ -118,7 +111,6 @@ public class App extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         try {
-
             discordBotManager.shutDownAllBot();
 
             for (Map.Entry<UUID, PlayerData> pair : allPlayers.entrySet()) {
@@ -128,14 +120,12 @@ public class App extends JavaPlugin implements Listener {
             this.dbClient.close();
 
             getLogger().info("See you again, SpigotMC!");
-
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             exception.printStackTrace(pw);
             discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
         }
-
     }
 
     @EventHandler
@@ -203,9 +193,7 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onMessage(AsyncPlayerChatEvent e) {
-
         try {
-
             String t = ChatColor.WHITE + "[" + ChatColor.AQUA + "工程師" + ChatColor.WHITE + "] " + e.getPlayer().getName()
                     + " 說 " + ChatColor.GRAY + e.getMessage();
 
@@ -215,7 +203,6 @@ public class App extends JavaPlugin implements Listener {
 
             // 顯示對話泡泡
             Bukkit.getScheduler().callSyncMethod(this, () -> this.setHolo(e.getPlayer(), e.getMessage(), 1)).get();
-
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -251,14 +238,11 @@ public class App extends JavaPlugin implements Listener {
         }.runTaskTimer(this, 1L, 1L);
 
         return true;
-
     }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEntityEvent event1) {
-
         try {
-
             Player p = event1.getPlayer();
             Entity entity = event1.getRightClicked();
             if (entity instanceof Player && event1.getHand() == EquipmentSlot.HAND) {
@@ -269,7 +253,6 @@ public class App extends JavaPlugin implements Listener {
                 a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite " + entity.getName()));
                 p.spigot().sendMessage(a);
             }
-
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);

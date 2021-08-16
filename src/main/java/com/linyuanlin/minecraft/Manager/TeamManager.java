@@ -78,6 +78,7 @@ public class TeamManager implements CommandExecutor {
 	 * 3. receiver already has team
 	 * 
 	 * 4. sender already invite receiver(cooling)
+	 * 
 	 */
 	private boolean invite(PlayerData senderPlayer, String[] args) {
 		if (args.length != 2) {
@@ -153,6 +154,7 @@ public class TeamManager implements CommandExecutor {
 	 * 3. sender is not invited by receiver
 	 * 
 	 * 4. receiver's team is full
+	 * 
 	 */
 	private boolean join(PlayerData senderPlayer, String[] args) throws Exception {
 		if (args.length != 2) {
@@ -238,6 +240,7 @@ public class TeamManager implements CommandExecutor {
 	 * Exception:
 	 * 
 	 * 1. player doesn't have a team
+	 * 
 	 */
 	private boolean list(PlayerData senderPlayer) {
 		Optional<Team> team = senderPlayer.team;
@@ -268,6 +271,7 @@ public class TeamManager implements CommandExecutor {
 	 * Exception:
 	 * 
 	 * 1. player doesn't have team
+	 * 
 	 */
 	private boolean leave(PlayerData senderPlayer) {
 		Optional<Team> team = senderPlayer.team;
@@ -327,6 +331,7 @@ public class TeamManager implements CommandExecutor {
 	 * Exception:
 	 * 
 	 * Nan
+	 * 
 	 */
 	private boolean help(PlayerData senderPlayer) {
 		senderPlayer.player.sendMessage(ChatColor.RED + "沒有這個指令");
