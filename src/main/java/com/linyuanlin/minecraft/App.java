@@ -155,11 +155,11 @@ public class App extends JavaPlugin implements Listener {
 
             Location location = locationManager.getLocation(LocationManager.lobby_spawn);
 
-            if (location != null) {
-                p.teleport(location);
-            } else {
+            if (location == null) {
                 p.teleport(lobbyWorld.getSpawnLocation());
-                throw new Exception("Location lobby_spawn is missing!");
+                throw new Exception("Location " + LocationManager.lobby_spawn + " is missing!");
+            } else {
+                p.teleport(location);
             }
 
             pd.sendWorldTitle(p.getWorld().getName());
