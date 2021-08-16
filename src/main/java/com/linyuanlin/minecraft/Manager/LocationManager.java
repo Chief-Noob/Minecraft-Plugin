@@ -20,8 +20,9 @@ public class LocationManager {
 		List<Document> docList = app.dbClient.findMany("Location", Filters.empty());
 		for (Document doc : docList) {
 			tagLocationMap.put(doc.getString("tag"),
-					new Location(this.app.worldManager.getWorldData(WorldManager.world_lobby).world,
-							doc.getDouble("x"), doc.getDouble("y"), doc.getDouble("z")));
+					new Location(this.app.worldManager.getWorldData(WorldManager.world_lobby)
+							.getWorld(), doc.getDouble("x"), doc.getDouble("y"),
+							doc.getDouble("z")));
 		}
 	}
 

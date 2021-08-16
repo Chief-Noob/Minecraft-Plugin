@@ -158,7 +158,7 @@ public class PlayerData {
         WorldData wd = app.worldManager.getWorldData(worldName);
         if (wd == null)
             return;
-        player.sendTitle(ChatColor.YELLOW + wd.worldName, wd.worldDescription, 20, 80, 20);
+        player.sendTitle(ChatColor.YELLOW + wd.getWorldName(), wd.getWorldDescription(), 20, 80, 20);
     }
 
     /*********
