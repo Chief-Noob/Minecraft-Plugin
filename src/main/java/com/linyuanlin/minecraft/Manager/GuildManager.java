@@ -33,6 +33,8 @@ public class GuildManager implements CommandExecutor {
 			switch (args[0]) {
 				case "getInvitationPaper":
 					return this.getInvitationPaper(p);
+				case "useInvitationPaper":
+					return this.useInvitationPaper(p);
 				case "second":
 					return this.second(p, args);
 				default:
@@ -56,6 +58,11 @@ public class GuildManager implements CommandExecutor {
 		senderPlayer.modifyBalance(-1000, "Buy Guild Invitation Paper");
 		senderPlayer.player.sendMessage("你已成功購買公會創立卷！ " + senderPlayer.getBalanceString());
 		senderPlayer.player.getInventory().addItem(new ItemStack(CustomItem.guildInvitationPaper));
+		return true;
+	}
+
+	private boolean useInvitationPaper(PlayerData sendPlayer) {
+		
 		return true;
 	}
 

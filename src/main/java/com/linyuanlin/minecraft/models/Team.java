@@ -9,13 +9,14 @@ import java.util.List;
 public class Team {
     private final List<PlayerData> playerList = new ArrayList<>();
     private PlayerData leader;
+    public final static int MAX_CAPACITY = 4;
 
     public boolean isEmpty() {
         return this.playerList.size() == 0;
     }
 
     public boolean isFull() {
-        return this.playerList.size() == 4;
+        return this.playerList.size() == MAX_CAPACITY;
     }
 
     public int size() {
