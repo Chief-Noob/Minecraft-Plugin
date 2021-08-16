@@ -15,9 +15,9 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerData {
-    public Player player;
-    public Optional<Team> team;
-    public Optional<Guild> guild;
+    private Player player;
+    private Optional<Team> team;
+    private Optional<Guild> guild;
     private final HashMap<Player, Date> invitedTimeMap;
     private final HashMap<Player, Date> inviteTimeMap;
     private final App app;
@@ -81,9 +81,25 @@ public class PlayerData {
         this.destroyInviteRecord();
     }
 
+    /**********
+     * player *
+     *********/
+
+    public Player player() {
+        return this.player;
+    }
+
     /********
      * team *
      *******/
+
+    public Optional<Team> team() {
+        return this.team;
+    }
+
+    public void replaceTeam(Optional<Team> team) {
+        this.team = team;
+    }
 
     /*
      * Record the invitation records when player invite p
@@ -180,7 +196,7 @@ public class PlayerData {
     /**
      * Get player's balance
      */
-    public int getBalance() {
+    public int balance() {
         return this.balance;
     }
 
@@ -188,6 +204,14 @@ public class PlayerData {
      * Get player's balance string
      */
     public String getBalanceString() {
-        return ChatColor.GRAY + "(餘額： " + this.getBalance() + ")";
+        return ChatColor.GRAY + "(餘額： " + this.balance() + ")";
+    }
+
+    /*********
+     * guild *
+     ********/
+
+    public Optional<Guild> guild() {
+        return this.guild;
     }
 }

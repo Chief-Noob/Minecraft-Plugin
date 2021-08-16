@@ -50,14 +50,14 @@ public class GuildManager implements CommandExecutor {
 	}
 
 	private boolean getInvitationPaper(PlayerData senderPlayer) {
-		if (senderPlayer.getBalance() < 1000) {
-			senderPlayer.player.sendMessage(
-					"你的錢不夠購買公會創立卷！ " + ChatColor.RED + "(" + senderPlayer.getBalance() + "/1000)");
+		if (senderPlayer.balance() < 1000) {
+			senderPlayer.player().sendMessage(
+					"你的錢不夠購買公會創立卷！ " + ChatColor.RED + "(" + senderPlayer.balance() + "/1000)");
 			return false;
 		}
 		senderPlayer.modifyBalance(-1000, "Buy Guild Invitation Paper");
-		senderPlayer.player.sendMessage("你已成功購買公會創立卷！ " + senderPlayer.getBalanceString());
-		senderPlayer.player.getInventory().addItem(new ItemStack(CustomItem.guildInvitationPaper));
+		senderPlayer.player().sendMessage("你已成功購買公會創立卷！ " + senderPlayer.getBalanceString());
+		senderPlayer.player().getInventory().addItem(new ItemStack(CustomItem.guildInvitationPaper));
 		return true;
 	}
 
@@ -71,12 +71,12 @@ public class GuildManager implements CommandExecutor {
 	}
 
 	private boolean help(PlayerData senderPlayer) {
-		senderPlayer.player.sendMessage(ChatColor.RED + "沒有這個指令");
-		senderPlayer.player.sendMessage(ChatColor.AQUA + "/guild 的使用方式：");
+		senderPlayer.player().sendMessage(ChatColor.RED + "沒有這個指令");
+		senderPlayer.player().sendMessage(ChatColor.AQUA + "/guild 的使用方式：");
 
-		senderPlayer.player.sendMessage("/guild getInvitationPaper" + ChatColor.GRAY + " - 獲得公會創立卷");
+		senderPlayer.player().sendMessage("/guild getInvitationPaper" + ChatColor.GRAY + " - 獲得公會創立卷");
 
-		senderPlayer.player.sendMessage(ChatColor.GRAY + "/guild help - 取得幫助");
+		senderPlayer.player().sendMessage(ChatColor.GRAY + "/guild help - 取得幫助");
 		return false;
 	}
 }

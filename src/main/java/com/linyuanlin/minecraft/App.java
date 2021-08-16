@@ -247,7 +247,7 @@ public class App extends JavaPlugin implements Listener {
             Entity entity = event1.getRightClicked();
             if (entity instanceof Player && event1.getHand() == EquipmentSlot.HAND) {
                 p.sendMessage("他是 " + entity.getName());
-                p.sendMessage("該玩家擁有財產 " + allPlayers.get(entity.getUniqueId()).getBalance() + " 元");
+                p.sendMessage("該玩家擁有財產 " + allPlayers.get(entity.getUniqueId()).balance() + " 元");
                 TextComponent a = new TextComponent("[傳送組隊邀請]");
                 a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊發送組隊邀請給 " + entity.getName())));
                 a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite " + entity.getName()));

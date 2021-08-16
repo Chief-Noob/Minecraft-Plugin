@@ -25,7 +25,7 @@ public class Team {
 
     public void sendMessageToAll(TextComponent msg) {
         for (PlayerData pd : this.playerList) {
-            pd.player.spigot().sendMessage(msg);
+            pd.player().spigot().sendMessage(msg);
         }
     }
 
@@ -46,12 +46,14 @@ public class Team {
         if (leader == null) {
             leader = p;
         }
+
         this.playerList.add(p);
     }
 
     public void delete(PlayerData p) {
-        if (this.leader == p)
+        if (this.leader == p) {
             this.newLeader();
+        }
 
         this.playerList.remove(p);
     }
@@ -67,8 +69,9 @@ public class Team {
     public String allTeamMemberString() {
         StringBuilder teamMemberNameString = new StringBuilder();
         for (PlayerData pd : this.playerList) {
-            teamMemberNameString.append(pd.player.getName()).append(" ");
+            teamMemberNameString.append(pd.player().getName()).append(" ");
         }
+
         return ChatColor.GOLD + teamMemberNameString.toString();
     }
 }

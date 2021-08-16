@@ -3,7 +3,6 @@ package com.linyuanlin.minecraft.models;
 import org.bukkit.World;
 
 public class WorldData {
-
     private String worldId;
     private String worldName;
     private String worldDescription;
