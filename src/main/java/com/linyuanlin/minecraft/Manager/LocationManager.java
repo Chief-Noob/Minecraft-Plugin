@@ -10,6 +10,7 @@ public class LocationManager {
 	private App app;
 	private HashMap<String, Location> tagLocationMap;
 	public final static String lobby_spawn = "lobby_spawn";
+	public final static String house_spawn = "house_spawn";
 
 	public LocationManager(App app) {
 		this.app = app;

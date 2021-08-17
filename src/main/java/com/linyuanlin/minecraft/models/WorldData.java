@@ -9,9 +9,12 @@ public class WorldData {
     private World world;
 
     public WorldData(String id, String name, String description, World world) {
-        worldId = id;
-        worldName = name;
-        worldDescription = description;
+        this.worldId = id;
+
+        this.worldName = name;
+
+        this.worldDescription = description;
+
         this.world = world;
     }
 

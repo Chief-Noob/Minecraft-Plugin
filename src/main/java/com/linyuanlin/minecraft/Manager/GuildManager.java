@@ -25,7 +25,6 @@ public class GuildManager implements CommandExecutor {
 			@NotNull String[] args) {
 		try {
 			PlayerData p = app.allPlayers.get(((Player) sender).getUniqueId());
-
 			if (p == null) {
 				return false;
 			}
@@ -62,11 +61,12 @@ public class GuildManager implements CommandExecutor {
 	}
 
 	private boolean useInvitationPaper(PlayerData sendPlayer) {
-		
+
 		return true;
 	}
 
 	private boolean second(PlayerData senderPlayer, String[] args) {
+
 		return true;
 	}
 

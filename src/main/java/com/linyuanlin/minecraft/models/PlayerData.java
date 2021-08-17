@@ -39,14 +39,9 @@ public class PlayerData {
 
         Document d = app.dbClient.findOne("PlayerData", "uuid", uuid.toString());
         if (d != null) {
-            // should crate a readPlayerFromDoc function
-            this.balance = d.getInteger("balance");
+            this.readPlayerFromDoc(d);
         } else {
-            // should crate a createDocForPlayer function
-            Document newDocument = new Document();
-            newDocument.append("uuid", player.getUniqueId().toString());
-            newDocument.append("balance", this.balance);
-            app.dbClient.insert("PlayerData", newDocument);
+            app.dbClient.insert("PlayerData", this.createDocForPlayer());
         }
 
         player.sendMessage(ChatColor.GRAY + "你的資料已從資料庫同步完成");
@@ -66,6 +61,17 @@ public class PlayerData {
 
         app.dbClient.replaceOne("PlayerData", Filters.eq("uuid", player.getUniqueId().toString()), d);
         player.sendMessage(ChatColor.GRAY + "你的資料已自動保存至資料庫");
+    }
+
+    public Document createDocForPlayer() {
+        Document newDocument = new Document();
+        newDocument.append("uuid", player.getUniqueId().toString());
+        newDocument.append("balance", this.balance);
+        return newDocument;
+    }
+
+    public void readPlayerFromDoc(Document doc) {
+        this.balance = doc.getInteger("balance");
     }
 
     /*

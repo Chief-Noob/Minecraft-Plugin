@@ -32,7 +32,6 @@ public class TeamManager implements CommandExecutor {
 			@NotNull String[] args) {
 		try {
 			PlayerData p = app.allPlayers.get(((Player) sender).getUniqueId());
-
 			if (p == null) {
 				return false;
 			}
@@ -104,7 +103,7 @@ public class TeamManager implements CommandExecutor {
 		Optional<Team> team = app.allPlayers.get(receiverPlayer.player().getUniqueId()).team();
 
 		if (receiverPlayer == senderPlayer) {
-			senderPlayer.player().sendMessage("不能邀請自己");
+			senderPlayer.player().sendMessage(ChatColor.RED + "不能邀請自己");
 			return false;
 		}
 
@@ -158,7 +157,7 @@ public class TeamManager implements CommandExecutor {
 	 */
 	private boolean join(PlayerData senderPlayer, String[] args) throws Exception {
 		if (args.length != 2) {
-			senderPlayer.player().sendMessage("組隊指令錯誤");
+			senderPlayer.player().sendMessage(ChatColor.RED + "組隊指令錯誤");
 			this.help(senderPlayer);
 			return false;
 		}
@@ -177,7 +176,7 @@ public class TeamManager implements CommandExecutor {
 		}
 
 		if (senderPlayer.team().isPresent()) {
-			senderPlayer.player().sendMessage("你已有隊伍");
+			senderPlayer.player().sendMessage(ChatColor.RED + "你已有隊伍");
 			return false;
 		}
 
@@ -218,7 +217,7 @@ public class TeamManager implements CommandExecutor {
 			msg = new TextComponent(ChatColor.GOLD + senderPlayer.player().getName() + ChatColor.WHITE
 					+ "已加入" + senderPlayer.teamCapacityStatus());
 		} else {
-			senderPlayer.player().sendMessage("隊伍已滿");
+			senderPlayer.player().sendMessage(ChatColor.RED + "隊伍已滿");
 
 			return false;
 		}
@@ -245,7 +244,7 @@ public class TeamManager implements CommandExecutor {
 	private boolean list(PlayerData senderPlayer) {
 		Optional<Team> team = senderPlayer.team();
 		if (!team.isPresent()) {
-			senderPlayer.player().sendMessage("你不在任何隊伍裡");
+			senderPlayer.player().sendMessage(ChatColor.RED + "你不在任何隊伍裡");
 
 			return false;
 		}
@@ -276,7 +275,7 @@ public class TeamManager implements CommandExecutor {
 	private boolean leave(PlayerData senderPlayer) {
 		Optional<Team> team = senderPlayer.team();
 		if (!team.isPresent()) {
-			senderPlayer.player().spigot().sendMessage(new TextComponent("你沒有隊伍"));
+			senderPlayer.player().sendMessage(ChatColor.RED + "你沒有隊伍");
 			return false;
 		}
 
@@ -318,7 +317,7 @@ public class TeamManager implements CommandExecutor {
 		}
 
 		senderPlayer.replaceTeam(Optional.empty());
-		senderPlayer.player().spigot().sendMessage(new TextComponent("你離開了隊伍"));
+		senderPlayer.player().sendMessage("你離開了隊伍");
 
 		return true;
 	}
