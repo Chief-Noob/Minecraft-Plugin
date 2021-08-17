@@ -10,8 +10,14 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class WorldManager {
-
+    /*
+     * Key: worlds' tag, Value: world data
+     */
     private HashMap<String, WorldData> worlds;
+
+    /*
+     * constants
+     */
     public final static String world_lobby = "world_lobby";
     public final static String house_world = "house_world";
 

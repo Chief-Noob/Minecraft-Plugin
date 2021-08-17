@@ -7,6 +7,7 @@ import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -103,14 +104,14 @@ public class PlayerData {
         return this.team;
     }
 
-    public void replaceTeam(Optional<Team> team) {
+    public void replaceTeam(@NotNull Optional<Team> team) {
         this.team = team;
     }
 
     /*
      * Record the invitation records when player invite p
      */
-    public void recordInvite(PlayerData p) {
+    public void recordInvite(@NotNull PlayerData p) {
         Date t = new Date();
         this.inviteTimeMap.put(p.player, t);
         p.invitedTimeMap.put(this.player, t);
@@ -139,7 +140,7 @@ public class PlayerData {
     /*
      * Return whether player invite p is cooling
      */
-    public boolean isInviteCooling(PlayerData p) {
+    public boolean isInviteCooling(@NotNull PlayerData p) {
         Date t = inviteTimeMap.get(p.player);
         return t != null && new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1)).before(t);
     }
@@ -147,7 +148,7 @@ public class PlayerData {
     /*
      * Return whether player is invited by p THIS WILL REMOVE EXPIRED RECORDS!!
      */
-    public boolean isInvitedBy(PlayerData p) {
+    public boolean isInvitedBy(@NotNull PlayerData p) {
         if (p.inviteTimeMap.get(this.player) != null && this.invitedTimeMap.get(p.player) != null) {
             Date t = new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(TeamManager.INVITE_COOLING_MINS));
             if (this.invitedTimeMap.get(p.player).before(t) && p.inviteTimeMap.get(this.player).before(t)) {
@@ -177,10 +178,10 @@ public class PlayerData {
      * Send a title to player about a world's information
      */
     public void sendWorldTitle(String worldName) {
-        WorldData wd = app.worldManager.getWorldData(worldName);
-        if (wd == null)
+        WorldData world = app.worldManager.getWorldData(worldName);
+        if (world == null)
             return;
-        player.sendTitle(ChatColor.YELLOW + wd.getWorldName(), wd.getWorldDescription(), 20, 80, 20);
+        player.sendTitle(ChatColor.YELLOW + world.getWorldName(), world.getWorldDescription(), 20, 80, 20);
     }
 
     /*********
@@ -191,11 +192,11 @@ public class PlayerData {
      * Modify the balance of player and leave a modification record into database
      */
     public void modifyBalance(int delta, String reason) {
-        Document d = new Document();
-        d.append("before", balance);
-        d.append("after", balance + delta);
-        d.append("reason", reason);
-        this.app.dbClient.insert("BalanceModify", d);
+        Document doc = new Document();
+        doc.append("before", balance);
+        doc.append("after", balance + delta);
+        doc.append("reason", reason);
+        this.app.dbClient.insert("BalanceModify", doc);
         balance += delta;
     }
 
