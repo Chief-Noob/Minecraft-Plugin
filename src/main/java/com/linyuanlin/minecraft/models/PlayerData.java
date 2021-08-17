@@ -19,7 +19,14 @@ public class PlayerData {
     private Player player;
     private Optional<Team> team;
     private Optional<Guild> guild;
+    /*
+     * Key: inviter data, Value: invited time
+     */
     private final HashMap<Player, Date> invitedTimeMap;
+
+    /*
+     * Key: player data, Value: invite time
+     */
     private final HashMap<Player, Date> inviteTimeMap;
     private final App app;
     private int balance = 0;

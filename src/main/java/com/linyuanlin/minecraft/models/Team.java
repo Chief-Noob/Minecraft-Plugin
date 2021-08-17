@@ -9,6 +9,10 @@ import java.util.List;
 public class Team {
     private final List<PlayerData> playerList = new ArrayList<>();
     private PlayerData leader;
+
+    /*
+     * constants
+     */
     public final static int MAX_CAPACITY = 4;
 
     /*
