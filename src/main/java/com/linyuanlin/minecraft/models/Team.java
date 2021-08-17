@@ -3,8 +3,7 @@ package com.linyuanlin.minecraft.models;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Team {
     private final List<PlayerData> playerList = new ArrayList<>();

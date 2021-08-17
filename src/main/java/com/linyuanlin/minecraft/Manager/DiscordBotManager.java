@@ -5,11 +5,9 @@ import com.tjplaysnow.discord.object.Bot;
 import com.tjplaysnow.discord.object.ThreadSpigot;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class DiscordBotManager {
-
     private App app;
 
     // Key: Channel Tag, Value: Channel ID
@@ -41,22 +39,24 @@ public class DiscordBotManager {
     public void sendMessage(String botTag, String channelTag, String message) {
         Bot bot = bots.get(botTag);
         if (bot == null) {
-            this.app.getLogger().warning("Cannot let bot " + botTag + " send message to channel " + channelTag + " because bot is not exist.");
+            this.app.getLogger().warning("Cannot let bot " + botTag + " send message to channel " + channelTag
+                    + " because bot is not exist.");
             return;
         }
         String cId = textChannels.get(channelTag);
         if (cId == null) {
-            this.app.getLogger().warning("Cannot let bot " + botTag + " send message to channel " + channelTag + " because channel is not exist.");
+            this.app.getLogger().warning("Cannot let bot " + botTag + " send message to channel " + channelTag
+                    + " because channel is not exist.");
             return;
         }
 
         TextChannel c = bot.getBot().getTextChannelById(cId);
         if (c == null) {
-            this.app.getLogger().warning("Cannot let bot " + botTag + " send message to channel " + channelTag + " because channel is not exist.");
+            this.app.getLogger().warning("Cannot let bot " + botTag + " send message to channel " + channelTag
+                    + " because channel is not exist.");
             return;
         }
 
         c.sendMessage(message).queue();
     }
-
 }

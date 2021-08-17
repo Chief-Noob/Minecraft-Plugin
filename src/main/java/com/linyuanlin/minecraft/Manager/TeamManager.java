@@ -1,23 +1,16 @@
 package com.linyuanlin.minecraft.manager;
 
 import com.linyuanlin.minecraft.App;
-import com.linyuanlin.minecraft.models.PlayerData;
-import com.linyuanlin.minecraft.models.Team;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import com.linyuanlin.minecraft.models.*;
+import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.*;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Optional;
+import java.io.*;
+import java.util.*;
 
 public class TeamManager implements CommandExecutor {
 	private App app;

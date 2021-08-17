@@ -1,6 +1,6 @@
 package com.linyuanlin.minecraft.models;
 
-import org.bukkit.World;
+import org.bukkit.*;
 
 public class WorldData {
     private String worldId;

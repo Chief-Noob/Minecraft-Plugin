@@ -3,8 +3,8 @@ package com.linyuanlin.minecraft.manager;
 import com.linyuanlin.minecraft.App;
 import com.mongodb.client.model.Filters;
 import java.util.*;
-import org.bson.Document;
 import org.bukkit.*;
+import org.bson.Document;
 
 public class LocationManager {
 	private App app;
