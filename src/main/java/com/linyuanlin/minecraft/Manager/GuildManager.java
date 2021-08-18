@@ -59,6 +59,7 @@ public class GuildManager implements CommandExecutor {
 	}
 
 	private boolean useInvitationPaper(PlayerData sendPlayer) {
+
 		return true;
 	}
 
