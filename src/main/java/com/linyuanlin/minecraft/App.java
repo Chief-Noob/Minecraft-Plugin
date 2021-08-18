@@ -1,35 +1,21 @@
 package com.linyuanlin.minecraft;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.gmail.filoghost.holographicdisplays.api.*;
 import com.linyuanlin.minecraft.manager.*;
 import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.mongodb.MongodbClient;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
+import org.bukkit.*;
+import org.bukkit.entity.*;
+import org.bukkit.event.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.*;
+import java.util.*;
+import java.util.logging.*;
 
 public class App extends JavaPlugin implements Listener {
 
@@ -42,7 +28,6 @@ public class App extends JavaPlugin implements Listener {
     public LocationManager locationManager = new LocationManager(this);
     public String mongodbConnectString = "";
     public MongodbClient dbClient;
-    public PluginMessageHandler PMH = new PluginMessageHandler();
 
     public void downloadAllUserData() throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -151,7 +136,8 @@ public class App extends JavaPlugin implements Listener {
             Player p = e.getPlayer();
             PlayerData pd = new PlayerData(this, p.getUniqueId());
             allPlayers.put(p.getUniqueId(), pd);
-            String msg = ChatColor.WHITE + "玩家 " + ChatColor.GOLD + e.getPlayer().getName() + ChatColor.WHITE + " 登入了, 讚啦！";
+            String msg = ChatColor.WHITE + "玩家 " + ChatColor.GOLD + e.getPlayer().getName() + ChatColor.WHITE
+                    + " 登入了, 讚啦！";
             e.setJoinMessage(msg);
             World lobbyWorld = Bukkit.getWorld("world_lobby");
             discordBotManager.sendMessage("TEST", "Project-Minecraft", msg);
@@ -161,11 +147,11 @@ public class App extends JavaPlugin implements Listener {
 
             Location location = locationManager.getLocation(LocationManager.lobby_spawn);
 
-            if (location != null) {
-                p.teleport(location);
-            } else {
+            if (location == null) {
                 p.teleport(lobbyWorld.getSpawnLocation());
-                throw new Exception("Location lobby_spawn is missing!");
+                throw new Exception("Location " + LocationManager.lobby_spawn + " is missing!");
+            } else {
+                p.teleport(location);
             }
 
             pd.sendWorldTitle(p.getWorld().getName());
@@ -262,25 +248,21 @@ public class App extends JavaPlugin implements Listener {
         }.runTaskTimer(this, 1L, 1L);
 
         return true;
-
     }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEntityEvent event1) {
-
         try {
-
             Player p = event1.getPlayer();
             Entity entity = event1.getRightClicked();
             if (entity instanceof Player && event1.getHand() == EquipmentSlot.HAND) {
                 p.sendMessage("他是 " + entity.getName());
-                p.sendMessage("該玩家擁有財產 " + allPlayers.get(entity.getUniqueId()).getBalance() + " 元");
+                p.sendMessage("該玩家擁有財產 " + allPlayers.get(entity.getUniqueId()).balance() + " 元");
                 TextComponent a = new TextComponent("[傳送組隊邀請]");
                 a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊發送組隊邀請給 " + entity.getName())));
                 a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite " + entity.getName()));
                 p.spigot().sendMessage(a);
             }
-
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);

@@ -2,16 +2,11 @@ package com.linyuanlin.minecraft.mongodb;
 
 import com.linyuanlin.minecraft.App;
 import com.mongodb.BasicDBObject;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.*;
 
 public class MongodbClient {
     public FindIterable<Document> cursor;
