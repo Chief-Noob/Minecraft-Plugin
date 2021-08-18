@@ -1,21 +1,35 @@
 package com.linyuanlin.minecraft;
 
-import com.gmail.filoghost.holographicdisplays.api.*;
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.linyuanlin.minecraft.manager.*;
 import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.mongodb.MongodbClient;
-import net.md_5.bungee.api.chat.*;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.*;
-import org.bukkit.entity.*;
-import org.bukkit.event.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import java.io.*;
-import java.util.*;
-import java.util.logging.*;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class App extends JavaPlugin implements Listener {
 
@@ -27,6 +41,7 @@ public class App extends JavaPlugin implements Listener {
     public GuildManager guildManager = new GuildManager(this);
     public LocationManager locationManager = new LocationManager(this);
     public String mongodbConnectString = "";
+    public PluginMessageHandler PMH = new PluginMessageHandler();
     public MongodbClient dbClient;
 
     public void downloadAllUserData() throws Exception {
@@ -37,8 +52,14 @@ public class App extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this.PMH);
+
         // Starting discord bot
+
         String discordBotToken = this.getConfig().getString("discord_bot_token");
+
         if (discordBotToken == null || discordBotToken.equals("null")) {
             getLogger().log(java.util.logging.Level.WARNING, "There is no valid discord bot token in config file !!");
         } else {
@@ -50,13 +71,17 @@ public class App extends JavaPlugin implements Listener {
         }
 
         // register event listeners
+
         getServer().getPluginManager().registerEvents(this, this);
 
         // handling configs
+
         this.saveDefaultConfig();
 
         // starting database connections
+
         mongodbConnectString = this.getConfig().getString("mongo_connection_string");
+
         if (mongodbConnectString == null || mongodbConnectString.equals("mongodb://username:password@host")) {
             getLogger().log(java.util.logging.Level.WARNING,
                     "There is no valid mongodb connection string in config file !!");
@@ -97,6 +122,10 @@ public class App extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         try {
+
+            this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
+            this.getServer().getMessenger().unregisterIncomingPluginChannel(this);
+
             discordBotManager.shutDownAllBot();
 
             for (Map.Entry<UUID, PlayerData> pair : allPlayers.entrySet()) {
@@ -106,12 +135,14 @@ public class App extends JavaPlugin implements Listener {
             this.dbClient.close();
 
             getLogger().info("See you again, SpigotMC!");
+
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             exception.printStackTrace(pw);
             discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
         }
+
     }
 
     @EventHandler
@@ -139,6 +170,11 @@ public class App extends JavaPlugin implements Listener {
             }
 
             pd.sendWorldTitle(p.getWorld().getName());
+
+
+            Bukkit.getScheduler().runTaskLater(this,
+                    () -> PMH.sendPluginMessage("subChannel-player-join", p.getName() + " joined this server"),
+                    20L);
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -179,7 +215,9 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onMessage(AsyncPlayerChatEvent e) {
+
         try {
+
             String t = ChatColor.WHITE + "[" + ChatColor.AQUA + "工程師" + ChatColor.WHITE + "] " + e.getPlayer().getName()
                     + " 說 " + ChatColor.GRAY + e.getMessage();
 
@@ -189,6 +227,7 @@ public class App extends JavaPlugin implements Listener {
 
             // 顯示對話泡泡
             Bukkit.getScheduler().callSyncMethod(this, () -> this.setHolo(e.getPlayer(), e.getMessage(), 1)).get();
+
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);

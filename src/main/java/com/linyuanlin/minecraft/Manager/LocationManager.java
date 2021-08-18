@@ -17,10 +17,10 @@ public class LocationManager {
 	public final static String lobby_spawn = "lobby_spawn";
 	public final static String house_spawn = "house_spawn";
 
-	public LocationManager(App app) {
-		this.app = app;
-		tagLocationMap = new HashMap<>();
-	}
+    public LocationManager(App app) {
+        this.app = app;
+        tagLocationMap = new HashMap<>();
+    }
 
 	public void loadLocations() {
 		List<Document> docList = app.dbClient.findMany("Location", Filters.empty());
@@ -35,7 +35,7 @@ public class LocationManager {
 
 	}
 
-	public Location getLocation(String tag) {
-		return tagLocationMap.get(tag);
-	}
+    public Location getLocation(String tag) {
+        return tagLocationMap.get(tag);
+    }
 }

@@ -1,22 +1,23 @@
 package com.linyuanlin.minecraft.manager;
 
 import com.linyuanlin.minecraft.App;
-import com.linyuanlin.minecraft.models.PlayerData;
 import com.linyuanlin.minecraft.item.CustomItem;
+import com.linyuanlin.minecraft.models.PlayerData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class GuildManager implements CommandExecutor {
-	private App app;
+    private final App app;
 
-	public GuildManager(App app) {
-		this.app = app;
-	}
+    public GuildManager(App app) {
+        this.app = app;
+    }
 
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
@@ -63,9 +64,9 @@ public class GuildManager implements CommandExecutor {
 		return true;
 	}
 
-	private boolean second(PlayerData senderPlayer, String[] args) {
-		return true;
-	}
+    private boolean second(PlayerData senderPlayer, String[] args) {
+        return true;
+    }
 
 	private boolean help(PlayerData senderPlayer) {
 		senderPlayer.player().sendMessage(ChatColor.RED + "沒有這個指令");
