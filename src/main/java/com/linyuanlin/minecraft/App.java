@@ -42,6 +42,7 @@ public class App extends JavaPlugin implements Listener {
     public LocationManager locationManager = new LocationManager(this);
     public String mongodbConnectString = "";
     public MongodbClient dbClient;
+    public PluginMessageHandler PMH = new PluginMessageHandler();
 
     public void downloadAllUserData() throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -51,6 +52,9 @@ public class App extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this.PMH);
 
         // Starting discord bot
 
@@ -119,6 +123,9 @@ public class App extends JavaPlugin implements Listener {
     public void onDisable() {
         try {
 
+            this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
+            this.getServer().getMessenger().unregisterIncomingPluginChannel(this);
+
             discordBotManager.shutDownAllBot();
 
             for (Map.Entry<UUID, PlayerData> pair : allPlayers.entrySet()) {
@@ -144,8 +151,7 @@ public class App extends JavaPlugin implements Listener {
             Player p = e.getPlayer();
             PlayerData pd = new PlayerData(this, p.getUniqueId());
             allPlayers.put(p.getUniqueId(), pd);
-            String msg = ChatColor.WHITE + "玩家 " + ChatColor.GOLD + e.getPlayer().getName() + ChatColor.WHITE
-                    + " 登入了, 讚啦！";
+            String msg = ChatColor.WHITE + "玩家 " + ChatColor.GOLD + e.getPlayer().getName() + ChatColor.WHITE + " 登入了, 讚啦！";
             e.setJoinMessage(msg);
             World lobbyWorld = Bukkit.getWorld("world_lobby");
             discordBotManager.sendMessage("TEST", "Project-Minecraft", msg);
@@ -163,6 +169,11 @@ public class App extends JavaPlugin implements Listener {
             }
 
             pd.sendWorldTitle(p.getWorld().getName());
+
+
+            Bukkit.getScheduler().runTaskLater(this,
+                    () -> PMH.sendPluginMessage("subChannel-player-join", p.getName() + " joined this server"),
+                    20L);
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);

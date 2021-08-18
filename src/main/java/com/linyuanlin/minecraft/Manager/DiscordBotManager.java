@@ -10,13 +10,13 @@ import java.util.Map;
 
 public class DiscordBotManager {
 
-    private App app;
+    private final App app;
 
     // Key: Channel Tag, Value: Channel ID
-    private HashMap<String, String> textChannels = new HashMap<>();
+    private final HashMap<String, String> textChannels = new HashMap<>();
 
     // Key: Bot Tag, Value: Bot
-    private HashMap<String, Bot> bots = new HashMap<>();
+    private final HashMap<String, Bot> bots = new HashMap<>();
 
     public DiscordBotManager(App app) {
         this.app = app;
