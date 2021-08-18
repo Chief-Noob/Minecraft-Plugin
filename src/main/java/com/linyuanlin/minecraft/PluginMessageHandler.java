@@ -5,6 +5,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -29,8 +30,11 @@ public class PluginMessageHandler implements PluginMessageListener {
         Bukkit.getConsoleSender().sendMessage("receive plugin message: " + subChannel + msg);
         switch (subChannel) {
             case "subChannel-player-message": {
-                // String[] msgList = msg.split(" ", 2);
-                // Bukkit.getServer().broadcastMessage(msgList[1]);
+                String[] msgList = msg.split(" ", 2);
+                for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+                    p.sendMessage(ChatColor.WHITE + "[" + ChatColor.AQUA + "工程師" + ChatColor.WHITE + "] " + msgList[0]
+                            + " 說 " + ChatColor.GRAY + msgList[1]);
+                }
                 break;
             }
             default:
