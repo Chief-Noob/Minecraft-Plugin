@@ -29,8 +29,8 @@ public class PluginMessageHandler implements PluginMessageListener {
         Bukkit.getConsoleSender().sendMessage("receive plugin message: " + subChannel + msg);
         switch (subChannel) {
             case "subChannel-player-message": {
-                String[] msgList = msg.split(" ", 2);
-                Bukkit.getServer().broadcastMessage(msgList[1]);
+                // String[] msgList = msg.split(" ", 2);
+                // Bukkit.getServer().broadcastMessage(msgList[1]);
                 break;
             }
             default:
