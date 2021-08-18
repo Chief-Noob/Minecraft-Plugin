@@ -41,8 +41,8 @@ public class PluginMessageHandler implements PluginMessageListener {
         out.writeUTF(subChannel);
         out.writeUTF(PluginMessage);
         Bukkit.getConsoleSender().sendMessage("send plugin message: " + subChannel + ' ' + PluginMessage);
-        Objects.requireNonNull(Iterables.getFirst(Bukkit.getOnlinePlayers(), null))
-                .sendPluginMessage(getPlugin(), "BungeeCord", out.toByteArray());
+        Objects.requireNonNull(Iterables.getFirst(Bukkit.getOnlinePlayers(), null)).sendPluginMessage(getPlugin(),
+                "BungeeCord", out.toByteArray());
     }
 
 }

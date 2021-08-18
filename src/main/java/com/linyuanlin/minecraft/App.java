@@ -35,11 +35,11 @@ public class App extends JavaPlugin implements Listener {
 
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
     public WorldManager worldManager = new WorldManager();
-    public DiscordBotManager discordBotManager = new DiscordBotManager(this);
-    public TeamManager teamManager = new TeamManager(this);
-    public TradeManager tradeManager = new TradeManager(this);
-    public GuildManager guildManager = new GuildManager(this);
-    public LocationManager locationManager = new LocationManager(this);
+    public DiscordBotManager discordBotManager = new DiscordBotManager();
+    public TeamManager teamManager = new TeamManager();
+    public TradeManager tradeManager = new TradeManager();
+    public GuildManager guildManager = new GuildManager();
+    public LocationManager locationManager = new LocationManager();
     public String mongodbConnectString = "";
     public PluginMessageHandler PMH = new PluginMessageHandler();
     public MongodbClient dbClient;
@@ -171,10 +171,8 @@ public class App extends JavaPlugin implements Listener {
 
             pd.sendWorldTitle(p.getWorld().getName());
 
-
             Bukkit.getScheduler().runTaskLater(this,
-                    () -> PMH.sendPluginMessage("subChannel-player-join", p.getName() + " joined this server"),
-                    20L);
+                    () -> PMH.sendPluginMessage("subChannel-player-join", p.getName() + " joined this server"), 20L);
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);

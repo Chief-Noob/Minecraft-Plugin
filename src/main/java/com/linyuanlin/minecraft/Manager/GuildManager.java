@@ -3,7 +3,8 @@ package com.linyuanlin.minecraft.manager;
 import com.linyuanlin.minecraft.App;
 import com.linyuanlin.minecraft.item.CustomItem;
 import com.linyuanlin.minecraft.models.PlayerData;
-import org.bukkit.ChatColor;
+import org.bukkit.*;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,17 +14,15 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class GuildManager implements CommandExecutor {
-    private final App app;
-
-    public GuildManager(App app) {
-        this.app = app;
-    }
+	public static App getPlugin() {
+		return JavaPlugin.getPlugin(App.class);
+	}
 
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
 			@NotNull String[] args) {
 		try {
-			PlayerData p = app.allPlayers.get(((Player) sender).getUniqueId());
+			PlayerData p = getPlugin().allPlayers.get(((Player) sender).getUniqueId());
 			if (p == null) {
 				return false;
 			}
@@ -42,7 +41,7 @@ public class GuildManager implements CommandExecutor {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
-			app.discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
+			getPlugin().discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
 			return false;
 		}
 	}
@@ -64,9 +63,9 @@ public class GuildManager implements CommandExecutor {
 		return true;
 	}
 
-    private boolean second(PlayerData senderPlayer, String[] args) {
-        return true;
-    }
+	private boolean second(PlayerData senderPlayer, String[] args) {
+		return true;
+	}
 
 	private boolean help(PlayerData senderPlayer) {
 		senderPlayer.player().sendMessage(ChatColor.RED + "沒有這個指令");

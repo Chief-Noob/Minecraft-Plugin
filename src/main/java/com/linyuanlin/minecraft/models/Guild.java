@@ -1,9 +1,6 @@
 package com.linyuanlin.minecraft.models;
 
-import java.util.List;
-import java.util.Map;
-
-import com.iwebpp.crypto.TweetNaclFast.Hash;
+import java.util.*;
 
 import org.bukkit.entity.Player;
 import static java.util.Map.entry;

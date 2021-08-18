@@ -4,29 +4,29 @@ import com.linyuanlin.minecraft.App;
 import com.mongodb.client.model.Filters;
 import java.util.*;
 import org.bukkit.*;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.bson.Document;
 
 public class LocationManager {
-	private App app;
-	private HashMap<String, Location> tagLocationMap;
-
 	/*
 	 * constants
 	 */
 	public final static String lobby_spawn = "lobby_spawn";
 	public final static String house_spawn = "house_spawn";
 
-    public LocationManager(App app) {
-        this.app = app;
-        tagLocationMap = new HashMap<>();
-    }
+	private HashMap<String, Location> tagLocationMap = new HashMap<>();;
+
+	public static App getPlugin() {
+		return JavaPlugin.getPlugin(App.class);
+	}
 
 	public void loadLocations() {
-		List<Document> docList = app.dbClient.findMany("Location", Filters.empty());
+		List<Document> docList = getPlugin().dbClient.findMany("Location", Filters.empty());
 		for (Document doc : docList) {
 			tagLocationMap.put(doc.getString("tag"), this.getLocation(
-					this.app.worldManager.getWorldData(WorldManager.world_lobby).getWorld(), doc));
+					getPlugin().worldManager.getWorldData(WorldManager.world_lobby).getWorld(),
+					doc));
 		}
 	}
 
@@ -35,7 +35,7 @@ public class LocationManager {
 
 	}
 
-    public Location getLocation(String tag) {
-        return tagLocationMap.get(tag);
-    }
+	public Location getLocation(String tag) {
+		return tagLocationMap.get(tag);
+	}
 }
