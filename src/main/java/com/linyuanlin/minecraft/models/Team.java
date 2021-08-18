@@ -76,18 +76,18 @@ public class Team {
     /*
      * delete a player in the team
      */
-    public void delete(PlayerData p) {
+    public boolean delete(PlayerData p) {
         if (this.leader == p) {
             this.newLeader();
         }
 
-        this.playerList.remove(p);
+        return this.playerList.remove(p);
     }
 
     /*
      * return true if this team contain this player
      */
-    public boolean isContain(PlayerData p) {
+    public boolean isTeamMember(PlayerData p) {
         return this.playerList.contains(p);
     }
 
