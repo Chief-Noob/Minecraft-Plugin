@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class PluginMessageHandler implements PluginMessageListener {
-
     public static App getPlugin() {
         return JavaPlugin.getPlugin(App.class);
     }
@@ -28,10 +27,18 @@ public class PluginMessageHandler implements PluginMessageListener {
         String subChannel = in.readUTF();
         String msg = in.readUTF();
         Bukkit.getConsoleSender().sendMessage("receive plugin message: " + subChannel + msg);
+        switch (subChannel) {
+            case "subChannel-player-message": {
+                String[] msgList = msg.split(" ", 2);
+                Bukkit.getServer().broadcastMessage(msgList[1]);
+                break;
+            }
+            default:
+                break;
+        }
     }
 
     public void sendPluginMessage(String subChannel, String PluginMessage) {
-
         if (Bukkit.getOnlinePlayers().size() == 0)
             return;
 

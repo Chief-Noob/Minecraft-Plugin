@@ -31,7 +31,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class App extends JavaPlugin implements Listener {
-
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
     public WorldManager worldManager = new WorldManager();
     public DiscordBotManager discordBotManager = new DiscordBotManager();
@@ -207,9 +206,7 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onMessage(AsyncPlayerChatEvent e) {
-
         try {
-
             String t = ChatColor.WHITE + "[" + ChatColor.AQUA + "工程師" + ChatColor.WHITE + "] " + e.getPlayer().getName()
                     + " 說 " + ChatColor.GRAY + e.getMessage();
 
@@ -219,6 +216,9 @@ public class App extends JavaPlugin implements Listener {
 
             // 顯示對話泡泡
             Bukkit.getScheduler().callSyncMethod(this, () -> this.setHolo(e.getPlayer(), e.getMessage(), 1)).get();
+
+            Bukkit.getScheduler().runTaskLater(this, () -> PMH.sendPluginMessage("subChannel-player-message",
+                    e.getPlayer().getName() + " " + e.getMessage()), 20L);
 
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
