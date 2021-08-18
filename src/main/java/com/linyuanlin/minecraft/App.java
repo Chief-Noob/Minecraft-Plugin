@@ -26,7 +26,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -112,11 +111,6 @@ public class App extends JavaPlugin implements Listener {
         // load all locations
 
         locationManager.loadLocations();
-
-        // register command
-        Objects.requireNonNull(this.getCommand("trade")).setExecutor(this.tradeManager);
-        Objects.requireNonNull(this.getCommand("team")).setExecutor(this.teamManager);
-        Objects.requireNonNull(this.getCommand("guild")).setExecutor(this.guildManager);
     }
 
     @Override

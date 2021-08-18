@@ -7,6 +7,7 @@ import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import java.util.Objects;
 
 import java.io.*;
 
@@ -17,6 +18,10 @@ public class TradeManager implements CommandExecutor {
 
 	public static App getPlugin() {
 		return JavaPlugin.getPlugin(App.class);
+	}
+
+	public TradeManager() {
+		Objects.requireNonNull(getPlugin().getCommand("trade")).setExecutor(this);
 	}
 
 	@Override

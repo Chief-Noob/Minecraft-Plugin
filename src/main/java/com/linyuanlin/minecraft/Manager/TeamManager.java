@@ -23,6 +23,10 @@ public class TeamManager implements CommandExecutor {
 		return JavaPlugin.getPlugin(App.class);
 	}
 
+	public TeamManager() {
+		Objects.requireNonNull(getPlugin().getCommand("team")).setExecutor(this);
+	}
+
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
 			@NotNull String[] args) {

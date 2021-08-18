@@ -10,12 +10,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
+import java.util.*;
 
 public class GuildManager implements CommandExecutor {
 	public static App getPlugin() {
 		return JavaPlugin.getPlugin(App.class);
+	}
+
+	public GuildManager() {
+		Objects.requireNonNull(getPlugin().getCommand("guild")).setExecutor(this);
 	}
 
 	@Override
