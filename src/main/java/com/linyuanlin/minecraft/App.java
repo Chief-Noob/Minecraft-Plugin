@@ -57,6 +57,7 @@ public class App extends JavaPlugin implements Listener {
         this.tradeManager = new TradeManager();
         this.guildManager = new GuildManager();
         this.locationManager = new LocationManager();
+        this.PMH = new PluginMessageHandler();
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this.PMH);
