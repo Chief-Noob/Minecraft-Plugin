@@ -4,7 +4,6 @@ import com.linyuanlin.minecraft.App;
 import com.mongodb.client.model.Filters;
 import java.util.*;
 import org.bukkit.*;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.bson.Document;
 
@@ -17,15 +16,11 @@ public class LocationManager {
 
 	private HashMap<String, Location> tagLocationMap = new HashMap<>();;
 
-	public static App getPlugin() {
-		return JavaPlugin.getPlugin(App.class);
-	}
-
 	public void loadLocations() {
-		List<Document> docList = getPlugin().dbClient.findMany("Location", Filters.empty());
+		List<Document> docList = App.getPlugin().dbClient.findMany("Location", Filters.empty());
 		for (Document doc : docList) {
 			tagLocationMap.put(doc.getString("tag"), this.getLocation(
-					getPlugin().worldManager.getWorldData(WorldManager.world_lobby).getWorld(),
+					App.getPlugin().worldManager.getWorldData(WorldManager.world_lobby).getWorld(),
 					doc));
 		}
 	}

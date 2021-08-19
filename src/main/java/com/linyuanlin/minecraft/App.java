@@ -95,7 +95,7 @@ public class App extends JavaPlugin implements Listener {
         }
 
         Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
-        this.dbClient = new MongodbClient(this, "Minecraft");
+        this.dbClient = new MongodbClient("Minecraft");
 
         // Download all user data
 

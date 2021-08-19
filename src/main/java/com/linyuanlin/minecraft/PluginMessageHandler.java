@@ -7,17 +7,12 @@ import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public class PluginMessageHandler implements PluginMessageListener {
-    public static App getPlugin() {
-        return JavaPlugin.getPlugin(App.class);
-    }
-
     @Override
     public void onPluginMessageReceived(String channel, @NotNull Player player, byte[] message) {
         Bukkit.getConsoleSender().sendMessage("receive plugin message");
@@ -54,7 +49,7 @@ public class PluginMessageHandler implements PluginMessageListener {
         out.writeUTF(subChannel);
         out.writeUTF(PluginMessage);
         Bukkit.getConsoleSender().sendMessage("send plugin message: " + subChannel + ' ' + PluginMessage);
-        Objects.requireNonNull(Iterables.getFirst(Bukkit.getOnlinePlayers(), null)).sendPluginMessage(getPlugin(),
+        Objects.requireNonNull(Iterables.getFirst(Bukkit.getOnlinePlayers(), null)).sendPluginMessage(App.getPlugin(),
                 "BungeeCord", out.toByteArray());
     }
 

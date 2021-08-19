@@ -10,14 +10,12 @@ import java.util.*;
 
 public class MongodbClient {
     public FindIterable<Document> cursor;
-    private App app;
     private MongoClient client;
     private MongoDatabase database;
 
-    public MongodbClient(App app, String databaseName) {
+    public MongodbClient(String databaseName) {
         try {
-            this.app = app;
-            this.client = MongoClients.create(this.app.mongodbConnectString);
+            this.client = MongoClients.create(App.getPlugin().mongodbConnectString);
             this.database = this.client.getDatabase(databaseName);
         } catch (Exception e) {
             e.printStackTrace();
