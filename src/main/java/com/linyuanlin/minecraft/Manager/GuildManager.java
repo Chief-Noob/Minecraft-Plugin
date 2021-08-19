@@ -6,6 +6,7 @@ import com.linyuanlin.minecraft.models.PlayerData;
 import org.bukkit.*;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,15 +14,19 @@ import java.io.*;
 import java.util.*;
 
 public class GuildManager implements CommandExecutor {
+	public static App getPlugin() {
+		return JavaPlugin.getPlugin(App.class);
+	}
+
 	public GuildManager() {
-		Objects.requireNonNull(App.getPlugin().getCommand("guild")).setExecutor(this);
+		Objects.requireNonNull(getPlugin().getCommand("guild")).setExecutor(this);
 	}
 
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
 			@NotNull String[] args) {
 		try {
-			PlayerData p = App.getPlugin().allPlayers.get(((Player) sender).getUniqueId());
+			PlayerData p = getPlugin().allPlayers.get(((Player) sender).getUniqueId());
 			if (p == null) {
 				return false;
 			}
@@ -40,7 +45,7 @@ public class GuildManager implements CommandExecutor {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
-			App.getPlugin().discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
+			getPlugin().discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
 			return false;
 		}
 	}

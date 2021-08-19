@@ -5,6 +5,7 @@ import com.linyuanlin.minecraft.models.PlayerData;
 import org.bukkit.*;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
@@ -15,8 +16,12 @@ public class TradeManager implements CommandExecutor {
 	 * constants
 	 */
 
+	public static App getPlugin() {
+		return JavaPlugin.getPlugin(App.class);
+	}
+
 	public TradeManager() {
-		Objects.requireNonNull(App.getPlugin().getCommand("trade")).setExecutor(this);
+		Objects.requireNonNull(getPlugin().getCommand("trade")).setExecutor(this);
 	}
 
 	@Override
@@ -24,7 +29,7 @@ public class TradeManager implements CommandExecutor {
 			@NotNull String[] args) {
 
 		try {
-			PlayerData p = App.getPlugin().allPlayers.get(((Player) sender).getUniqueId());
+			PlayerData p = getPlugin().allPlayers.get(((Player) sender).getUniqueId());
 
 			if (p == null) {
 				return false;
@@ -42,7 +47,7 @@ public class TradeManager implements CommandExecutor {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
-			App.getPlugin().discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
+			getPlugin().discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
 			return false;
 		}
 	}
@@ -80,7 +85,7 @@ public class TradeManager implements CommandExecutor {
 			return false;
 		}
 
-		PlayerData receiverPlayer = App.getPlugin().allPlayers.get(p.getUniqueId());
+		PlayerData receiverPlayer = getPlugin().allPlayers.get(p.getUniqueId());
 		if (receiverPlayer == null) {
 			senderPlayer.player().sendMessage(
 					"玩家 " + ChatColor.GOLD + receiverName + ChatColor.WHITE + " 不存在或是不在線上");

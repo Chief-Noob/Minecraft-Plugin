@@ -5,17 +5,22 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
 public class MongodbClient {
+    public static App getPlugin() {
+        return JavaPlugin.getPlugin(App.class);
+    }
+
     public FindIterable<Document> cursor;
     private MongoClient client;
     private MongoDatabase database;
 
     public MongodbClient(String databaseName) {
         try {
-            this.client = MongoClients.create(App.getPlugin().mongodbConnectString);
+            this.client = MongoClients.create(getPlugin().mongodbConnectString);
             this.database = this.client.getDatabase(databaseName);
         } catch (Exception e) {
             e.printStackTrace();
