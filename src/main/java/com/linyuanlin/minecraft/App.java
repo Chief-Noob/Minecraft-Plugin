@@ -50,6 +50,13 @@ public class App extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        // register managers
+        this.worldManager = new WorldManager();
+        this.discordBotManager = new DiscordBotManager();
+        this.teamManager = new TeamManager();
+        this.tradeManager = new TradeManager();
+        this.guildManager = new GuildManager();
+        this.locationManager = new LocationManager();
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this.PMH);
@@ -71,14 +78,6 @@ public class App extends JavaPlugin implements Listener {
         // register event listeners
 
         getServer().getPluginManager().registerEvents(this, this);
-
-        // register managers
-        this.worldManager = new WorldManager();
-        this.discordBotManager = new DiscordBotManager();
-        this.teamManager = new TeamManager();
-        this.tradeManager = new TradeManager();
-        this.guildManager = new GuildManager();
-        this.locationManager = new LocationManager();
 
         // handling configs
 
