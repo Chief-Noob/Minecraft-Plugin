@@ -11,6 +11,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -25,21 +26,21 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class App extends JavaPlugin implements Listener {
-
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
-    public WorldManager worldManager = new WorldManager();
-    public DiscordBotManager discordBotManager = new DiscordBotManager(this);
-    public TeamManager teamManager = new TeamManager(this);
-    public TradeManager tradeManager = new TradeManager(this);
-    public GuildManager guildManager = new GuildManager(this);
-    public String mongodbConnectString = "";
+    public WorldManager worldManager;
+    public DiscordBotManager discordBotManager;
+    public TeamManager teamManager;
+    public TradeManager tradeManager;
+    public GuildManager guildManager;
+    public LocationManager locationManager;
+    public PluginMessageHandler pluginMessageHandler;
     public MongodbClient dbClient;
+    public String mongodbConnectString = "";
 
     public void downloadAllUserData() throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -47,33 +48,50 @@ public class App extends JavaPlugin implements Listener {
         }
     }
 
+    private void loadManagers() {
+        this.worldManager = new WorldManager();
+        this.discordBotManager = new DiscordBotManager();
+        this.teamManager = new TeamManager();
+        this.tradeManager = new TradeManager();
+        this.guildManager = new GuildManager();
+        this.locationManager = new LocationManager();
+    }
+
+    private void loadHandlers() {
+        this.pluginMessageHandler = new PluginMessageHandler();
+    }
+
     @Override
     public void onEnable() {
+        // load managers
+        this.loadManagers();
+
+        // load handlers
+        this.loadHandlers();
+
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this.pluginMessageHandler);
 
         // Starting discord bot
-
         String discordBotToken = this.getConfig().getString("discord_bot_token");
 
         if (discordBotToken == null || discordBotToken.equals("null")) {
             getLogger().log(java.util.logging.Level.WARNING, "There is no valid discord bot token in config file !!");
         } else {
             discordBotManager.registerNewBot("TEST", discordBotToken);
-            discordBotManager.registerNewTextChannel("Project-Minecraft", "873512076184813588");
+            discordBotManager.registerNewTextChannel("Project-Minecraft", DiscordBotManager.channelId);
             Bukkit.getScheduler().runTaskLater(this,
                     () -> discordBotManager.sendMessage("TEST", "Project-Minecraft", "Server main system enabled."),
                     100L);
         }
 
         // register event listeners
-
         getServer().getPluginManager().registerEvents(this, this);
 
         // handling configs
-
         this.saveDefaultConfig();
 
         // starting database connections
-
         mongodbConnectString = this.getConfig().getString("mongo_connection_string");
 
         if (mongodbConnectString == null || mongodbConnectString.equals("mongodb://username:password@host")) {
@@ -85,7 +103,7 @@ public class App extends JavaPlugin implements Listener {
         }
 
         Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
-        this.dbClient = new MongodbClient(this, "Minecraft");
+        this.dbClient = new MongodbClient("Minecraft");
 
         // Download all user data
 
@@ -101,15 +119,17 @@ public class App extends JavaPlugin implements Listener {
 
         getLogger().info("Main system enabled");
 
-        // register command
-        Objects.requireNonNull(this.getCommand("trade")).setExecutor(this.tradeManager);
-        Objects.requireNonNull(this.getCommand("team")).setExecutor(this.teamManager);
-        Objects.requireNonNull(this.getCommand("guild")).setExecutor(this.guildManager);
+        // load all custom items
+
+        // load all locations
+        locationManager.loadLocations();
     }
 
     @Override
     public void onDisable() {
         try {
+            this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
+            this.getServer().getMessenger().unregisterIncomingPluginChannel(this);
 
             discordBotManager.shutDownAllBot();
 
@@ -141,10 +161,23 @@ public class App extends JavaPlugin implements Listener {
             e.setJoinMessage(msg);
             World lobbyWorld = Bukkit.getWorld("world_lobby");
             discordBotManager.sendMessage("TEST", "Project-Minecraft", msg);
-            if (lobbyWorld != null) {
+
+            if (lobbyWorld == null)
+                throw new Exception("World lobby_spawn is missing!");
+
+            Location location = locationManager.getLocation(LocationManager.lobby_spawn);
+
+            if (location == null) {
                 p.teleport(lobbyWorld.getSpawnLocation());
+                throw new Exception("Location " + LocationManager.lobby_spawn + " is missing!");
+            } else {
+                p.teleport(location);
             }
+
             pd.sendWorldTitle(p.getWorld().getName());
+
+            Bukkit.getScheduler().runTaskLater(this, () -> pluginMessageHandler
+                    .sendPluginMessage("subChannel-player-join", p.getName() + " joined this server"), 20L);
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -185,9 +218,7 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onMessage(AsyncPlayerChatEvent e) {
-
         try {
-
             String t = ChatColor.WHITE + "[" + ChatColor.AQUA + "工程師" + ChatColor.WHITE + "] " + e.getPlayer().getName()
                     + " 說 " + ChatColor.GRAY + e.getMessage();
 
@@ -197,6 +228,10 @@ public class App extends JavaPlugin implements Listener {
 
             // 顯示對話泡泡
             Bukkit.getScheduler().callSyncMethod(this, () -> this.setHolo(e.getPlayer(), e.getMessage(), 1)).get();
+
+            Bukkit.getScheduler().runTaskLater(this, () -> pluginMessageHandler
+                    .sendPluginMessage("subChannel-player-message", e.getPlayer().getName() + " " + e.getMessage()),
+                    20L);
 
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
@@ -233,25 +268,21 @@ public class App extends JavaPlugin implements Listener {
         }.runTaskTimer(this, 1L, 1L);
 
         return true;
-
     }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEntityEvent event1) {
-
         try {
-
             Player p = event1.getPlayer();
             Entity entity = event1.getRightClicked();
             if (entity instanceof Player && event1.getHand() == EquipmentSlot.HAND) {
                 p.sendMessage("他是 " + entity.getName());
-                p.sendMessage("該玩家擁有財產 " + allPlayers.get(entity.getUniqueId()).getBalance() + " 元");
+                p.sendMessage("該玩家擁有財產 " + allPlayers.get(entity.getUniqueId()).balance() + " 元");
                 TextComponent a = new TextComponent("[傳送組隊邀請]");
                 a.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("點擊發送組隊邀請給 " + entity.getName())));
                 a.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team invite " + entity.getName()));
                 p.spigot().sendMessage(a);
             }
-
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);

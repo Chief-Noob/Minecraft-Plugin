@@ -1,30 +1,31 @@
 package com.linyuanlin.minecraft.manager;
 
 import com.linyuanlin.minecraft.App;
+import org.bukkit.plugin.java.JavaPlugin;
 import com.tjplaysnow.discord.object.Bot;
 import com.tjplaysnow.discord.object.ThreadSpigot;
 import net.dv8tion.jda.api.entities.TextChannel;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class DiscordBotManager {
-
-    private App app;
+    /*
+     * constants
+     */
+    public final static String channelId = "873512076184813588";
 
     // Key: Channel Tag, Value: Channel ID
-    private HashMap<String, String> textChannels = new HashMap<>();
+    private final HashMap<String, String> textChannels = new HashMap<>();
 
     // Key: Bot Tag, Value: Bot
-    private HashMap<String, Bot> bots = new HashMap<>();
+    private final HashMap<String, Bot> bots = new HashMap<>();
 
-    public DiscordBotManager(App app) {
-        this.app = app;
+    public static App getPlugin() {
+        return JavaPlugin.getPlugin(App.class);
     }
 
     public void registerNewBot(String tag, String token) {
         Bot b = new Bot(token, tag);
-        b.setBotThread(new ThreadSpigot(this.app));
+        b.setBotThread(new ThreadSpigot(getPlugin()));
         bots.put(tag, b);
     }
 
@@ -41,22 +42,24 @@ public class DiscordBotManager {
     public void sendMessage(String botTag, String channelTag, String message) {
         Bot bot = bots.get(botTag);
         if (bot == null) {
-            this.app.getLogger().warning("Cannot let bot " + botTag + " send message to channel " + channelTag + " because bot is not exist.");
+            getPlugin().getLogger().warning("Cannot let bot " + botTag + " send message to channel " + channelTag
+                    + " because bot is not exist.");
             return;
         }
         String cId = textChannels.get(channelTag);
         if (cId == null) {
-            this.app.getLogger().warning("Cannot let bot " + botTag + " send message to channel " + channelTag + " because channel is not exist.");
+            getPlugin().getLogger().warning("Cannot let bot " + botTag + " send message to channel " + channelTag
+                    + " because channel is not exist.");
             return;
         }
 
         TextChannel c = bot.getBot().getTextChannelById(cId);
         if (c == null) {
-            this.app.getLogger().warning("Cannot let bot " + botTag + " send message to channel " + channelTag + " because channel is not exist.");
+            getPlugin().getLogger().warning("Cannot let bot " + botTag + " send message to channel " + channelTag
+                    + " because channel is not exist.");
             return;
         }
 
         c.sendMessage(message).queue();
     }
-
 }

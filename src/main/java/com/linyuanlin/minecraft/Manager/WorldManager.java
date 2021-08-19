@@ -1,17 +1,22 @@
 package com.linyuanlin.minecraft.manager;
 
 import com.linyuanlin.minecraft.models.WorldData;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Objects;
+import java.io.*;
+import java.util.*;
 
 public class WorldManager {
-
+    /*
+     * Key: worlds' tag, Value: world data
+     */
     private HashMap<String, WorldData> worlds;
+
+    /*
+     * constants
+     */
+    public final static String world_lobby = "world_lobby";
+    public final static String house_world = "house_world";
 
     public void loadWorlds() {
         worlds = new HashMap<>();
@@ -21,16 +26,14 @@ public class WorldManager {
 
     // Load the house world into server
     private void loadLobbyWorld() {
-        final String worldName = "world_lobby";
-        World world = Bukkit.createWorld(new WorldCreator(worldName));
-        worlds.put(worldName, new WorldData(worldName, "大廳", "所有玩家一開始進入遊戲時的交誼廳，擁有通往各個區域的傳送門", world));
+        World world = Bukkit.createWorld(new WorldCreator(world_lobby));
+        worlds.put(world_lobby, new WorldData(world_lobby, "大廳", "所有玩家一開始進入遊戲時的交誼廳，擁有通往各個區域的傳送門", world));
     }
 
     // Load the house world into server
     private void loadHouseWorld() {
-        final String worldName = "house_world";
-        World world = Bukkit.createWorld(new WorldCreator(worldName));
-        worlds.put(worldName, new WorldData(worldName, "小屋世界", "你能用收集來的資源建造你的居所，也能儲存你的戰利品以及勳章和物資", world));
+        World world = Bukkit.createWorld(new WorldCreator(house_world));
+        worlds.put(house_world, new WorldData(house_world, "小屋世界", "你能用收集來的資源建造你的居所，也能儲存你的戰利品以及勳章和物資", world));
     }
 
     public WorldData getWorldData(String worldId) {
@@ -51,5 +54,4 @@ public class WorldManager {
 
         return false;
     }
-
 }

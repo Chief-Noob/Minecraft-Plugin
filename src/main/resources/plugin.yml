@@ -7,3 +7,5 @@ commands:
     description: 組隊系統
   trade:
     description: 交易系統
+  guild:
+    description: 公會系統
