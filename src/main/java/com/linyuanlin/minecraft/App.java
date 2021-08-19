@@ -31,22 +31,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class App extends JavaPlugin implements Listener {
-    private static App instance;
-
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
-    public WorldManager worldManager = new WorldManager();
-    public DiscordBotManager discordBotManager = new DiscordBotManager();
-    public TeamManager teamManager = new TeamManager();
-    public TradeManager tradeManager = new TradeManager();
-    public GuildManager guildManager = new GuildManager();
-    public LocationManager locationManager = new LocationManager();
-    public String mongodbConnectString = "";
-    public PluginMessageHandler PMH = new PluginMessageHandler();
+    public WorldManager worldManager;
+    public DiscordBotManager discordBotManager;
+    public TeamManager teamManager;
+    public TradeManager tradeManager;
+    public GuildManager guildManager;
+    public LocationManager locationManager;
+    public PluginMessageHandler PMH;
     public MongodbClient dbClient;
-
-    public static App getPlugin() {
-        return instance;
-    }
+    public String mongodbConnectString = "";
 
     public void downloadAllUserData() throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -77,6 +71,14 @@ public class App extends JavaPlugin implements Listener {
         // register event listeners
 
         getServer().getPluginManager().registerEvents(this, this);
+
+        // register managers
+        this.worldManager = new WorldManager();
+        this.discordBotManager = new DiscordBotManager();
+        this.teamManager = new TeamManager();
+        this.tradeManager = new TradeManager();
+        this.guildManager = new GuildManager();
+        this.locationManager = new LocationManager();
 
         // handling configs
 
