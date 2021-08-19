@@ -31,6 +31,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class App extends JavaPlugin implements Listener {
+    private static App instance;
+
     public HashMap<UUID, PlayerData> allPlayers = new HashMap<>();
     public WorldManager worldManager = new WorldManager();
     public DiscordBotManager discordBotManager = new DiscordBotManager();
@@ -41,6 +43,10 @@ public class App extends JavaPlugin implements Listener {
     public String mongodbConnectString = "";
     public PluginMessageHandler PMH = new PluginMessageHandler();
     public MongodbClient dbClient;
+
+    public static App getPlugin() {
+        return instance;
+    }
 
     public void downloadAllUserData() throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {

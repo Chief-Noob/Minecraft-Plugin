@@ -24,9 +24,11 @@ public class PluginMessageHandler implements PluginMessageListener {
         if (!channel.equals("BungeeCord")) {
             return;
         }
+
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
         String subChannel = in.readUTF();
         String msg = in.readUTF();
+
         Bukkit.getConsoleSender().sendMessage("receive plugin message: " + subChannel + msg);
         switch (subChannel) {
             case "subChannel-player-message": {
