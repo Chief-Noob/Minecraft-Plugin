@@ -7,7 +7,6 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.*;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -19,19 +18,15 @@ public class TeamManager implements CommandExecutor {
 	 */
 	public final static int INVITE_COOLING_MINS = 1;
 
-	public static App getPlugin() {
-		return JavaPlugin.getPlugin(App.class);
-	}
-
 	public TeamManager() {
-		Objects.requireNonNull(getPlugin().getCommand("team")).setExecutor(this);
+		Objects.requireNonNull(App.getPlugin().getCommand("team")).setExecutor(this);
 	}
 
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
 			@NotNull String[] args) {
 		try {
-			PlayerData p = getPlugin().allPlayers.get(((Player) sender).getUniqueId());
+			PlayerData p = App.getPlugin().allPlayers.get(((Player) sender).getUniqueId());
 			if (p == null) {
 				return false;
 			}
@@ -52,7 +47,7 @@ public class TeamManager implements CommandExecutor {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
-			getPlugin().discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
+			App.getPlugin().discordBotManager.sendMessage("TEST", "Project-Minecraft", sw.toString());
 			return false;
 		}
 	}
@@ -93,14 +88,14 @@ public class TeamManager implements CommandExecutor {
 			return false;
 		}
 
-		PlayerData receiverPlayer = getPlugin().allPlayers.get(p.getUniqueId());
+		PlayerData receiverPlayer = App.getPlugin().allPlayers.get(p.getUniqueId());
 		if (receiverPlayer == null) {
 			senderPlayer.player().sendMessage("你邀請的玩家 " + ChatColor.GOLD + args[1] + ChatColor.WHITE
 					+ " 不存在於allPlayers中,請聯繫開發人員");
 			return false;
 		}
 
-		Optional<Team> team = getPlugin().allPlayers.get(receiverPlayer.player().getUniqueId()).team();
+		Optional<Team> team = App.getPlugin().allPlayers.get(receiverPlayer.player().getUniqueId()).team();
 
 		if (receiverPlayer == senderPlayer) {
 			senderPlayer.player().sendMessage(ChatColor.RED + "不能邀請自己");
@@ -168,7 +163,7 @@ public class TeamManager implements CommandExecutor {
 					"你要加入的隊伍的邀請人 " + ChatColor.GOLD + args[1] + ChatColor.WHITE + " 不存在或是不在線上！");
 			return false;
 		}
-		PlayerData receiverPlayer = getPlugin().allPlayers.get(p.getUniqueId());
+		PlayerData receiverPlayer = App.getPlugin().allPlayers.get(p.getUniqueId());
 		if (receiverPlayer == null) {
 			senderPlayer.player().sendMessage("你要加入的隊伍的邀請人" + ChatColor.GOLD + args[1] + ChatColor.WHITE
 					+ "不存在於allPlayers中, 請聯繫開發人員");
