@@ -8,6 +8,11 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import java.util.*;
 
 public class DiscordBotManager {
+    /*
+     * constants
+     */
+    public final static String channelId = "873512076184813588";
+
     // Key: Channel Tag, Value: Channel ID
     private final HashMap<String, String> textChannels = new HashMap<>();
 

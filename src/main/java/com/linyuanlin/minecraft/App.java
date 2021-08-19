@@ -38,7 +38,7 @@ public class App extends JavaPlugin implements Listener {
     public TradeManager tradeManager;
     public GuildManager guildManager;
     public LocationManager locationManager;
-    public PluginMessageHandler PMH;
+    public PluginMessageHandler pluginMessageHandler;
     public MongodbClient dbClient;
     public String mongodbConnectString = "";
 
@@ -48,44 +48,50 @@ public class App extends JavaPlugin implements Listener {
         }
     }
 
-    @Override
-    public void onEnable() {
-        // register managers
+    private void loadManagers() {
         this.worldManager = new WorldManager();
         this.discordBotManager = new DiscordBotManager();
         this.teamManager = new TeamManager();
         this.tradeManager = new TradeManager();
         this.guildManager = new GuildManager();
         this.locationManager = new LocationManager();
-        this.PMH = new PluginMessageHandler();
+    }
+
+    private void loadHandlers() {
+        this.pluginMessageHandler = new PluginMessageHandler();
+    }
+
+    @Override
+    public void onEnable() {
+        // load managers
+        this.loadManagers();
+
+        // load handlers
+        this.loadHandlers();
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this.PMH);
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this.pluginMessageHandler);
 
         // Starting discord bot
-
         String discordBotToken = this.getConfig().getString("discord_bot_token");
 
         if (discordBotToken == null || discordBotToken.equals("null")) {
             getLogger().log(java.util.logging.Level.WARNING, "There is no valid discord bot token in config file !!");
         } else {
             discordBotManager.registerNewBot("TEST", discordBotToken);
-            discordBotManager.registerNewTextChannel("Project-Minecraft", "873512076184813588");
+            discordBotManager.registerNewTextChannel("Project-Minecraft", DiscordBotManager.channelId);
             Bukkit.getScheduler().runTaskLater(this,
                     () -> discordBotManager.sendMessage("TEST", "Project-Minecraft", "Server main system enabled."),
                     100L);
         }
 
         // register event listeners
-
         getServer().getPluginManager().registerEvents(this, this);
 
         // handling configs
-
         this.saveDefaultConfig();
 
         // starting database connections
-
         mongodbConnectString = this.getConfig().getString("mongo_connection_string");
 
         if (mongodbConnectString == null || mongodbConnectString.equals("mongodb://username:password@host")) {
@@ -116,14 +122,12 @@ public class App extends JavaPlugin implements Listener {
         // load all custom items
 
         // load all locations
-
         locationManager.loadLocations();
     }
 
     @Override
     public void onDisable() {
         try {
-
             this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
             this.getServer().getMessenger().unregisterIncomingPluginChannel(this);
 
@@ -172,8 +176,8 @@ public class App extends JavaPlugin implements Listener {
 
             pd.sendWorldTitle(p.getWorld().getName());
 
-            Bukkit.getScheduler().runTaskLater(this,
-                    () -> PMH.sendPluginMessage("subChannel-player-join", p.getName() + " joined this server"), 20L);
+            Bukkit.getScheduler().runTaskLater(this, () -> pluginMessageHandler
+                    .sendPluginMessage("subChannel-player-join", p.getName() + " joined this server"), 20L);
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -225,8 +229,9 @@ public class App extends JavaPlugin implements Listener {
             // 顯示對話泡泡
             Bukkit.getScheduler().callSyncMethod(this, () -> this.setHolo(e.getPlayer(), e.getMessage(), 1)).get();
 
-            Bukkit.getScheduler().runTaskLater(this, () -> PMH.sendPluginMessage("subChannel-player-message",
-                    e.getPlayer().getName() + " " + e.getMessage()), 20L);
+            Bukkit.getScheduler().runTaskLater(this, () -> pluginMessageHandler
+                    .sendPluginMessage("subChannel-player-message", e.getPlayer().getName() + " " + e.getMessage()),
+                    20L);
 
         } catch (Exception exception) {
             StringWriter sw = new StringWriter();

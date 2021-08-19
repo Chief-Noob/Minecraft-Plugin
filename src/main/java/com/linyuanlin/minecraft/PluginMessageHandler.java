@@ -57,5 +57,4 @@ public class PluginMessageHandler implements PluginMessageListener {
         Objects.requireNonNull(Iterables.getFirst(Bukkit.getOnlinePlayers(), null)).sendPluginMessage(getPlugin(),
                 "BungeeCord", out.toByteArray());
     }
-
 }
