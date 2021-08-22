@@ -18,18 +18,30 @@ public class WorldData {
         this.world = world;
     }
 
+    /*
+     * return the world Id
+     */
     public String getWoldId() {
         return worldId;
     }
 
+    /*
+     * return the world name
+     */
     public String getWorldName() {
         return worldName;
     }
 
+    /*
+     * return the world description
+     */
     public String getWorldDescription() {
         return worldDescription;
     }
 
+    /*
+     * return the world
+     */
     public World getWorld() {
         return world;
     }

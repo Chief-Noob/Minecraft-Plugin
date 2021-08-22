@@ -8,9 +8,8 @@ import static java.util.Map.entry;
 public class Guild {
 	private Player president;
 	private List<Player> memberList, lordList, vicePresidentList;
-	private int Capacity = 10;
+	private int Capacity = 10, level = 1;
 	private boolean freeJoin = true;
-	private int level = 1;
 
 	private static class LevelAttributes {
 		private int cost, memberNums, lordNums, vicePresidentNums;
