@@ -3,6 +3,7 @@ package com.linyuanlin.minecraft.models;
 import java.util.*;
 
 import org.bukkit.entity.Player;
+
 import static java.util.Map.entry;
 
 public class Guild {
@@ -13,6 +14,11 @@ public class Guild {
 
 	private static class LevelAttributes {
 		private int cost, memberNums, lordNums, vicePresidentNums;
+
+		public final static String COST = "cost";
+		public final static String MEMBER_NUMS = "memberNums";
+		public final static String LORD_NUMS = "lordNums";
+		public final static String VICE_PRESIDENT_NUMS = "vicePresidentNums";
 
 		public LevelAttributes(int cost, int memberNums, int lordNums, int vicePresidentNums) {
 			this.cost = cost;
@@ -48,15 +54,16 @@ public class Guild {
 			entry(2, level_2), entry(3, level_3), entry(4, level_4), entry(5, level_5));
 
 	public boolean isMemberFull() {
-		return this.memberList.size() > getLevelAttributes(this.level, "memberNums");
+		return this.memberList.size() > getLevelAttributes(this.level, LevelAttributes.MEMBER_NUMS);
 	}
 
 	public boolean isLordFull() {
-		return this.lordList.size() > getLevelAttributes(this.level, "lordNums");
+		return this.lordList.size() > getLevelAttributes(this.level, LevelAttributes.LORD_NUMS);
 	}
 
 	public boolean isVicePresidentFull() {
-		return this.vicePresidentList.size() > getLevelAttributes(this.level, "vicePresidentNums");
+		return this.vicePresidentList.size() > getLevelAttributes(this.level,
+				LevelAttributes.VICE_PRESIDENT_NUMS);
 	}
 
 	public Player president() {
@@ -137,13 +144,13 @@ public class Guild {
 
 	public int getLevelAttributes(int level, String key) {
 		switch (key) {
-			case "cost":
+			case LevelAttributes.COST:
 				return Guild.levelMap.get(level).cost();
-			case "memberNums":
+			case LevelAttributes.MEMBER_NUMS:
 				return Guild.levelMap.get(level).memberNums();
-			case "lordNums":
+			case LevelAttributes.LORD_NUMS:
 				return Guild.levelMap.get(level).lordNums();
-			case "vicePresidentNums":
+			case LevelAttributes.VICE_PRESIDENT_NUMS:
 				return Guild.levelMap.get(level).vicePresidentNums();
 			default:
 				return -1;
