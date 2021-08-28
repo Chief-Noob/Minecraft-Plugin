@@ -10,8 +10,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import net.md_5.bungee.api.chat.TextComponent;
+
 import java.io.*;
 import java.util.*;
+
+import javax.swing.text.DefaultStyledDocument.ElementSpec;
 
 public class GuildManager implements CommandExecutor {
 	public static App getPlugin() {
@@ -35,7 +39,7 @@ public class GuildManager implements CommandExecutor {
 				case "getInvitationPaper":
 					return this.getInvitationPaper(p);
 				case "useInvitationPaper":
-					return this.useInvitationPaper(p);
+					return this.useInvitationPaper(p, args);
 				case "second":
 					return this.second(p, args);
 				default:
@@ -62,8 +66,21 @@ public class GuildManager implements CommandExecutor {
 		return true;
 	}
 
-	private boolean useInvitationPaper(PlayerData sendPlayer) {
+	private boolean useInvitationPaper(PlayerData sendPlayer, String[] args) {
+		if (args.length == 0) {
+			sendPlayer.player().sendMessage("請至少邀請一人");
+			return false;
+		}
 
+		for (String name : args) {
+			Player receiverPlayer = Bukkit.getPlayer(name);
+			if (receiverPlayer == null) {
+				sendPlayer.player()
+						.sendMessage("邀請對象" + ChatColor.GOLD + name + ChatColor.WHITE + "不存在");
+			} else {
+				receiverPlayer.sendMessage("err");
+			}
+		}
 		return true;
 	}
 

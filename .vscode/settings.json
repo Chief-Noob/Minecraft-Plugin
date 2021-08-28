@@ -5,5 +5,9 @@
     "bukkit",
     "cmdlable",
     "minecraft"
+  ],
+  "cSpell.ignoreWords": [
+    "member",
+    "nums"
   ]
 }
