@@ -10,12 +10,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import net.md_5.bungee.api.chat.TextComponent;
-
 import java.io.*;
 import java.util.*;
-
-import javax.swing.text.DefaultStyledDocument.ElementSpec;
 
 public class GuildManager implements CommandExecutor {
 	public static App getPlugin() {
